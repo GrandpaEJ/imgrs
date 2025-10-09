@@ -67,8 +67,8 @@ Choose your path:
 ## 🆘 Getting Help
 
 - 📝 **Documentation**: You're here!
-- 🐛 **Bug Reports**: [GitHub Issues](https://github.com/yourusername/imgrs/issues)
-- 💬 **Discussions**: [GitHub Discussions](https://github.com/yourusername/imgrs/discussions)
+- 🐛 **Bug Reports**: [GitHub Issues](https://github.com/GrandpaEJ/imgrs/issues)
+- 💬 **Discussions**: [GitHub Discussions](https://github.com/GrandpaEJ/imgrs/discussions)
 - 📧 **Email**: your-email@example.com
 
 ## 📄 License
