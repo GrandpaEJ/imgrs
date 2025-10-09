@@ -1,146 +1,146 @@
 {
   "open_pillow": {
-    "name": "Pillow - Open",
-    "iterations": 100,
-    "total_time": 0.023016275990812574,
-    "avg_time": 0.00023016275990812575,
-    "min_time": 0.00018370000179857016,
-    "max_time": 0.0006962289990042336
+    "name": "Pillow",
+    "iterations": 50,
+    "total_time": 0.020733743003802374,
+    "avg_time": 0.00041467486007604746,
+    "min_time": 7.507899863412604e-05,
+    "max_time": 0.016446399997221306
   },
   "open_imgrs": {
-    "name": "imgrs - Open",
-    "iterations": 100,
-    "total_time": 0.0004928680064040236,
-    "avg_time": 4.928680064040236e-06,
-    "min_time": 2.354005118831992e-06,
-    "max_time": 0.0001420620028511621
-  },
-  "resize_pillow": {
-    "name": "Pillow - Resize",
-    "iterations": 100,
-    "total_time": 6.248715669978992,
-    "avg_time": 0.06248715669978992,
-    "min_time": 0.054607040001428686,
-    "max_time": 0.16068785199604463
-  },
-  "resize_imgrs": {
-    "name": "imgrs - Resize",
-    "iterations": 100,
-    "total_time": 14.319912707054755,
-    "avg_time": 0.14319912707054755,
-    "min_time": 0.12329416900320211,
-    "max_time": 0.3661098500015214
-  },
-  "blur_pillow": {
-    "name": "Pillow - Blur",
-    "iterations": 100,
-    "total_time": 15.547314153023763,
-    "avg_time": 0.1554731415302376,
-    "min_time": 0.13235302199609578,
-    "max_time": 0.28543528400041396
-  },
-  "blur_imgrs": {
-    "name": "imgrs - Blur",
-    "iterations": 100,
-    "total_time": 694.4606006740214,
-    "avg_time": 6.944606006740214,
-    "min_time": 5.280839806000586,
-    "max_time": 8.095203661003325
-  },
-  "sharpen_pillow": {
-    "name": "Pillow - Sharpen",
-    "iterations": 100,
-    "total_time": 6.195291431016813,
-    "avg_time": 0.061952914310168125,
-    "min_time": 0.049544342000444885,
-    "max_time": 0.09672121699986747
-  },
-  "sharpen_imgrs": {
-    "name": "imgrs - Sharpen",
-    "iterations": 100,
-    "total_time": 14.123192328959703,
-    "avg_time": 0.14123192328959702,
-    "min_time": 0.11423361200286308,
-    "max_time": 0.21491470700129867
-  },
-  "brightness_pillow": {
-    "name": "Pillow - Brightness",
-    "iterations": 100,
-    "total_time": 2.6835701950185467,
-    "avg_time": 0.026835701950185465,
-    "min_time": 0.023070385002938565,
-    "max_time": 0.040087038003548514
-  },
-  "brightness_imgrs": {
-    "name": "imgrs - Brightness",
-    "iterations": 100,
-    "total_time": 1.4342343029784388,
-    "avg_time": 0.014342343029784387,
-    "min_time": 0.011257892001594882,
-    "max_time": 0.03378427500138059
-  },
-  "rotate_pillow": {
-    "name": "Pillow - Rotate",
-    "iterations": 100,
-    "total_time": 0.5866919809632236,
-    "avg_time": 0.005866919809632236,
-    "min_time": 0.0037732269993284717,
-    "max_time": 0.017286506998061668
-  },
-  "rotate_imgrs": {
-    "name": "imgrs - Rotate",
-    "iterations": 100,
-    "total_time": 0.9890569439885439,
-    "avg_time": 0.009890569439885439,
-    "min_time": 0.007624901001690887,
-    "max_time": 0.021538795001106337
-  },
-  "convert_pillow": {
-    "name": "Pillow - Convert",
-    "iterations": 100,
-    "total_time": 0.3562888009910239,
-    "avg_time": 0.003562888009910239,
-    "min_time": 0.0024375010034418665,
-    "max_time": 0.019392292000702582
-  },
-  "convert_imgrs": {
-    "name": "imgrs - Convert",
-    "iterations": 100,
-    "total_time": 1.9257401900249533,
-    "avg_time": 0.019257401900249535,
-    "min_time": 0.017295190002187155,
-    "max_time": 0.0355562680051662
+    "name": "imgrs",
+    "iterations": 50,
+    "total_time": 0.00013697003305424005,
+    "avg_time": 2.739400661084801e-06,
+    "min_time": 1.3500030036084354e-06,
+    "max_time": 4.6699002268724144e-05
   },
   "save_pillow": {
-    "name": "Pillow - Save",
-    "iterations": 100,
-    "total_time": 15.009396223977092,
-    "avg_time": 0.15009396223977092,
-    "min_time": 0.07882141699519707,
-    "max_time": 0.5368898059969069
+    "name": "Pillow",
+    "iterations": 50,
+    "total_time": 7.345653112977743,
+    "avg_time": 0.14691306225955486,
+    "min_time": 0.10509762399306055,
+    "max_time": 0.36002314199868124
   },
   "save_imgrs": {
-    "name": "imgrs - Save",
-    "iterations": 100,
-    "total_time": 2.318869645045197,
-    "avg_time": 0.023188696450451973,
-    "min_time": 0.01024984499963466,
-    "max_time": 0.13400151899986668
+    "name": "imgrs",
+    "iterations": 50,
+    "total_time": 1.331243392021861,
+    "avg_time": 0.02662486784043722,
+    "min_time": 0.013184534000174608,
+    "max_time": 0.09756629200273892
   },
-  "pipeline_pillow": {
-    "name": "Pillow - Pipeline",
-    "iterations": 100,
-    "total_time": 7.823237737015006,
-    "avg_time": 0.07823237737015006,
-    "min_time": 0.0544522659984068,
-    "max_time": 0.16235656100616325
+  "convert_pillow": {
+    "name": "Pillow",
+    "iterations": 50,
+    "total_time": 0.17126697799540125,
+    "avg_time": 0.003425339559908025,
+    "min_time": 0.002341558996704407,
+    "max_time": 0.016383297996071633
   },
-  "pipeline_imgrs": {
-    "name": "imgrs - Pipeline",
-    "iterations": 100,
-    "total_time": 34.320892235977226,
-    "avg_time": 0.34320892235977224,
-    "min_time": 0.28493318099936005,
-    "max_time": 0.5411640439997427
+  "convert_imgrs": {
+    "name": "imgrs",
+    "iterations": 50,
+    "total_time": 0.8863938430295093,
+    "avg_time": 0.017727876860590186,
+    "min_time": 0.014853211003355682,
+    "max_time": 0.028915477996633854
+  },
+  "rotate_pillow": {
+    "name": "Pillow",
+    "iterations": 50,
+    "total_time": 0.3160426499962341,
+    "avg_time": 0.006320852999924682,
+    "min_time": 0.003673512997920625,
+    "max_time": 0.021927631998551078
+  },
+  "rotate_imgrs": {
+    "name": "imgrs",
+    "iterations": 50,
+    "total_time": 0.5649169669995899,
+    "avg_time": 0.011298339339991798,
+    "min_time": 0.00900065300083952,
+    "max_time": 0.02993167700333288
+  },
+  "flip_pillow": {
+    "name": "Pillow",
+    "iterations": 50,
+    "total_time": 0.2606204379990231,
+    "avg_time": 0.005212408759980462,
+    "min_time": 0.0027703070009010844,
+    "max_time": 0.021279680004226975
+  },
+  "flip_imgrs": {
+    "name": "imgrs",
+    "iterations": 50,
+    "total_time": 0.6361197940059355,
+    "avg_time": 0.012722395880118711,
+    "min_time": 0.009179636996123008,
+    "max_time": 0.03637623599934159
+  },
+  "resize_pillow": {
+    "name": "Pillow",
+    "iterations": 50,
+    "total_time": 1.0637673570017796,
+    "avg_time": 0.02127534714003559,
+    "min_time": 0.01795792100165272,
+    "max_time": 0.034407298000587616
+  },
+  "resize_imgrs": {
+    "name": "imgrs",
+    "iterations": 50,
+    "total_time": 0.6261744890070986,
+    "avg_time": 0.012523489780141972,
+    "min_time": 0.0104824220034061,
+    "max_time": 0.02203553700383054
+  },
+  "crop_pillow": {
+    "name": "Pillow",
+    "iterations": 50,
+    "total_time": 0.02525207102735294,
+    "avg_time": 0.0005050414205470588,
+    "min_time": 0.00011364600504748523,
+    "max_time": 0.013394327004789375
+  },
+  "crop_imgrs": {
+    "name": "imgrs",
+    "iterations": 50,
+    "total_time": 0.03676306802663021,
+    "avg_time": 0.0007352613605326042,
+    "min_time": 0.00042464899888727814,
+    "max_time": 0.012227642997459043
+  },
+  "split_pillow": {
+    "name": "Pillow",
+    "iterations": 50,
+    "total_time": 0.25956112997664604,
+    "avg_time": 0.005191222599532921,
+    "min_time": 0.0026160550041822717,
+    "max_time": 0.018035002001852263
+  },
+  "split_imgrs": {
+    "name": "imgrs",
+    "iterations": 50,
+    "total_time": 0.5187338609612198,
+    "avg_time": 0.010374677219224394,
+    "min_time": 0.00780818700150121,
+    "max_time": 0.02020572600304149
+  },
+  "workflow_pillow": {
+    "name": "Pillow",
+    "iterations": 50,
+    "total_time": 1.9717867990257218,
+    "avg_time": 0.03943573598051444,
+    "min_time": 0.030850093004119117,
+    "max_time": 0.07779976800520672
+  },
+  "workflow_imgrs": {
+    "name": "imgrs",
+    "iterations": 50,
+    "total_time": 1.8002646039967658,
+    "avg_time": 0.03600529207993532,
+    "min_time": 0.02859301799617242,
+    "max_time": 0.052667365001980215
   }
 }

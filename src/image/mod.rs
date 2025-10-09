@@ -12,6 +12,7 @@ mod filters;
 mod pixel_ops;
 mod drawing;
 mod effects;
+mod fast_resize;
 
 // Python bindings
 mod pymethods;

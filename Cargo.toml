@@ -14,6 +14,7 @@ crate-type = ["cdylib"]
 [dependencies]
 pyo3 = { version = "0.22", features = ["extension-module", "abi3", "abi3-py38"] }
 image = { version = "0.25.6", features = ["jpeg", "png", "gif", "bmp", "tiff", "webp"], default-features = false }
+fast_image_resize = "4.2"
 rayon = "1.7"
 thiserror = "1.0"
 numpy = "0.22"
@@ -25,3 +26,8 @@ default = []
 lto = true
 codegen-units = 1
 panic = "abort"
+opt-level = 3
+strip = true
+
+[profile.release.package."*"]
+opt-level = 3

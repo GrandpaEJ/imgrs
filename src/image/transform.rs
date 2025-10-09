@@ -1,7 +1,9 @@
 use pyo3::prelude::*;
+use image::DynamicImage;
 use crate::errors::ImgrsError;
 use crate::operations;
 use super::core::{PyImage, LazyImage};
+use super::fast_resize::fast_resize;
 
 impl PyImage {
     pub fn resize_impl(&mut self, size: (u32, u32), resample: Option<String>) -> PyResult<Self> {
@@ -19,11 +21,27 @@ impl PyImage {
             });
         }
         
-        let filter = operations::parse_resample_filter(resample.as_deref())?;
+        let filter_str = resample.as_deref().unwrap_or("BILINEAR");
         
         Ok(Python::with_gil(|py| {
             py.allow_threads(|| {
-                let resized = image.resize(width, height, filter);
+                // Use fast SIMD resize for RGB/RGBA images
+                let resized = match image {
+                    DynamicImage::ImageRgb8(_) | DynamicImage::ImageRgba8(_) => {
+                        fast_resize(image, width, height, filter_str)
+                            .unwrap_or_else(|_| {
+                                // Fallback to standard resize if fast resize fails
+                                let filter = operations::parse_resample_filter(Some(filter_str)).unwrap();
+                                image.resize(width, height, filter)
+                            })
+                    }
+                    _ => {
+                        // Use standard resize for other formats
+                        let filter = operations::parse_resample_filter(Some(filter_str)).unwrap();
+                        image.resize(width, height, filter)
+                    }
+                };
+                
                 PyImage {
                     lazy_image: LazyImage::Loaded(resized),
                     format,
