@@ -1,5 +1,6 @@
 /// Blend modes for compositing operations
 #[derive(Debug, Clone, Copy)]
+#[allow(dead_code)]
 pub enum BlendMode {
     Normal,
     Multiply,
@@ -16,6 +17,7 @@ pub enum BlendMode {
 }
 
 /// Blend two pixels using the specified blend mode
+#[allow(dead_code)]
 pub fn blend_pixels(
     base: (u8, u8, u8, u8),
     overlay: (u8, u8, u8, u8),

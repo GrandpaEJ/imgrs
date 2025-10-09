@@ -3,6 +3,7 @@ use crate::errors::ImgrsError;
 use super::modes::{BlendMode, blend_pixels};
 
 /// Composite two images using the specified blend mode
+#[allow(dead_code)]
 pub fn composite(
     base: &DynamicImage,
     overlay: &DynamicImage,
@@ -42,11 +43,13 @@ pub fn composite(
 }
 
 /// Alpha composite two images (standard alpha blending)
+#[allow(dead_code)]
 pub fn alpha_composite(base: &DynamicImage, overlay: &DynamicImage) -> Result<DynamicImage, ImgrsError> {
     composite(base, overlay, BlendMode::Normal, 1.0)
 }
 
 /// Apply a color overlay to an image
+#[allow(dead_code)]
 pub fn color_overlay(
     image: &DynamicImage,
     color: (u8, u8, u8, u8),

@@ -1,4 +1,4 @@
-use image::{DynamicImage, GenericImageView};
+use image::DynamicImage;
 use crate::errors::ImgrsError;
 use super::access::map_pixels;
 

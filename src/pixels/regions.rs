@@ -3,6 +3,7 @@ use crate::errors::ImgrsError;
 use super::access::{get_pixel, put_pixel};
 
 /// Get a region of pixels as a 2D array
+#[allow(dead_code)]
 pub fn get_region(
     image: &DynamicImage,
     x: u32,
@@ -34,6 +35,7 @@ pub fn get_region(
 }
 
 /// Set a region of pixels from a 2D array
+#[allow(dead_code)]
 pub fn put_region(
     image: &DynamicImage,
     x: u32,

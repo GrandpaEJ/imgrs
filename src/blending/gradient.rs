@@ -5,6 +5,7 @@ use super::composite::composite;
 
 /// Gradient direction
 #[derive(Debug, Clone, Copy)]
+#[allow(dead_code)]
 pub enum GradientDirection {
     Horizontal,
     Vertical,
@@ -13,6 +14,7 @@ pub enum GradientDirection {
 }
 
 /// Create a gradient overlay
+#[allow(dead_code)]
 pub fn gradient_overlay(
     image: &DynamicImage,
     start_color: (u8, u8, u8, u8),

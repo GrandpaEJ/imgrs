@@ -75,6 +75,7 @@ pub fn put_pixel(image: &DynamicImage, x: u32, y: u32, color: (u8, u8, u8, u8)) 
 }
 
 /// Apply a function to each pixel in the image
+#[allow(dead_code)]
 pub fn map_pixels<F>(image: &DynamicImage, mut func: F) -> Result<DynamicImage, ImgrsError>
 where
     F: FnMut(u32, u32, (u8, u8, u8, u8)) -> (u8, u8, u8, u8),
