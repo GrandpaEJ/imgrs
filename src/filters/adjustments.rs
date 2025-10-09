@@ -1,8 +1,15 @@
 use image::{DynamicImage, ImageBuffer, Rgb, Rgba, Luma};
 use crate::errors::ImgrsError;
+use super::simd_ops::{fast_brightness, fast_contrast};
 
 /// Apply brightness adjustment to an image
 pub fn brightness(image: &DynamicImage, adjustment: i16) -> Result<DynamicImage, ImgrsError> {
+    // Use optimized version for RGB/RGBA
+    if matches!(image, DynamicImage::ImageRgb8(_) | DynamicImage::ImageRgba8(_)) {
+        return fast_brightness(image, adjustment);
+    }
+    
+    // Original implementation for other formats
     match image {
         DynamicImage::ImageRgb8(rgb_img) => {
             let (width, height) = rgb_img.dimensions();
@@ -61,6 +68,11 @@ pub fn brightness(image: &DynamicImage, adjustment: i16) -> Result<DynamicImage,
 
 /// Apply contrast adjustment to an image
 pub fn contrast(image: &DynamicImage, factor: f32) -> Result<DynamicImage, ImgrsError> {
+    // Use optimized version with lookup table for RGB/RGBA
+    if matches!(image, DynamicImage::ImageRgb8(_)) {
+        return fast_contrast(image, factor);
+    }
+    
     let factor = factor.max(0.0); // Ensure non-negative factor
 
     match image {

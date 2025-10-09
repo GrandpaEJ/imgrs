@@ -1,6 +1,7 @@
 use pyo3::prelude::*;
 use image::{DynamicImage, Rgba, Rgb};
 use crate::errors::ImgrsError;
+use crate::filters::simd_ops::fast_rgb_to_gray;
 use super::core::{PyImage, LazyImage, color_type_to_mode_string};
 
 impl PyImage {
@@ -28,8 +29,13 @@ impl PyImage {
             py.allow_threads(|| {
                 match mode {
                     "L" => {
-                        // Convert to grayscale
-                        Ok(DynamicImage::ImageLuma8(image.to_luma8()))
+                        // Use SIMD-optimized grayscale conversion for RGB/RGBA
+                        match image {
+                            DynamicImage::ImageRgb8(_) | DynamicImage::ImageRgba8(_) => {
+                                fast_rgb_to_gray(image)
+                            }
+                            _ => Ok(DynamicImage::ImageLuma8(image.to_luma8()))
+                        }
                     }
                     "LA" => {
                         // Convert to grayscale with alpha
