@@ -1,0 +1,195 @@
+/* Custom Styles for imgrs Documentation */
+
+:root {
+    --primary-color: #007bff;
+    --secondary-color: #6c757d;
+    --success-color: #28a745;
+    --warning-color: #ffc107;
+    --danger-color: #dc3545;
+    --info-color: #17a2b8;
+    --dark-color: #343a40;
+}
+
+/* Hero Section */
+.hero-section {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 400px;
+    display: flex;
+    align-items: center;
+}
+
+/* Feature Icons */
+.feature-icon {
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+}
+
+/* Code Blocks */
+pre {
+    border-radius: 8px;
+    background-color: #2d2d2d;
+    padding: 1rem;
+    margin: 0;
+}
+
+pre code {
+    color: #f8f8f2;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.9rem;
+}
+
+/* Cards */
+.card {
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Badges */
+.badge {
+    font-weight: 500;
+    padding: 0.5em 0.8em;
+}
+
+/* Buttons */
+.btn {
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Table Styling */
+.table-dark {
+    --bs-table-bg: #2d2d2d;
+}
+
+.table-dark tbody tr:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Smooth Scrolling */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Navbar */
+.navbar-dark .navbar-nav .nav-link {
+    transition: color 0.2s;
+}
+
+.navbar-dark .navbar-nav .nav-link:hover {
+    color: var(--warning-color) !important;
+}
+
+/* Footer Links */
+footer a:hover {
+    color: var(--warning-color) !important;
+    text-decoration: underline !important;
+}
+
+/* Responsive Typography */
+@media (max-width: 768px) {
+    .display-3 {
+        font-size: 2.5rem;
+    }
+    
+    .display-4 {
+        font-size: 2rem;
+    }
+}
+
+/* Animation for feature cards */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.card {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+/* Copy button feedback */
+.btn-warning:active {
+    transform: scale(0.95);
+}
+
+/* Performance meter colors */
+.text-performance-good {
+    color: #28a745;
+}
+
+.text-performance-medium {
+    color: #ffc107;
+}
+
+.text-performance-bad {
+    color: #dc3545;
+}
+
+/* Syntax highlighting enhancement */
+.language-python .token.keyword {
+    color: #ff79c6;
+}
+
+.language-python .token.string {
+    color: #50fa7b;
+}
+
+.language-python .token.function {
+    color: #8be9fd;
+}
+
+.language-python .token.comment {
+    color: #6272a4;
+    font-style: italic;
+}
+
+/* Loading animation */
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+.loading {
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+/* Hero gradient animation */
+@keyframes gradient-shift {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+.hero-section {
+    background-size: 200% 200%;
+    animation: gradient-shift 15s ease infinite;
+}
+

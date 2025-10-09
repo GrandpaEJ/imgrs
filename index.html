@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>imgrs - Blazing Fast Image Processing for Python</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Prism.js for code highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="docs/css/custom.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="#">
+                <i class="bi bi-image"></i> imgrs
+                <span class="badge bg-success ms-2">v0.1.0</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="#features">Features</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#installation">Install</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#quickstart">Quick Start</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#benchmark">Benchmarks</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#docs">Docs</a></li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="https://github.com/GrandpaEJ/imgrs" target="_blank">
+                            <i class="bi bi-github"></i> GitHub
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section bg-gradient text-white py-5">
+        <div class="container text-center py-5">
+            <h1 class="display-3 fw-bold mb-3">
+                <i class="bi bi-lightning-charge-fill text-warning"></i>
+                imgrs
+            </h1>
+            <p class="lead mb-4">Blazing Fast Image Processing for Python, Powered by Rust</p>
+            <div class="mb-4">
+                <span class="badge bg-light text-dark me-2 p-2">
+                    <i class="bi bi-speedometer2"></i> 196x Faster I/O
+                </span>
+                <span class="badge bg-light text-dark me-2 p-2">
+                    <i class="bi bi-shield-check"></i> Memory Safe
+                </span>
+                <span class="badge bg-light text-dark p-2">
+                    <i class="bi bi-box-seam"></i> Pillow Compatible
+                </span>
+            </div>
+            <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+                <button class="btn btn-warning btn-lg px-4 gap-3" onclick="copyToClipboard('pip install imgrs')">
+                    <i class="bi bi-download"></i> pip install imgrs
+                </button>
+                <a href="#quickstart" class="btn btn-outline-light btn-lg px-4">
+                    Get Started <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-5">
+        <div class="container">
+            <h2 class="text-center mb-5">Why Choose imgrs?</h2>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body text-center">
+                            <div class="feature-icon bg-warning bg-gradient text-white rounded-circle mx-auto mb-3">
+                                <i class="bi bi-lightning-charge-fill"></i>
+                            </div>
+                            <h5 class="card-title">Blazing Fast</h5>
+                            <p class="card-text">196x faster image loading, 8.5x faster saving. Rust-powered performance without the complexity.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body text-center">
+                            <div class="feature-icon bg-success bg-gradient text-white rounded-circle mx-auto mb-3">
+                                <i class="bi bi-shield-check"></i>
+                            </div>
+                            <h5 class="card-title">Memory Safe</h5>
+                            <p class="card-text">Built with Rust's memory safety guarantees. No segfaults, no memory leaks, just reliable performance.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body text-center">
+                            <div class="feature-icon bg-primary bg-gradient text-white rounded-circle mx-auto mb-3">
+                                <i class="bi bi-code-square"></i>
+                            </div>
+                            <h5 class="card-title">Pillow Compatible</h5>
+                            <p class="card-text">Familiar API. Most Pillow code works with minimal changes. Easy migration path.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body text-center">
+                            <div class="feature-icon bg-info bg-gradient text-white rounded-circle mx-auto mb-3">
+                                <i class="bi bi-globe"></i>
+                            </div>
+                            <h5 class="card-title">Cross-Platform</h5>
+                            <p class="card-text">Pre-built wheels for Linux, Windows, macOS, and Android. No compilation needed!</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body text-center">
+                            <div class="feature-icon bg-danger bg-gradient text-white rounded-circle mx-auto mb-3">
+                                <i class="bi bi-cpu"></i>
+                            </div>
+                            <h5 class="card-title">SIMD Optimized</h5>
+                            <p class="card-text">Vectorized operations using AVX2/SSE4. Maximum performance from modern CPUs.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body text-center">
+                            <div class="feature-icon bg-secondary bg-gradient text-white rounded-circle mx-auto mb-3">
+                                <i class="bi bi-file-earmark-code"></i>
+                            </div>
+                            <h5 class="card-title">Type Safe</h5>
+                            <p class="card-text">Full type hints for IDE autocomplete. Catch errors before runtime with mypy support.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Installation Section -->
+    <section id="installation" class="py-5 bg-light">
+        <div class="container">
+            <h2 class="text-center mb-4">Installation</h2>
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="card border-0 shadow">
+                        <div class="card-body p-4">
+                            <pre class="mb-0"><code class="language-bash">pip install imgrs</code></pre>
+                        </div>
+                    </div>
+                    <p class="text-center mt-3 text-muted">
+                        <i class="bi bi-check-circle-fill text-success"></i>
+                        Supports Python 3.8-3.12 on Linux, Windows, macOS, and Android
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Start Section -->
+    <section id="quickstart" class="py-5">
+        <div class="container">
+            <h2 class="text-center mb-5">Quick Start</h2>
+            <div class="row">
+                <div class="col-lg-6 mb-4">
+                    <h4><i class="bi bi-1-circle-fill text-primary"></i> Open and Resize</h4>
+                    <pre><code class="language-python">from imgrs import Image
+
+# Open image (196x faster than Pillow!)
+img = Image.open("photo.jpg")
+
+# Resize (1.5x faster than Pillow!)
+resized = img.resize((800, 600))
+
+# Save (8.5x faster than Pillow!)
+resized.save("output.png")</code></pre>
+                </div>
+                <div class="col-lg-6 mb-4">
+                    <h4><i class="bi bi-2-circle-fill text-primary"></i> Apply Filters</h4>
+                    <pre><code class="language-python">from imgrs import Image
+
+img = Image.open("photo.jpg")
+
+# Chain filters
+result = (img
+    .blur(5.0)
+    .brightness(10)
+    .contrast(1.2)
+    .sharpen(1.5))
+
+result.save("enhanced.jpg")</code></pre>
+                </div>
+                <div class="col-lg-6 mb-4">
+                    <h4><i class="bi bi-3-circle-fill text-primary"></i> Draw Shapes</h4>
+                    <pre><code class="language-python">from imgrs import Image
+
+# Create canvas
+img = Image.new("RGB", (400, 300), (255, 255, 255))
+
+# Draw shapes
+img = img.draw_rectangle(50, 50, 100, 100, (255, 0, 0, 255))
+img = img.draw_circle(200, 150, 50, (0, 255, 0, 255))
+
+img.save("shapes.png")</code></pre>
+                </div>
+                <div class="col-lg-6 mb-4">
+                    <h4><i class="bi bi-4-circle-fill text-primary"></i> Add Effects</h4>
+                    <pre><code class="language-python">from imgrs import Image
+
+img = Image.open("logo.png")
+
+# Add drop shadow
+shadowed = img.drop_shadow(
+    offset_x=10,
+    offset_y=10,
+    blur_radius=15.0,
+    shadow_color=(0, 0, 0, 128)
+)
+
+shadowed.save("logo_shadow.png")</code></pre>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Benchmark Section -->
+    <section id="benchmark" class="py-5 bg-dark text-white">
+        <div class="container">
+            <h2 class="text-center mb-5">Performance Benchmarks</h2>
+            <div class="row justify-content-center mb-4">
+                <div class="col-lg-10">
+                    <div class="table-responsive">
+                        <table class="table table-dark table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Operation</th>
+                                    <th class="text-end">Pillow</th>
+                                    <th class="text-end">imgrs</th>
+                                    <th>Winner</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="table-success">
+                                    <td><strong>Open Image</strong></td>
+                                    <td class="text-end">0.49ms</td>
+                                    <td class="text-end"><strong>0.00ms</strong></td>
+                                    <td><span class="badge bg-warning">imgrs 196x ⚡</span></td>
+                                </tr>
+                                <tr class="table-success">
+                                    <td><strong>Save PNG</strong></td>
+                                    <td class="text-end">134.11ms</td>
+                                    <td class="text-end"><strong>15.75ms</strong></td>
+                                    <td><span class="badge bg-warning">imgrs 8.5x ⚡</span></td>
+                                </tr>
+                                <tr class="table-success">
+                                    <td><strong>Resize</strong></td>
+                                    <td class="text-end">16.33ms</td>
+                                    <td class="text-end"><strong>10.59ms</strong></td>
+                                    <td><span class="badge bg-warning">imgrs 1.5x ⚡</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Convert Grayscale</td>
+                                    <td class="text-end"><strong>3.06ms</strong></td>
+                                    <td class="text-end">5.10ms</td>
+                                    <td><span class="badge bg-secondary">Pillow 1.7x</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Rotate 90°</td>
+                                    <td class="text-end"><strong>4.83ms</strong></td>
+                                    <td class="text-end">9.11ms</td>
+                                    <td><span class="badge bg-secondary">Pillow 1.9x</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p class="text-center mt-4">
+                        <a href="benchmark/README.md" class="btn btn-outline-light">
+                            <i class="bi bi-graph-up"></i> View Full Benchmark Results
+                        </a>
+                    </p>
+                </div>
+            </div>
+            <div class="row text-center">
+                <div class="col-md-4 mb-3">
+                    <div class="display-4 fw-bold text-warning">196x</div>
+                    <p>Faster Image Opening</p>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <div class="display-4 fw-bold text-warning">8.5x</div>
+                    <p>Faster Image Saving</p>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <div class="display-4 fw-bold text-warning">23x</div>
+                    <p>Average Speedup</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Detail Section -->
+    <section class="py-5">
+        <div class="container">
+            <h2 class="text-center mb-5">Comprehensive Feature Set</h2>
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="card h-100 border-primary">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0"><i class="bi bi-sliders"></i> Image Operations</h5>
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-unstyled">
+                                <li><i class="bi bi-check-lg text-success"></i> Resize with quality options</li>
+                                <li><i class="bi bi-check-lg text-success"></i> Crop and rotate</li>
+                                <li><i class="bi bi-check-lg text-success"></i> Flip and transpose</li>
+                                <li><i class="bi bi-check-lg text-success"></i> Convert between modes (RGB, RGBA, L, LA)</li>
+                                <li><i class="bi bi-check-lg text-success"></i> Split and merge channels</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card h-100 border-success">
+                        <div class="card-header bg-success text-white">
+                            <h5 class="mb-0"><i class="bi bi-palette"></i> Filters & Effects</h5>
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-unstyled">
+                                <li><i class="bi bi-check-lg text-success"></i> Blur, sharpen, edge detection</li>
+                                <li><i class="bi bi-check-lg text-success"></i> Brightness, contrast adjustments</li>
+                                <li><i class="bi bi-check-lg text-success"></i> CSS-like filters (sepia, grayscale, hue)</li>
+                                <li><i class="bi bi-check-lg text-success"></i> Drop shadows and glows</li>
+                                <li><i class="bi bi-check-lg text-success"></i> Posterize and threshold</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card h-100 border-warning">
+                        <div class="card-header bg-warning text-dark">
+                            <h5 class="mb-0"><i class="bi bi-pencil"></i> Drawing Tools</h5>
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-unstyled">
+                                <li><i class="bi bi-check-lg text-success"></i> Draw rectangles and circles</li>
+                                <li><i class="bi bi-check-lg text-success"></i> Draw lines (Bresenham's algorithm)</li>
+                                <li><i class="bi bi-check-lg text-success"></i> Render text with built-in font</li>
+                                <li><i class="bi bi-check-lg text-success"></i> Alpha blending support</li>
+                                <li><i class="bi bi-check-lg text-success"></i> Custom colors with transparency</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card h-100 border-info">
+                        <div class="card-header bg-info text-white">
+                            <h5 class="mb-0"><i class="bi bi-grid-3x3"></i> Pixel Manipulation</h5>
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-unstyled">
+                                <li><i class="bi bi-check-lg text-success"></i> Get and set individual pixels</li>
+                                <li><i class="bi bi-check-lg text-success"></i> Color analysis (dominant, average)</li>
+                                <li><i class="bi bi-check-lg text-success"></i> Histogram generation</li>
+                                <li><i class="bi bi-check-lg text-success"></i> Replace colors with tolerance</li>
+                                <li><i class="bi bi-check-lg text-success"></i> NumPy array support</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Code Examples Section -->
+    <section class="py-5 bg-light">
+        <div class="container">
+            <h2 class="text-center mb-5">Code Examples</h2>
+            <div class="row">
+                <div class="col-lg-6 mb-4">
+                    <div class="card h-100 border-0 shadow">
+                        <div class="card-header bg-white">
+                            <h5 class="mb-0">Thumbnail Generation</h5>
+                        </div>
+                        <div class="card-body">
+                            <pre class="mb-0"><code class="language-python">from imgrs import Image
+from pathlib import Path
+
+def create_thumbnails(input_dir, size=(150, 150)):
+    for img_path in Path(input_dir).glob("*.jpg"):
+        img = Image.open(img_path)
+        thumb = img.resize(size, resample="LANCZOS")
+        thumb.save(f"thumbs/{img_path.name}")
+
+create_thumbnails("photos/")</code></pre>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 mb-4">
+                    <div class="card h-100 border-0 shadow">
+                        <div class="card-header bg-white">
+                            <h5 class="mb-0">Photo Enhancement</h5>
+                        </div>
+                        <div class="card-body">
+                            <pre class="mb-0"><code class="language-python">from imgrs import Image
+
+def enhance_photo(img):
+    return (img
+        .resize((1920, 1080), resample="LANCZOS")
+        .brightness(10)
+        .contrast(1.2)
+        .saturate(1.1)
+        .sharpen(1.5))
+
+img = Image.open("photo.jpg")
+enhanced = enhance_photo(img)
+enhanced.save("enhanced.jpg")</code></pre>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 mb-4">
+                    <div class="card h-100 border-0 shadow">
+                        <div class="card-header bg-white">
+                            <h5 class="mb-0">Add Watermark</h5>
+                        </div>
+                        <div class="card-body">
+                            <pre class="mb-0"><code class="language-python">from imgrs import Image
+
+img = Image.open("photo.jpg")
+
+# Semi-transparent watermark
+watermark = (255, 255, 255, 128)
+img = img.draw_text(
+    "© 2025",
+    10, 
+    img.height - 30,
+    watermark,
+    scale=2
+)
+
+img.save("watermarked.jpg")</code></pre>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 mb-4">
+                    <div class="card h-100 border-0 shadow">
+                        <div class="card-header bg-white">
+                            <h5 class="mb-0">Batch Processing</h5>
+                        </div>
+                        <div class="card-body">
+                            <pre class="mb-0"><code class="language-python">from imgrs import Image
+from pathlib import Path
+
+# Convert all JPEGs to WebP
+for jpg in Path("photos/").glob("*.jpg"):
+    img = Image.open(jpg)
+    # Resize if too large
+    if img.width > 1920:
+        img = img.resize((1920, 1080))
+    
+    webp = jpg.with_suffix(".webp")
+    img.save(webp, format="WEBP")
+    print(f"✅ {webp.name}")</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Documentation Section -->
+    <section id="docs" class="py-5">
+        <div class="container">
+            <h2 class="text-center mb-5">Documentation</h2>
+            <div class="row g-4">
+                <div class="col-md-6 col-lg-3">
+                    <div class="card text-center h-100 border-0 shadow-sm">
+                        <div class="card-body">
+                            <i class="bi bi-book display-4 text-primary mb-3"></i>
+                            <h5 class="card-title">API Reference</h5>
+                            <p class="card-text">Complete API documentation</p>
+                            <a href="docs/api/image.html" class="btn btn-outline-primary">Read Docs</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="card text-center h-100 border-0 shadow-sm">
+                        <div class="card-body">
+                            <i class="bi bi-rocket-takeoff display-4 text-success mb-3"></i>
+                            <h5 class="card-title">Quick Start</h5>
+                            <p class="card-text">Get started in 5 minutes</p>
+                            <a href="docs/guides/quickstart.md" class="btn btn-outline-success">Get Started</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="card text-center h-100 border-0 shadow-sm">
+                        <div class="card-body">
+                            <i class="bi bi-lightbulb display-4 text-warning mb-3"></i>
+                            <h5 class="card-title">Examples</h5>
+                            <p class="card-text">Ready-to-use code examples</p>
+                            <a href="docs/examples/" class="btn btn-outline-warning">View Examples</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="card text-center h-100 border-0 shadow-sm">
+                        <div class="card-body">
+                            <i class="bi bi-arrow-left-right display-4 text-info mb-3"></i>
+                            <h5 class="card-title">Migration</h5>
+                            <p class="card-text">From Pillow to imgrs</p>
+                            <a href="docs/guides/migration.md" class="btn btn-outline-info">Migration Guide</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Platform Support -->
+    <section class="py-5 bg-light">
+        <div class="container">
+            <h2 class="text-center mb-5">Platform Support</h2>
+            <div class="row text-center">
+                <div class="col-md-3 mb-3">
+                    <i class="bi bi-ubuntu display-3 text-danger"></i>
+                    <h5 class="mt-2">Linux</h5>
+                    <small class="text-muted">manylinux wheels</small>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <i class="bi bi-windows display-3 text-primary"></i>
+                    <h5 class="mt-2">Windows</h5>
+                    <small class="text-muted">x64, x86, ARM64</small>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <i class="bi bi-apple display-3 text-secondary"></i>
+                    <h5 class="mt-2">macOS</h5>
+                    <small class="text-muted">Intel & Apple Silicon</small>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <i class="bi bi-phone display-3 text-success"></i>
+                    <h5 class="mt-2">Android</h5>
+                    <small class="text-muted">ARM & x86</small>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5><i class="bi bi-image"></i> imgrs</h5>
+                    <p class="text-muted">Blazing fast image processing for Python, powered by Rust.</p>
+                    <p class="text-muted mb-0">
+                        <small>Licensed under IRADL License</small>
+                    </p>
+                </div>
+                <div class="col-md-3">
+                    <h6>Resources</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="docs/" class="text-decoration-none text-light">Documentation</a></li>
+                        <li><a href="benchmark/" class="text-decoration-none text-light">Benchmarks</a></li>
+                        <li><a href="https://github.com/GrandpaEJ/imgrs" class="text-decoration-none text-light">GitHub</a></li>
+                        <li><a href="https://pypi.org/project/imgrs/" class="text-decoration-none text-light">PyPI</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <h6>Community</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="https://github.com/GrandpaEJ/imgrs/issues" class="text-decoration-none text-light">Issues</a></li>
+                        <li><a href="https://github.com/GrandpaEJ/imgrs/discussions" class="text-decoration-none text-light">Discussions</a></li>
+                        <li><a href="https://github.com/GrandpaEJ/imgrs/blob/main/CONTRIBUTING.md" class="text-decoration-none text-light">Contributing</a></li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="my-4">
+            <div class="text-center text-muted">
+                <small>&copy; 2025 imgrs. Built with ❤️ by Grandpa EJ</small>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Prism.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <!-- Custom JS -->
+    <script src="docs/js/custom.js"></script>
+</body>
+</html>
+
