@@ -1,4 +1,4 @@
-# Imgrs 🦉
+# Imgrs 🦀
 
 [![CI](https://github.com/grandpaej/imgrs/workflows/BUILD/badge.svg)](https://github.com/grandpaej/imgrs/actions)
 [![Python](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
@@ -258,6 +258,8 @@ pytest python/imgrs/tests/
 ### Contributors
 
 - **[GrandpaEJ](https://github.com/GrandpaEJ)** - Feature requests and guidance
+- **[Bilal Tonga](https://github.com/bgunebakan/puhu)** - Initial implementation of the project
+
 
 ### How to Contribute
 
@@ -281,3 +283,4 @@ MIT License - see [LICENSE](LICENSE) file for details.
 - Built with [PyO3](https://pyo3.rs/) for Python-Rust integration
 - Uses [image-rs](https://github.com/image-rs/image) for core image processing
 - Inspired by [Pillow](https://pillow.readthedocs.io/) for API design
+- First Skaliton by [Bilal Tonga](https://github.com/bgunebakan/puhu)
