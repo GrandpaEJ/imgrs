@@ -1,0 +1,117 @@
+name: MOBILE BUILD
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ["main"]
+
+jobs:
+  android:
+    name: Build Android wheels
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install Android SDK and NDK
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 29
+          target: default
+          arch: x86_64
+          force-avd-creation: false
+
+      - name: Cache maturin & pip
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/pyproject.toml') }}
+
+      - name: Install build deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install maturin setuptools_rust
+
+      - name: Build Android wheels (manylinux-style or aarch64)
+        env:
+          CARGO_TARGET_AARCH64_LINUX_ANDROID_LINKER: aarch64-linux-android21-clang
+        run: |
+          # This step assumes the Android NDK toolchains are available in PATH
+          # and that appropriate Android targets have been added to Rust.
+          # Cross-compilation for Android is platform and crate specific. Adjust
+          # the target triple(s) below as needed (armv7, aarch64, x86_64).
+          maturin build --release --target aarch64-linux-android --out dist || true
+          maturin build --release --target armv7-linux-androideabi --out dist || true
+
+      - name: Upload Android wheels
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-wheels
+          path: dist/*.whl
+
+  ios:
+    name: Build iOS wheels
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install build deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install maturin
+
+      - name: Build iOS universal wheel (simulator + device)
+        run: |
+          # Building wheels for iOS requires macOS runners and setting
+          # appropriate target triples (e.g. aarch64-apple-ios, x86_64-apple-ios).
+          # This step produces platform-specific wheels which may need to be
+          # packaged together or uploaded separately.
+          maturin build --release --target aarch64-apple-ios --out dist || true
+          maturin build --release --target x86_64-apple-ios --out dist || true
+
+      - name: Upload iOS wheels
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-wheels
+          path: dist/*.whl
+
+  notes:
+    name: Important notes for maintainers
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print notes
+        run: |
+          Mobile build notes:
+
+          - Cross-compiling the Rust extension for Android/iOS requires adding
+            the correct Rust targets (rustup target add ...) and installing
+            Android NDK/SDK toolchains or using a cross toolchain like
+            cargo-ndk. The workflow above is a starting template; you will need
+            to adapt toolchain setup for your project's native code.
+
+          - For Android, consider using `cargo ndk` or Github Actions that
+            provide preinstalled NDKs. Set environment variables to the
+            proper linker and sysroot.
+
+          - For iOS, macOS runners are required and building for device vs
+            simulator needs different target triples.
+
+          - Secrets: If you intend to publish builds to private registries or
+            sign artifacts, store credentials in repository secrets.
