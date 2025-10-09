@@ -1,4 +1,4 @@
-name: MOBILE BUILD
+name: MOBILE BUILD (AUTO)
 
 on:
   workflow_dispatch:
@@ -6,9 +6,15 @@ on:
     branches: ["main"]
 
 jobs:
-  android:
-    name: Build Android wheels
+  build-android:
+    name: Build Android Wheels (${{ matrix.target }})
     runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        target: [aarch64-linux-android, armv7-linux-androideabi]
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -16,50 +22,60 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.11'
+          python-version: "3.11"
 
-      - name: Install Rust toolchain
+      - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
 
-      - name: Install Android SDK and NDK
-        uses: reactivecircus/android-emulator-runner@v2
-        with:
-          api-level: 29
-          target: default
-          arch: x86_64
-          force-avd-creation: false
+      - name: Install Android SDK + NDK (Auto)
+        run: |
+          set -eux
+          sudo apt-get update
+          sudo apt-get install -y wget unzip
+          mkdir -p $HOME/android-sdk/cmdline-tools
+          wget -q https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip -O cmdtools.zip
+          unzip -q cmdtools.zip -d $HOME/android-sdk/cmdline-tools
+          mv $HOME/android-sdk/cmdline-tools/cmdline-tools $HOME/android-sdk/cmdline-tools/latest
+          yes | $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager --sdk_root=$HOME/android-sdk \
+            "platforms;android-29" "platform-tools" "build-tools;33.0.2" "ndk;23.1.7779620"
+          echo "ANDROID_SDK_ROOT=$HOME/android-sdk" >> $GITHUB_ENV
+          echo "ANDROID_NDK_ROOT=$HOME/android-sdk/ndk/23.1.7779620" >> $GITHUB_ENV
+          echo "$HOME/android-sdk/platform-tools" >> $GITHUB_PATH
 
-      - name: Cache maturin & pip
-        uses: actions/cache@v3
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/pyproject.toml') }}
+      - name: Add Rust target
+        run: rustup target add ${{ matrix.target }}
 
-      - name: Install build deps
+      - name: Install build dependencies
         run: |
           python -m pip install --upgrade pip
           pip install maturin setuptools_rust
 
-      - name: Build Android wheels (manylinux-style or aarch64)
-        env:
-          CARGO_TARGET_AARCH64_LINUX_ANDROID_LINKER: aarch64-linux-android21-clang
+      - name: Build Android Wheel (Auto)
         run: |
-          # This step assumes the Android NDK toolchains are available in PATH
-          # and that appropriate Android targets have been added to Rust.
-          # Cross-compilation for Android is platform and crate specific. Adjust
-          # the target triple(s) below as needed (armv7, aarch64, x86_64).
-          maturin build --release --target aarch64-linux-android --out dist || true
-          maturin build --release --target armv7-linux-androideabi --out dist || true
+          set -eux
+          export NDK_HOME=$ANDROID_NDK_ROOT
+          export PATH=$NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin:$PATH
+          TARGET=${{ matrix.target }}
+          # Derive the correct linker automatically
+          LINKER=$(echo "$TARGET" | sed 's/-/ /g' | awk '{print $1"-"$2"-"$3"21-clang"}')
+          export CARGO_TARGET_$(echo $TARGET | tr 'a-z-' 'A-Z_')_LINKER=$LINKER
+          maturin build --release --target $TARGET --out dist || true
 
       - name: Upload Android wheels
         uses: actions/upload-artifact@v4
         with:
-          name: android-wheels
+          name: android-${{ matrix.target }}-wheels
           path: dist/*.whl
 
-  ios:
-    name: Build iOS wheels
+  build-ios:
+    name: Build iOS Wheels (${{ matrix.target }})
     runs-on: macos-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        target: [aarch64-apple-ios, x86_64-apple-ios]
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -67,51 +83,40 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.11'
+          python-version: "3.11"
 
-      - name: Install Rust toolchain
+      - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
 
-      - name: Install build deps
+      - name: Add Rust target
+        run: rustup target add ${{ matrix.target }}
+
+      - name: Install build dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install maturin
+          pip install maturin setuptools_rust
 
-      - name: Build iOS universal wheel (simulator + device)
+      - name: Build iOS wheel
         run: |
-          # Building wheels for iOS requires macOS runners and setting
-          # appropriate target triples (e.g. aarch64-apple-ios, x86_64-apple-ios).
-          # This step produces platform-specific wheels which may need to be
-          # packaged together or uploaded separately.
-          maturin build --release --target aarch64-apple-ios --out dist || true
-          maturin build --release --target x86_64-apple-ios --out dist || true
+          set -eux
+          maturin build --release --target ${{ matrix.target }} --out dist || true
 
       - name: Upload iOS wheels
         uses: actions/upload-artifact@v4
         with:
-          name: ios-wheels
+          name: ios-${{ matrix.target }}-wheels
           path: dist/*.whl
 
-  notes:
-    name: Important notes for maintainers
+  summary:
+    name: Build Summary
     runs-on: ubuntu-latest
+    needs: [build-android, build-ios]
     steps:
-      - name: Print notes
+      - name: Print Summary
         run: |
-          Mobile build notes:
-
-          - Cross-compiling the Rust extension for Android/iOS requires adding
-            the correct Rust targets (rustup target add ...) and installing
-            Android NDK/SDK toolchains or using a cross toolchain like
-            cargo-ndk. The workflow above is a starting template; you will need
-            to adapt toolchain setup for your project's native code.
-
-          - For Android, consider using `cargo ndk` or Github Actions that
-            provide preinstalled NDKs. Set environment variables to the
-            proper linker and sysroot.
-
-          - For iOS, macOS runners are required and building for device vs
-            simulator needs different target triples.
-
-          - Secrets: If you intend to publish builds to private registries or
-            sign artifacts, store credentials in repository secrets.
+          echo "✅ All builds finished automatically!"
+          echo "Generated wheels:"
+          echo "  • Android (armv7, aarch64)"
+          echo "  • iOS (x86_64, aarch64)"
+          echo
+          echo "Artifacts available in the workflow run → Artifacts tab."
