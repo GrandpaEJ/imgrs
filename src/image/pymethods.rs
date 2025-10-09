@@ -147,6 +147,187 @@ impl PyImage {
         self.saturate_impl(amount)
     }
 
+    // Advanced Blur Filters
+    fn box_blur(&mut self, radius: u32) -> PyResult<Self> {
+        self.box_blur_impl(radius)
+    }
+
+    fn motion_blur(&mut self, size: u32, angle: f32) -> PyResult<Self> {
+        self.motion_blur_impl(size, angle)
+    }
+
+    fn median_blur(&mut self, radius: u32) -> PyResult<Self> {
+        self.median_blur_impl(radius)
+    }
+
+    fn bilateral_blur(&mut self, radius: u32, sigma_color: f32, sigma_space: f32) -> PyResult<Self> {
+        self.bilateral_blur_impl(radius, sigma_color, sigma_space)
+    }
+
+    fn radial_blur(&mut self, strength: f32) -> PyResult<Self> {
+        self.radial_blur_impl(strength)
+    }
+
+    fn zoom_blur(&mut self, strength: f32) -> PyResult<Self> {
+        self.zoom_blur_impl(strength)
+    }
+
+    // Advanced Edge Detection
+    fn prewitt_edge_detect(&mut self) -> PyResult<Self> {
+        self.prewitt_edge_detect_impl()
+    }
+
+    fn scharr_edge_detect(&mut self) -> PyResult<Self> {
+        self.scharr_edge_detect_impl()
+    }
+
+    fn roberts_cross_edge_detect(&mut self) -> PyResult<Self> {
+        self.roberts_cross_edge_detect_impl()
+    }
+
+    fn laplacian_edge_detect(&mut self) -> PyResult<Self> {
+        self.laplacian_edge_detect_impl()
+    }
+
+    fn laplacian_of_gaussian(&mut self, sigma: f32) -> PyResult<Self> {
+        self.laplacian_of_gaussian_impl(sigma)
+    }
+
+    fn canny_edge_detect(&mut self, low_threshold: f32, high_threshold: f32) -> PyResult<Self> {
+        self.canny_edge_detect_impl(low_threshold, high_threshold)
+    }
+
+    // Advanced Sharpening
+    fn unsharp_mask(&mut self, radius: f32, amount: f32, threshold: u8) -> PyResult<Self> {
+        self.unsharp_mask_impl(radius, amount, threshold)
+    }
+
+    fn high_pass(&mut self, radius: f32) -> PyResult<Self> {
+        self.high_pass_impl(radius)
+    }
+
+    fn edge_enhance(&mut self, strength: f32) -> PyResult<Self> {
+        self.edge_enhance_impl(strength)
+    }
+
+    fn edge_enhance_more(&mut self) -> PyResult<Self> {
+        self.edge_enhance_more_impl()
+    }
+
+    // Stylistic Effects
+    fn oil_painting(&mut self, radius: u32, intensity: u32) -> PyResult<Self> {
+        self.oil_painting_impl(radius, intensity)
+    }
+
+    fn pixelate(&mut self, pixel_size: u32) -> PyResult<Self> {
+        self.pixelate_impl(pixel_size)
+    }
+
+    fn mosaic(&mut self, tile_size: u32) -> PyResult<Self> {
+        self.mosaic_impl(tile_size)
+    }
+
+    fn posterize_filter(&mut self, levels: u8) -> PyResult<Self> {
+        self.posterize_filter_impl(levels)
+    }
+
+    fn cartoon(&mut self, num_levels: u8, edge_threshold: f32) -> PyResult<Self> {
+        self.cartoon_impl(num_levels, edge_threshold)
+    }
+
+    fn sketch(&mut self, detail_level: f32) -> PyResult<Self> {
+        self.sketch_impl(detail_level)
+    }
+
+    fn solarize(&mut self, threshold: u8) -> PyResult<Self> {
+        self.solarize_impl(threshold)
+    }
+
+    // Noise Effects
+    fn add_gaussian_noise(&mut self, mean: f32, stddev: f32) -> PyResult<Self> {
+        self.add_gaussian_noise_impl(mean, stddev)
+    }
+
+    fn add_salt_pepper_noise(&mut self, amount: f32) -> PyResult<Self> {
+        self.add_salt_pepper_noise_impl(amount)
+    }
+
+    fn denoise(&mut self, radius: u32) -> PyResult<Self> {
+        self.denoise_impl(radius)
+    }
+
+    // Morphological Operations
+    fn dilate(&mut self, radius: u32) -> PyResult<Self> {
+        self.dilate_impl(radius)
+    }
+
+    fn erode(&mut self, radius: u32) -> PyResult<Self> {
+        self.erode_impl(radius)
+    }
+
+    fn morphological_opening(&mut self, radius: u32) -> PyResult<Self> {
+        self.morphological_opening_impl(radius)
+    }
+
+    fn morphological_closing(&mut self, radius: u32) -> PyResult<Self> {
+        self.morphological_closing_impl(radius)
+    }
+
+    fn morphological_gradient(&mut self, radius: u32) -> PyResult<Self> {
+        self.morphological_gradient_impl(radius)
+    }
+
+    // Artistic Effects
+    fn vignette(&mut self, strength: f32, radius: f32) -> PyResult<Self> {
+        self.vignette_impl(strength, radius)
+    }
+
+    fn halftone(&mut self, dot_size: u32) -> PyResult<Self> {
+        self.halftone_impl(dot_size)
+    }
+
+    fn pencil_sketch(&mut self, detail: f32) -> PyResult<Self> {
+        self.pencil_sketch_impl(detail)
+    }
+
+    fn watercolor(&mut self, iterations: u32) -> PyResult<Self> {
+        self.watercolor_impl(iterations)
+    }
+
+    fn glitch(&mut self, intensity: f32) -> PyResult<Self> {
+        self.glitch_impl(intensity)
+    }
+
+    // Color Effects
+    fn duotone(&mut self, shadow: (u8, u8, u8), highlight: (u8, u8, u8)) -> PyResult<Self> {
+        self.duotone_impl(shadow, highlight)
+    }
+
+    fn color_splash(&mut self, target_hue: f32, tolerance: f32) -> PyResult<Self> {
+        self.color_splash_impl(target_hue, tolerance)
+    }
+
+    fn chromatic_aberration(&mut self, strength: f32) -> PyResult<Self> {
+        self.chromatic_aberration_impl(strength)
+    }
+
+    // Emoji Effects
+    fn add_emoji(&mut self, emoji_name: &str, x: i32, y: i32, size: u32, opacity: f32) -> PyResult<Self> {
+        self.add_emoji_impl(emoji_name, x, y, size, opacity)
+    }
+
+    fn add_emoji_text(&mut self, emoji: &str, x: i32, y: i32, size: u32, opacity: f32) -> PyResult<Self> {
+        self.add_emoji_text_impl(emoji, x, y, size, opacity)
+    }
+
+    fn add_emoji_quick(&mut self, emoji_name: &str, x: i32, y: i32, size: u32) -> PyResult<Self> {
+        self.add_emoji_quick_impl(emoji_name, x, y, size)
+    }
+
+    fn add_emojis(&mut self, emojis: Vec<(String, i32, i32, u32, f32)>) -> PyResult<Self> {
+        self.add_emojis_batch_impl(emojis)
+    }
+
     // Pixel operation methods (from pixel_ops.rs)
     fn getpixel(&mut self, x: u32, y: u32) -> PyResult<(u8, u8, u8, u8)> {
         self.getpixel_impl(x, y)

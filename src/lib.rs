@@ -7,6 +7,7 @@ use pyo3::types::PyModule;
 mod blending;
 mod css_filters;
 mod drawing;
+mod emoji;
 mod errors;
 mod filters;
 mod image;

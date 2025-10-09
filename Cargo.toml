@@ -18,6 +18,10 @@ fast_image_resize = "4.2"
 rayon = "1.7"
 thiserror = "1.0"
 numpy = "0.22"
+rand = "0.8"
+rand_distr = "0.4"
+imageproc = "0.25"
+ab_glyph = "0.2"
 
 [features]
 default = []
