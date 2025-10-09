@@ -276,7 +276,7 @@ See **[Contributing Guide](docs/contributing.md)** for detailed information.
 
 ## 📄 License
 
-MIT License - see [LICENSE](LICENSE) file for details.
+IRADL License - see [LICENSE](LICENSE) file for details.
 
 ## 🙏 Acknowledgments
 
