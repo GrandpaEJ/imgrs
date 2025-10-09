@@ -1,99 +1,81 @@
-# Imgrs Documentation
+# 📖 imgrs Documentation
 
-Welcome to the Imgrs documentation! This guide will help you get the most out of Imgrs, the blazingly fast image processing library for Python.
+Welcome to **imgrs** - A blazing fast image processing library for Python, powered by Rust! 🚀
 
-## 📚 Documentation Index
+## 🎯 What is imgrs?
 
-### 🚀 Getting Started
-- **[Quick Start Guide](quickstart.md)** - Get up and running in minutes
-- **[Basic Usage](basic-usage.md)** - Core concepts and common patterns
-- **[Migration Guide](migration.md)** - Moving from Pillow to Imgrs
+imgrs provides a **Pillow-compatible API** with **Rust performance**:
+- ⚡ **10-100x faster** than pure Python
+- 🔒 **Memory safe** with Rust's guarantees
+- 🎨 **Easy to use** - familiar Pillow-like interface
+- 🌍 **Cross-platform** - works on Linux, Windows, macOS, Android
 
-### 📖 Reference & Examples
-- **[API Reference](api-reference.md)** - Complete method documentation
-- **[Examples](examples.md)** - Real-world usage examples and tutorials
-- **[Performance Guide](performance.md)** - Optimization techniques and best practices
+## 📚 Documentation Structure
 
-### 🤝 Contributing
-- **[Contributing Guide](contributing.md)** - How to contribute to Imgrs
+### For Beginners
+- **[Quick Start](guides/quickstart.md)** - Get started in 5 minutes
+- **[Installation](guides/installation.md)** - How to install
+- **[Basic Usage](guides/basic-usage.md)** - Common operations
+- **[Examples](examples/)** - Ready-to-use code examples
 
-## 🎯 Quick Navigation
+### API Reference
+- **[Image Class](api/image.md)** - Core Image class
+- **[Constructors](api/constructors.md)** - Creating images
+- **[Filters](api/filters.md)** - Image filters
+- **[Drawing](api/drawing.md)** - Drawing operations
+- **[Pixels](api/pixels.md)** - Pixel manipulation
+- **[Effects](api/effects.md)** - Shadow and glow effects
 
-### New to Imgrs?
-Start with the **[Quick Start Guide](quickstart.md)** to install Imgrs and run your first image processing operations.
+### Type Reference
+- **[Types & Enums](reference/types.md)** - All types and enums
+- **[Color Types](reference/colors.md)** - Color specifications
+- **[Image Modes](reference/modes.md)** - Image mode details
 
-### Coming from Pillow?
-Check out the **[Migration Guide](migration.md)** for a smooth transition from Pillow to Imgrs.
-
-### Looking for Examples?
-Browse the **[Examples](examples.md)** section for real-world usage patterns and creative applications.
-
-### Need Performance?
-Read the **[Performance Guide](performance.md)** to optimize your image processing workflows.
-
-### Want to Contribute?
-See the **[Contributing Guide](contributing.md)** to learn how you can help improve Imgrs.
-
-## 🔍 What You'll Learn
-
-### Core Concepts
-- Image loading, saving, and format conversion
-- Basic transformations (resize, crop, rotate)
-- Color mode conversions and channel operations
-- Method chaining for efficient processing
-
-### Advanced Features
-- Built-in filters and effects
-- CSS-style image filters
-- Pixel manipulation and analysis
-- Drawing operations and compositing
-- Shadow effects and artistic filters
-
-### Performance Optimization
-- Batch processing techniques
-- Memory management strategies
-- Parallel processing approaches
-- Performance monitoring and profiling
-
-### Real-World Applications
-- Photography enhancement workflows
-- Web development image optimization
-- Creative projects and artistic effects
-- Data visualization and infographics
-- E-commerce product image processing
+### Advanced Topics
+- **[Performance Guide](guides/performance.md)** - Optimization tips
+- **[Migration from Pillow](guides/migration.md)** - Switching guide
+- **[Contributing](guides/contributing.md)** - How to contribute
 
 ## 🚀 Quick Example
 
 ```python
-import puhu
+from imgrs import Image
 
-# Load and enhance a photo
-img = imgrs.open("photo.jpg")
+# Open and resize an image
+img = Image.open("photo.jpg")
+resized = img.resize((800, 600))
+resized.save("resized.jpg")
 
-# Apply enhancements with method chaining
-enhanced = (img
-            .resize((800, 600))
-            .brightness(15)
-            .contrast(1.1)
-            .saturate(1.05)
-            .sharpen(1.2))
+# Apply filters
+blurred = img.blur(5.0)
+sharp = img.sharpen(2.0)
 
-# Save the result
-enhanced.save("enhanced_photo.jpg")
+# Draw on image
+img.draw_rectangle(10, 10, 100, 50, (255, 0, 0, 255))
+img.save("output.png")
 ```
 
-## 🔗 External Resources
+## 📖 Navigation
 
-- **[GitHub Repository](https://github.com/bgunebakan/puhu)** - Source code and issues
-- **[PyPI Package](https://pypi.org/project/puhu/)** - Installation and releases
-- **[Pillow Documentation](https://pillow.readthedocs.io/)** - API compatibility reference
+Choose your path:
 
-## 📝 Documentation Feedback
+- 🆕 **New to imgrs?** Start with [Quick Start](guides/quickstart.md)
+- 🔍 **Looking for something?** Check [API Reference](api/)
+- 💡 **Need examples?** Browse [Examples](examples/)
+- 🎓 **Coming from Pillow?** See [Migration Guide](guides/migration.md)
 
-Found an error or have suggestions for improving the documentation? Please:
+## 🆘 Getting Help
 
-1. **[Open an issue](https://github.com/bgunebakan/puhu/issues)** on GitHub
-2. **[Submit a pull request](https://github.com/bgunebakan/puhu/pulls)** with improvements
-3. **[Start a discussion](https://github.com/bgunebakan/puhu/discussions)** for questions
+- 📝 **Documentation**: You're here!
+- 🐛 **Bug Reports**: [GitHub Issues](https://github.com/yourusername/imgrs/issues)
+- 💬 **Discussions**: [GitHub Discussions](https://github.com/yourusername/imgrs/discussions)
+- 📧 **Email**: your-email@example.com
 
-Your feedback helps make Imgrs better for everyone! 🦉
+## 📄 License
+
+This project is licensed under the IRADL License.
+
+---
+
+**Happy image processing!** 🎨✨
+
