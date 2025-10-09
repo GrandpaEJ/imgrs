@@ -1,9 +1,7 @@
-name: MOBILE BUILD (AUTO)
+name: MOBILE BUILD
 
 on:
   workflow_dispatch:
-  push:
-    branches: ["main"]
 
 jobs:
   build-android:
