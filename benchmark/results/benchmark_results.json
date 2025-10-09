@@ -1,0 +1,146 @@
+{
+  "open_pillow": {
+    "name": "Pillow",
+    "iterations": 50,
+    "total_time": 0.032827685005031526,
+    "avg_time": 0.0006565537001006305,
+    "min_time": 0.000102988000435289,
+    "max_time": 0.02585559699946316
+  },
+  "open_imgrs": {
+    "name": "imgrs",
+    "iterations": 50,
+    "total_time": 0.00014671699318569154,
+    "avg_time": 2.9343398637138305e-06,
+    "min_time": 1.4269971870817244e-06,
+    "max_time": 6.443800521083176e-05
+  },
+  "save_pillow": {
+    "name": "Pillow",
+    "iterations": 50,
+    "total_time": 7.890937904972816,
+    "avg_time": 0.1578187580994563,
+    "min_time": 0.13901502099906793,
+    "max_time": 0.21839697300310945
+  },
+  "save_imgrs": {
+    "name": "imgrs",
+    "iterations": 50,
+    "total_time": 1.0767822229900048,
+    "avg_time": 0.021535644459800097,
+    "min_time": 0.015361737998318858,
+    "max_time": 0.04135246399528114
+  },
+  "convert_pillow": {
+    "name": "Pillow",
+    "iterations": 50,
+    "total_time": 0.20541839498764602,
+    "avg_time": 0.0041083678997529205,
+    "min_time": 0.003051578998565674,
+    "max_time": 0.02800795700022718
+  },
+  "convert_imgrs": {
+    "name": "imgrs",
+    "iterations": 50,
+    "total_time": 1.3330938549988787,
+    "avg_time": 0.026661877099977572,
+    "min_time": 0.021909089002292603,
+    "max_time": 0.03710576500452589
+  },
+  "rotate_pillow": {
+    "name": "Pillow",
+    "iterations": 50,
+    "total_time": 0.25809618300991133,
+    "avg_time": 0.0051619236601982265,
+    "min_time": 0.0035795700023300014,
+    "max_time": 0.019728955994651187
+  },
+  "rotate_imgrs": {
+    "name": "imgrs",
+    "iterations": 50,
+    "total_time": 0.563242895041185,
+    "avg_time": 0.0112648579008237,
+    "min_time": 0.009105256001930684,
+    "max_time": 0.03498662600031821
+  },
+  "flip_pillow": {
+    "name": "Pillow",
+    "iterations": 50,
+    "total_time": 0.20428109500790015,
+    "avg_time": 0.004085621900158003,
+    "min_time": 0.0026653660024749115,
+    "max_time": 0.020515322998107877
+  },
+  "flip_imgrs": {
+    "name": "imgrs",
+    "iterations": 50,
+    "total_time": 0.6094051439722534,
+    "avg_time": 0.012188102879445068,
+    "min_time": 0.010827669000718743,
+    "max_time": 0.036397663003299385
+  },
+  "resize_pillow": {
+    "name": "Pillow",
+    "iterations": 50,
+    "total_time": 1.2986221370083513,
+    "avg_time": 0.025972442740167027,
+    "min_time": 0.023734367998258676,
+    "max_time": 0.039162764995126054
+  },
+  "resize_imgrs": {
+    "name": "imgrs",
+    "iterations": 50,
+    "total_time": 3.2035171380193788,
+    "avg_time": 0.06407034276038757,
+    "min_time": 0.05981993999739643,
+    "max_time": 0.09479842200380517
+  },
+  "crop_pillow": {
+    "name": "Pillow",
+    "iterations": 50,
+    "total_time": 0.01852927605068544,
+    "avg_time": 0.0003705855210137088,
+    "min_time": 0.00010463500075275078,
+    "max_time": 0.012455006995878648
+  },
+  "crop_imgrs": {
+    "name": "imgrs",
+    "iterations": 50,
+    "total_time": 0.07111979599721963,
+    "avg_time": 0.0014223959199443925,
+    "min_time": 0.0009416950051672757,
+    "max_time": 0.01284693199704634
+  },
+  "split_pillow": {
+    "name": "Pillow",
+    "iterations": 50,
+    "total_time": 0.22001974497106858,
+    "avg_time": 0.004400394899421372,
+    "min_time": 0.0031918599997879937,
+    "max_time": 0.015405465994263068
+  },
+  "split_imgrs": {
+    "name": "imgrs",
+    "iterations": 50,
+    "total_time": 0.5627108729604515,
+    "avg_time": 0.01125421745920903,
+    "min_time": 0.009333791000244673,
+    "max_time": 0.031180079000478145
+  },
+  "workflow_pillow": {
+    "name": "Pillow",
+    "iterations": 50,
+    "total_time": 1.966137987044931,
+    "avg_time": 0.03932275974089862,
+    "min_time": 0.035558720999688376,
+    "max_time": 0.05969972100137966
+  },
+  "workflow_imgrs": {
+    "name": "imgrs",
+    "iterations": 50,
+    "total_time": 3.8557343060238054,
+    "avg_time": 0.0771146861204761,
+    "min_time": 0.06918130299891345,
+    "max_time": 0.12472832799539901
+  }
+}
