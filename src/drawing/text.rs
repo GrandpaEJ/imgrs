@@ -28,7 +28,7 @@ pub fn draw_text(
                         // Draw scaled pixel
                         for sy in 0..scale {
                             for sx in 0..scale {
-                                let px = char_x + col as i32 * scale as i32 + sx as i32;
+                                let px = char_x + col * scale as i32 + sx as i32;
                                 let py = y + row as i32 * scale as i32 + sy as i32;
                                 
                                 result = draw_pixel(&result, px, py, color)?;

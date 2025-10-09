@@ -2,6 +2,11 @@ use image::{DynamicImage, GenericImageView};
 use crate::errors::ImgrsError;
 use super::access::{get_pixel, put_pixel};
 
+/// Type alias for pixel color (RGBA)
+pub type Color = (u8, u8, u8, u8);
+/// Type alias for a 2D region of pixels
+pub type PixelRegion = Vec<Vec<Color>>;
+
 /// Get a region of pixels as a 2D array
 #[allow(dead_code)]
 pub fn get_region(
@@ -10,7 +15,7 @@ pub fn get_region(
     y: u32,
     width: u32,
     height: u32,
-) -> Result<Vec<Vec<(u8, u8, u8, u8)>>, ImgrsError> {
+) -> Result<PixelRegion, ImgrsError> {
     let (img_width, img_height) = image.dimensions();
     
     if x + width > img_width || y + height > img_height {
@@ -40,7 +45,7 @@ pub fn put_region(
     image: &DynamicImage,
     x: u32,
     y: u32,
-    pixels: &[Vec<(u8, u8, u8, u8)>],
+    pixels: &[Vec<Color>],
 ) -> Result<DynamicImage, ImgrsError> {
     let (img_width, img_height) = image.dimensions();
     let height = pixels.len() as u32;

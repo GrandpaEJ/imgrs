@@ -1,3 +1,6 @@
+// Suppress PyO3 internal warnings about gil-refs (library issue, not ours)
+#![allow(unexpected_cfgs)]
+
 use pyo3::prelude::*;
 use pyo3::types::PyModule;
 

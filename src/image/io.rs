@@ -24,7 +24,7 @@ impl PyImage {
             Python::with_gil(|py| {
                 py.allow_threads(|| {
                     image.save_with_format(&path, save_format)
-                        .map_err(|e| ImgrsError::ImageError(e))
+                        .map_err(ImgrsError::ImageError)
                         .map_err(|e| e.into())
                 })
             })

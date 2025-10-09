@@ -2,8 +2,11 @@ use image::{DynamicImage, GenericImageView};
 use crate::errors::ImgrsError;
 use super::access::get_pixel;
 
+/// Type alias for RGBA histogram data
+pub type HistogramData = ([u32; 256], [u32; 256], [u32; 256], [u32; 256]);
+
 /// Create a histogram of pixel values
-pub fn histogram(image: &DynamicImage) -> Result<([u32; 256], [u32; 256], [u32; 256], [u32; 256]), ImgrsError> {
+pub fn histogram(image: &DynamicImage) -> Result<HistogramData, ImgrsError> {
     let (width, height) = image.dimensions();
     let mut r_hist = [0u32; 256];
     let mut g_hist = [0u32; 256];

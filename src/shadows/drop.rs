@@ -14,7 +14,7 @@ pub fn drop_shadow(
     let (width, height) = image.dimensions();
     
     // Calculate expanded canvas size to accommodate shadow
-    let shadow_padding = (blur_radius * 2.0) as u32 + offset_x.abs() as u32 + offset_y.abs() as u32;
+    let shadow_padding = (blur_radius * 2.0) as u32 + offset_x.unsigned_abs() + offset_y.unsigned_abs();
     let new_width = width + shadow_padding * 2;
     let new_height = height + shadow_padding * 2;
     

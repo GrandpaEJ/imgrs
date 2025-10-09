@@ -37,7 +37,7 @@ impl LazyImage {
             LazyImage::Loaded(img) => Ok(img),
             LazyImage::Path { path } => {
                 let img = image::open(path)
-                    .map_err(|e| ImgrsError::ImageError(e))?;
+                    .map_err(ImgrsError::ImageError)?;
                 *self = LazyImage::Loaded(img);
                 match self {
                     LazyImage::Loaded(img) => Ok(img),
@@ -47,9 +47,9 @@ impl LazyImage {
             LazyImage::Bytes { data } => {
                 let cursor = Cursor::new(data);
                 let reader = image::ImageReader::new(cursor).with_guessed_format()
-                    .map_err(|e| ImgrsError::Io(e))?;
+                    .map_err(ImgrsError::Io)?;
                 let img = reader.decode()
-                    .map_err(|e| ImgrsError::ImageError(e))?;
+                    .map_err(ImgrsError::ImageError)?;
                 *self = LazyImage::Loaded(img);
                 match self {
                     LazyImage::Loaded(img) => Ok(img),
