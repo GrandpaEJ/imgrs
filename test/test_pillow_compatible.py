@@ -27,8 +27,8 @@ print(f"   ✅ Resized to {img.size}")
 
 # Rotate
 print("\n3. rotate()")
-img = img.rotate(45)
-print("   ✅ Rotated 45°")
+img = img.rotate(90)
+print("   ✅ Rotated 90°")
 
 # Convert
 print("\n4. convert()")
