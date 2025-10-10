@@ -463,6 +463,40 @@ impl PyImage {
         Ok(self.draw_rich_text_multiline_impl(text, x, y, size, color, font_path, line_spacing, align)?)
     }
 
+    // Text measurement methods (from text_ops.rs)
+    #[staticmethod]
+    #[pyo3(signature = (text, size=32.0, font_path=None))]
+    fn get_text_size(
+        text: &str,
+        size: f32,
+        font_path: Option<&str>,
+    ) -> PyResult<(u32, u32)> {
+        Ok(Self::get_text_size_impl(text, size, font_path)?)
+    }
+
+    #[staticmethod]
+    #[pyo3(signature = (text, size=32.0, line_spacing=1.2, font_path=None))]
+    fn get_multiline_text_size(
+        text: &str,
+        size: f32,
+        line_spacing: f32,
+        font_path: Option<&str>,
+    ) -> PyResult<(u32, u32, usize)> {
+        Ok(Self::get_multiline_text_size_impl(text, size, line_spacing, font_path)?)
+    }
+
+    #[staticmethod]
+    #[pyo3(signature = (text, x, y, size=32.0, font_path=None))]
+    fn get_text_box(
+        text: &str,
+        x: i32,
+        y: i32,
+        size: f32,
+        font_path: Option<&str>,
+    ) -> PyResult<PyObject> {
+        Ok(Self::get_text_box_impl(text, x, y, size, font_path)?)
+    }
+
     // Pixel operation methods (from pixel_ops.rs)
     fn getpixel(&mut self, x: u32, y: u32) -> PyResult<(u8, u8, u8, u8)> {
         self.getpixel_impl(x, y)

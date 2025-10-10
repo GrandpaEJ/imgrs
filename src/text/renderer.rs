@@ -166,6 +166,118 @@ fn measure_text_width(text: &str, size: f32, font: &FontVec) -> i32 {
     width as i32
 }
 
+/// Get text bounding box dimensions
+/// Returns (width, height, ascent, descent)
+pub fn get_text_size(
+    text: &str,
+    size: f32,
+    font_path: Option<&std::path::Path>,
+) -> Result<(u32, u32, i32, i32), ImgrsError> {
+    let font = fonts::load_font(font_path)?;
+    let scale = PxScale::from(size);
+    let scaled_font = font.as_scaled(scale);
+    
+    // Measure width
+    let mut width = 0.0_f32;
+    let mut max_height = 0.0_f32;
+    let mut min_y = 0.0_f32;
+    let mut max_y = 0.0_f32;
+    
+    for c in text.chars() {
+        let glyph = scaled_font.scaled_glyph(c);
+        width += scaled_font.h_advance(glyph.id);
+        
+        // Get glyph bounds for height calculation
+        if let Some(outlined) = scaled_font.outline_glyph(glyph) {
+            let bounds = outlined.px_bounds();
+            min_y = min_y.min(bounds.min.y);
+            max_y = max_y.max(bounds.max.y);
+            max_height = max_height.max(bounds.height());
+        }
+    }
+    
+    let height = (max_y - min_y).max(size);
+    let ascent = (-min_y) as i32;
+    let descent = max_y as i32;
+    
+    Ok((width as u32, height as u32, ascent, descent))
+}
+
+/// Get multiline text bounding box
+/// Returns (width, height, line_count)
+pub fn get_multiline_text_size(
+    text: &str,
+    size: f32,
+    line_spacing: f32,
+    font_path: Option<&std::path::Path>,
+) -> Result<(u32, u32, usize), ImgrsError> {
+    let font = fonts::load_font(font_path)?;
+    let lines: Vec<&str> = text.lines().collect();
+    let line_count = lines.len();
+    
+    if line_count == 0 {
+        return Ok((0, 0, 0));
+    }
+    
+    let mut max_width = 0;
+    for line in &lines {
+        let line_width = measure_text_width(line, size, &font);
+        max_width = max_width.max(line_width);
+    }
+    
+    let line_height = (size * line_spacing) as u32;
+    let total_height = line_height * (line_count as u32);
+    
+    Ok((max_width as u32, total_height, line_count))
+}
+
+/// Get text bounding box with all details
+/// Returns a TextBox struct with comprehensive information
+pub fn get_text_box(
+    text: &str,
+    x: i32,
+    y: i32,
+    size: f32,
+    font_path: Option<&std::path::Path>,
+) -> Result<TextBox, ImgrsError> {
+    let (width, height, ascent, descent) = get_text_size(text, size, font_path)?;
+    
+    Ok(TextBox {
+        x,
+        y,
+        width,
+        height,
+        ascent,
+        descent,
+        baseline_y: y + ascent,
+        bottom_y: y + height as i32,
+        right_x: x + width as i32,
+    })
+}
+
+/// Text bounding box information
+#[derive(Debug, Clone)]
+pub struct TextBox {
+    /// X coordinate (left)
+    pub x: i32,
+    /// Y coordinate (top)
+    pub y: i32,
+    /// Width in pixels
+    pub width: u32,
+    /// Height in pixels
+    pub height: u32,
+    /// Ascent (distance from baseline to top)
+    pub ascent: i32,
+    /// Descent (distance from baseline to bottom)
+    pub descent: i32,
+    /// Y coordinate of baseline
+    pub baseline_y: i32,
+    /// Y coordinate of bottom edge
+    pub bottom_y: i32,
+    /// X coordinate of right edge
+    pub right_x: i32,
+}
+
 /// Wrap text to fit within max width
 fn wrap_text(
     text: &str,

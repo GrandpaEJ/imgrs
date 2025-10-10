@@ -174,3 +174,89 @@ class TextMixin:
         )
         return self.__class__(rust_image)
 
+    @staticmethod
+    def get_text_size(
+        text: str,
+        size: float = 32.0,
+        font_path: str | None = None,
+    ) -> tuple[int, int]:
+        """
+        Get text dimensions without rendering.
+        
+        Args:
+            text: Text to measure
+            size: Font size
+            font_path: Path to font file
+        
+        Returns:
+            (width, height) tuple in pixels
+        
+        Example:
+            width, height = Image.get_text_size("Hello World", size=48)
+            print(f"Text will be {width}x{height} pixels")
+        """
+        from imgrs._core import Image as CoreImage
+        return CoreImage.get_text_size(text, size, font_path)
+
+    @staticmethod
+    def get_multiline_text_size(
+        text: str,
+        size: float = 32.0,
+        line_spacing: float = 1.2,
+        font_path: str | None = None,
+    ) -> tuple[int, int, int]:
+        """
+        Get multiline text dimensions.
+        
+        Args:
+            text: Multiline text (with \\n)
+            size: Font size
+            line_spacing: Line spacing multiplier
+            font_path: Path to font file
+        
+        Returns:
+            (width, height, line_count) tuple
+        
+        Example:
+            text = "Line 1\\nLine 2\\nLine 3"
+            width, height, lines = Image.get_multiline_text_size(text)
+            print(f"{width}x{height} pixels, {lines} lines")
+        """
+        from imgrs._core import Image as CoreImage
+        return CoreImage.get_multiline_text_size(text, size, line_spacing, font_path)
+
+    @staticmethod
+    def get_text_box(
+        text: str,
+        x: int,
+        y: int,
+        size: float = 32.0,
+        font_path: str | None = None,
+    ) -> dict:
+        """
+        Get complete text bounding box information.
+        
+        Args:
+            text: Text to measure
+            x: X coordinate
+            y: Y coordinate
+            size: Font size
+            font_path: Path to font file
+        
+        Returns:
+            Dictionary with keys:
+            - x, y: Top-left corner
+            - width, height: Dimensions
+            - ascent, descent: Font metrics
+            - baseline_y: Y coordinate of baseline
+            - bottom_y: Y coordinate of bottom edge
+            - right_x: X coordinate of right edge
+        
+        Example:
+            box = Image.get_text_box("Hello", 100, 50, size=48)
+            print(f"Text spans from ({box['x']}, {box['y']}) to ({box['right_x']}, {box['bottom_y']})")
+            print(f"Baseline at y={box['baseline_y']}")
+        """
+        from imgrs._core import Image as CoreImage
+        return CoreImage.get_text_box(text, x, y, size, font_path)
+

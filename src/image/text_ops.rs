@@ -3,8 +3,10 @@
 use crate::errors::ImgrsError;
 use crate::image::core::{PyImage, LazyImage};
 use crate::text::{draw_text, draw_text_styled, draw_text_centered, TextStyle, TextAlign};
+use crate::text::{get_text_size, get_multiline_text_size, get_text_box};
 use std::path::Path;
 use pyo3::prelude::*;
+use pyo3::types::PyDict;
 
 impl PyImage {
     /// Draw rich text on image (basic)
@@ -219,6 +221,55 @@ impl PyImage {
         let font = font_path.map(Path::new);
         let result = crate::text::draw_text_multiline(image, text, x, y, &style, font)?;
         Ok(PyImage::new_from_image(result, self.format))
+    }
+    
+    /// Get text bounding box size
+    pub fn get_text_size_impl(
+        text: &str,
+        size: f32,
+        font_path: Option<&str>,
+    ) -> Result<(u32, u32), ImgrsError> {
+        let font = font_path.map(Path::new);
+        let (width, height, _, _) = get_text_size(text, size, font)?;
+        Ok((width, height))
+    }
+    
+    /// Get multiline text size
+    pub fn get_multiline_text_size_impl(
+        text: &str,
+        size: f32,
+        line_spacing: f32,
+        font_path: Option<&str>,
+    ) -> Result<(u32, u32, usize), ImgrsError> {
+        let font = font_path.map(Path::new);
+        get_multiline_text_size(text, size, line_spacing, font)
+    }
+    
+    /// Get text box with all information
+    pub fn get_text_box_impl(
+        text: &str,
+        x: i32,
+        y: i32,
+        size: f32,
+        font_path: Option<&str>,
+    ) -> PyResult<PyObject> {
+        let font = font_path.map(Path::new);
+        let textbox = get_text_box(text, x, y, size, font)
+            .map_err(|e| PyErr::new::<pyo3::exceptions::PyRuntimeError, _>(e.to_string()))?;
+        
+        Python::with_gil(|py| {
+            let dict = PyDict::new_bound(py);
+            dict.set_item("x", textbox.x)?;
+            dict.set_item("y", textbox.y)?;
+            dict.set_item("width", textbox.width)?;
+            dict.set_item("height", textbox.height)?;
+            dict.set_item("ascent", textbox.ascent)?;
+            dict.set_item("descent", textbox.descent)?;
+            dict.set_item("baseline_y", textbox.baseline_y)?;
+            dict.set_item("bottom_y", textbox.bottom_y)?;
+            dict.set_item("right_x", textbox.right_x)?;
+            Ok(dict.into())
+        })
     }
 }
 
