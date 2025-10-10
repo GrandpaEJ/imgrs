@@ -71,6 +71,35 @@ result = base.paste(overlay, (50, 50))  # Paste at position (50, 50)
 import numpy as np
 array = np.random.randint(0, 256, (100, 100, 3), dtype=np.uint8)
 img_from_array = imgrs.fromarray(array)
+
+# Rich text rendering with styling
+img = img.add_text("Hello World", (50, 50), size=48, color=(255, 0, 0, 255))
+
+# Text with outline and shadow
+img = img.add_text_styled(
+    "BOLD TEXT", 
+    (100, 100), 
+    size=64,
+    color=(255, 255, 255, 255),
+    outline=(0, 0, 0, 255, 3.0),
+    shadow=(3, 3, 0, 0, 0, 180)
+)
+
+# Centered text
+img = img.add_text_centered("Centered Title", 50, size=56, color=(0, 0, 128, 255))
+
+# Multi-line text
+multiline = "Line 1\nLine 2\nLine 3"
+img = img.add_text_multiline(multiline, (50, 50), size=32, line_spacing=1.5)
+
+# Measure text dimensions before rendering
+width, height = imgrs.Image.get_text_size("Sample Text", size=48)
+print(f"Text will be {width}x{height} pixels")
+
+# Get complete text bounding box information
+box = imgrs.Image.get_text_box("Sample", 100, 50, size=64)
+print(f"Text spans from ({box['x']}, {box['y']}) to ({box['right_x']}, {box['bottom_y']})")
+print(f"Baseline at y={box['baseline_y']}")
 ```
 
 ### Drop-in Pillow Replacement
