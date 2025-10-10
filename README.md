@@ -9,12 +9,11 @@ A **blazingly fast**, modern image processing library for Python, powered by Rus
 
 ## 📚 Documentation
 
-- **[Quick Start Guide](docs/quickstart.md)** - Get up and running in minutes
-- **[Basic Usage](docs/basic-usage.md)** - Core concepts and common patterns
-- **[API Reference](docs/api-reference.md)** - Complete method documentation
-- **[Examples](docs/examples.md)** - Real-world usage examples
-- **[Performance Guide](docs/performance.md)** - Optimization techniques
-- **[Migration Guide](docs/migration.md)** - Migrating from Pillow
+- **[Quick Start Guide](docs/guides/quickstart.md)** - Get up and running in minutes
+- **[Basic Usage](docs/guides/basic-usage.md)** - Core concepts and common patterns
+- **[API Reference](docs/api/)** - Complete method documentation
+- **[Examples](docs/examples/README.md)** - Real-world usage examples
+- **[Migration Guide](docs/guides/migration.md)** - Migrating from Pillow
 
 ## ✨ Key Features
 
@@ -266,14 +265,13 @@ pytest python/imgrs/tests/
 ## 📖 Learn More
 
 ### 🚀 Getting Started
-- **[Quick Start Guide](docs/quickstart.md)** - Installation and first steps
-- **[Basic Usage](docs/basic-usage.md)** - Essential concepts and patterns
-- **[Migration Guide](docs/migration.md)** - Moving from Pillow to imgrs
+- **[Quick Start Guide](docs/guides/quickstart.md)** - Installation and first steps
+- **[Basic Usage](docs/guides/basic-usage.md)** - Essential concepts and patterns
 
 ### 📚 Reference & Examples
-- **[API Reference](docs/api-reference.md)** - Complete method documentation
-- **[Examples](docs/examples.md)** - Real-world usage examples
-- **[Performance Guide](docs/performance.md)** - Optimization techniques
+- **[API Reference](docs/api/)** - Complete method documentation
+- **[Examples](docs/examples/)** - Real-world usage examples
+- **[Performance Guide](docs/guides/)** - Optimization techniques
 
 ### 🎯 Use Cases
 - **Photography**: Portrait enhancement, landscape processing, batch operations
@@ -300,8 +298,6 @@ Contributions are welcome! Areas where help is needed:
 4. **Advanced Operations**: CSS-like filters, path operations, text rendering
 5. **Documentation**: More examples and tutorials
 6. **Testing**: Edge cases, compatibility tests, and performance benchmarks
-
-See **[Contributing Guide](docs/contributing.md)** for detailed information.
 
 ## 📄 License
 
