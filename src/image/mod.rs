@@ -14,6 +14,7 @@ mod drawing;
 mod effects;
 mod emoji;
 mod metadata_ops;
+mod text_ops;
 mod fast_resize;
 
 // Python bindings

@@ -10,6 +10,7 @@ from .drawing_mixin import DrawingMixin
 from .effects_mixin import EffectsMixin
 from .emoji_mixin import EmojiMixin
 from .metadata_mixin import MetadataMixin
+from .text_mixin import TextMixin
 
 __all__ = [
     "CoreMixin",
@@ -20,5 +21,6 @@ __all__ = [
     "EffectsMixin",
     "EmojiMixin",
     "MetadataMixin",
+    "TextMixin",
 ]
 

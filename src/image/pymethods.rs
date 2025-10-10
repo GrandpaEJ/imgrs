@@ -382,6 +382,87 @@ impl PyImage {
         self.has_gps_impl(path)
     }
 
+    // Rich text methods (from text_ops.rs)
+    #[pyo3(signature = (text, x, y, size=32.0, color=(0, 0, 0, 255), font_path=None))]
+    fn text(
+        &self,
+        text: &str,
+        x: i32,
+        y: i32,
+        size: f32,
+        color: (u8, u8, u8, u8),
+        font_path: Option<&str>,
+    ) -> PyResult<Self> {
+        Ok(self.draw_rich_text_impl(text, x, y, size, color, font_path)?)
+    }
+
+    #[pyo3(signature = (
+        text, x, y,
+        size=32.0,
+        color=(0, 0, 0, 255),
+        font_path=None,
+        align=None,
+        background=None,
+        outline=None,
+        shadow=None,
+        opacity=None,
+        line_spacing=None,
+        letter_spacing=None,
+        max_width=None,
+        rotation=None
+    ))]
+    fn text_styled(
+        &self,
+        text: &str,
+        x: i32,
+        y: i32,
+        size: f32,
+        color: (u8, u8, u8, u8),
+        font_path: Option<&str>,
+        align: Option<&str>,
+        background: Option<(u8, u8, u8, u8)>,
+        outline: Option<(u8, u8, u8, u8, f32)>,
+        shadow: Option<(i32, i32, u8, u8, u8, u8)>,
+        opacity: Option<f32>,
+        line_spacing: Option<f32>,
+        letter_spacing: Option<f32>,
+        max_width: Option<u32>,
+        rotation: Option<f32>,
+    ) -> PyResult<Self> {
+        Ok(self.draw_rich_text_styled_impl(
+            text, x, y, size, color, font_path, align, background,
+            outline, shadow, opacity, line_spacing, letter_spacing,
+            max_width, rotation
+        )?)
+    }
+
+    #[pyo3(signature = (text, y, size=32.0, color=(0, 0, 0, 255), font_path=None))]
+    fn text_centered(
+        &self,
+        text: &str,
+        y: i32,
+        size: f32,
+        color: (u8, u8, u8, u8),
+        font_path: Option<&str>,
+    ) -> PyResult<Self> {
+        Ok(self.draw_rich_text_centered_impl(text, y, size, color, font_path)?)
+    }
+
+    #[pyo3(signature = (text, x, y, size=32.0, color=(0, 0, 0, 255), font_path=None, line_spacing=None, align=None))]
+    fn text_multiline(
+        &self,
+        text: &str,
+        x: i32,
+        y: i32,
+        size: f32,
+        color: (u8, u8, u8, u8),
+        font_path: Option<&str>,
+        line_spacing: Option<f32>,
+        align: Option<&str>,
+    ) -> PyResult<Self> {
+        Ok(self.draw_rich_text_multiline_impl(text, x, y, size, color, font_path, line_spacing, align)?)
+    }
+
     // Pixel operation methods (from pixel_ops.rs)
     fn getpixel(&mut self, x: u32, y: u32) -> PyResult<(u8, u8, u8, u8)> {
         self.getpixel_impl(x, y)
