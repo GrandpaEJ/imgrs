@@ -12,6 +12,7 @@ pub struct ImageMetadata {
 }
 
 /// EXIF data structure
+#[allow(dead_code)]
 #[derive(Debug, Clone, Default)]
 pub struct ExifData {
     pub make: Option<String>,
@@ -33,6 +34,7 @@ pub struct ExifData {
 }
 
 /// GPS information
+#[allow(dead_code)]
 #[derive(Debug, Clone, Default)]
 pub struct GpsInfo {
     pub latitude: Option<f64>,
@@ -48,6 +50,7 @@ pub struct GpsInfo {
 }
 
 /// Camera settings information
+#[allow(dead_code)]
 #[derive(Debug, Clone, Default)]
 pub struct CameraInfo {
     pub iso: Option<u32>,
@@ -64,6 +67,7 @@ pub struct CameraInfo {
 }
 
 /// Basic image information
+#[allow(dead_code)]
 #[derive(Debug, Clone, Default)]
 pub struct BasicInfo {
     pub width: u32,
@@ -74,6 +78,7 @@ pub struct BasicInfo {
 }
 
 impl ImageMetadata {
+    #[allow(dead_code)]
     pub fn new() -> Self {
         Default::default()
     }
@@ -89,6 +94,7 @@ impl ImageMetadata {
     }
     
     /// Check if metadata contains camera info
+    #[allow(dead_code)]
     pub fn has_camera_info(&self) -> bool {
         self.camera.is_some()
     }

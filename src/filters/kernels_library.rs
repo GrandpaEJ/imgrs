@@ -3,6 +3,7 @@
 use crate::errors::ImgrsError;
 
 /// Predefined kernel types
+#[allow(dead_code)]
 #[derive(Debug, Clone)]
 pub enum KernelType {
     // Edge Detection
@@ -53,6 +54,7 @@ pub enum KernelType {
 
 impl KernelType {
     /// Get the kernel matrix for the specified type
+    #[allow(dead_code)]
     pub fn get_kernel(&self) -> Vec<Vec<f32>> {
         match self {
             // Sobel Operators
@@ -267,6 +269,7 @@ impl KernelType {
     }
     
     /// Get the name of the kernel
+    #[allow(dead_code)]
     pub fn name(&self) -> &str {
         match self {
             KernelType::SobelX => "Sobel X",
@@ -308,6 +311,7 @@ impl KernelType {
     }
     
     /// Get all available kernel types
+    #[allow(dead_code)]
     pub fn all() -> Vec<KernelType> {
         vec![
             KernelType::SobelX,
@@ -350,6 +354,7 @@ impl KernelType {
 }
 
 /// Apply a predefined kernel to an image
+    #[allow(dead_code)]
 pub fn apply_predefined_kernel(image: &image::DynamicImage, kernel_type: KernelType) -> Result<image::DynamicImage, ImgrsError> {
     let kernel = kernel_type.get_kernel();
     super::kernel::apply_convolution(image, &kernel)

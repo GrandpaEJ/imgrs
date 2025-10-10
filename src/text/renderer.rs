@@ -6,7 +6,7 @@ use ab_glyph::{FontVec, PxScale, Font, ScaleFont};
 use imageproc::rect::Rect;
 use crate::errors::ImgrsError;
 use super::styles::{TextStyle, TextAlign};
-use super::fonts;
+use super::fonts::{self};
 
 /// Draw text on image with basic parameters
 pub fn draw_text(
@@ -317,6 +317,7 @@ fn wrap_text(
 }
 
 /// Quick text rendering with minimal parameters
+    #[allow(dead_code)]
 pub fn draw_text_quick(
     image: &DynamicImage,
     text: &str,

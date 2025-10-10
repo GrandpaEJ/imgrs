@@ -1,4 +1,4 @@
-use image::{DynamicImage, ImageBuffer, Rgb, Rgba, Luma};
+use image::{DynamicImage, ImageBuffer, Rgb, Rgba};
 use crate::errors::ImgrsError;
 use super::kernel::apply_convolution;
 

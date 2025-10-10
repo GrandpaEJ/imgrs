@@ -10,6 +10,7 @@ pub enum TextAlign {
 
 /// Font weight options
 #[derive(Debug, Clone, Copy, PartialEq)]
+    #[allow(dead_code)]
 pub enum FontWeight {
     Normal,
     Bold,
@@ -106,6 +107,7 @@ impl TextStyle {
     }
     
     /// Set font weight
+    #[allow(dead_code)]
     pub fn with_weight(mut self, weight: FontWeight) -> Self {
         self.weight = weight;
         self

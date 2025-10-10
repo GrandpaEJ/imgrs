@@ -112,6 +112,7 @@ pub fn halftone(image: &DynamicImage, dot_size: u32) -> Result<DynamicImage, Img
 }
 
 /// Apply crosshatch effect
+    #[allow(dead_code)]
 pub fn crosshatch(image: &DynamicImage, spacing: u32, angle: f32) -> Result<DynamicImage, ImgrsError> {
     let gray_img = image.to_luma8();
     let (width, height) = gray_img.dimensions();
@@ -180,6 +181,7 @@ pub fn pencil_sketch(image: &DynamicImage, detail: f32) -> Result<DynamicImage, 
 }
 
 /// Apply color pencil effect
+    #[allow(dead_code)]
 pub fn color_pencil(image: &DynamicImage, detail: f32) -> Result<DynamicImage, ImgrsError> {
     use super::blur::blur;
     use super::edges::edge_detect;

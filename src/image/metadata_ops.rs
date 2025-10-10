@@ -2,7 +2,6 @@ use pyo3::prelude::*;
 use pyo3::types::PyDict;
 use crate::metadata;
 use super::core::PyImage;
-use std::collections::HashMap;
 
 impl PyImage {
     /// Get EXIF/metadata from image file

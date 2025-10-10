@@ -1,7 +1,7 @@
 /// High-performance emoji renderer
 /// Creates visual emoji representations with colors and shapes
 
-use image::{DynamicImage, ImageBuffer, Rgba, RgbaImage};
+use image::{DynamicImage, Rgba, RgbaImage};
 use imageproc::drawing::{draw_filled_circle_mut, draw_text_mut};
 use ab_glyph::{FontVec, PxScale};
 use crate::errors::ImgrsError;
@@ -17,6 +17,7 @@ pub struct EmojiStyle {
     pub x: i32,
     pub y: i32,
     pub opacity: f32,
+    #[allow(dead_code)]
     pub background: Option<(u8, u8, u8, u8)>,
     pub color: Option<(u8, u8, u8, u8)>,
 }
@@ -220,6 +221,7 @@ pub fn add_emojis_batch(
 }
 
 /// Quick emoji add with minimal parameters
+    #[allow(dead_code)]
 pub fn add_emoji_quick(
     image: &DynamicImage,
     emoji_type: EmojiType,

@@ -10,6 +10,6 @@
 pub mod renderer;
 pub mod presets;
 
-pub use renderer::{add_emoji, add_emoji_text, add_emojis_batch, add_emoji_quick, EmojiStyle};
+pub use renderer::{add_emoji, add_emoji_text, add_emojis_batch, EmojiStyle};
 pub use presets::EmojiType;
 

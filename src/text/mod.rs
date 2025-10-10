@@ -13,9 +13,12 @@ pub mod styles;
 pub mod fonts;
 
 pub use renderer::{
-    draw_text, draw_text_multiline, draw_text_styled, draw_text_centered, draw_text_quick,
-    get_text_size, get_multiline_text_size, get_text_box, TextBox
+    draw_text, draw_text_multiline, draw_text_styled, draw_text_centered,
+    get_text_size, get_multiline_text_size, get_text_box
 };
-pub use styles::{TextStyle, TextAlign, FontWeight};
-pub use fonts::{load_font, get_default_font, FontManager};
+pub use styles::{TextStyle, TextAlign};
+// Additional text functions available for future use
+// pub use renderer::{draw_text_quick, TextBox};
+// pub use styles::FontWeight;
+// pub use fonts::{get_default_font, FontManager};
 

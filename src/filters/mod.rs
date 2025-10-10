@@ -25,7 +25,8 @@ pub use blur::blur;
 pub use sharpen::sharpen;
 pub use edges::{edge_detect, emboss};
 pub use adjustments::{brightness, contrast};
-pub use simd_ops::{fast_rgb_to_gray, fast_brightness, fast_contrast};
+// SIMD operations available but not yet exposed to Python
+// pub use simd_ops::{fast_rgb_to_gray, fast_brightness, fast_contrast};
 
 // Re-export advanced blur functions
 pub use advanced_blur::{
@@ -52,34 +53,35 @@ pub use stylistic::{
 
 // Re-export noise filters
 pub use noise::{
-    add_gaussian_noise, add_salt_pepper_noise, add_uniform_noise,
-    denoise, nl_means_denoise
+    add_gaussian_noise, add_salt_pepper_noise,
+    denoise
 };
 
 // Re-export morphological operations
 pub use morphological::{
     dilate, erode, opening, closing,
-    morphological_gradient, top_hat, black_hat
+    morphological_gradient
 };
 
 // Re-export artistic effects
 pub use artistic::{
-    vignette, halftone, crosshatch, pencil_sketch,
-    color_pencil, watercolor, glitch
+    vignette, halftone, pencil_sketch,
+    watercolor, glitch
 };
 
 // Re-export color effects
 pub use color_effects::{
-    duotone, tritone, color_splash, channel_shift,
-    false_color, color_quantize, chromatic_aberration
+    duotone, color_splash,
+    chromatic_aberration
 };
 
 // Re-export kernel library
-pub use kernels_library::{KernelType, apply_predefined_kernel};
+// Kernel library available but not yet exposed to Python
+// pub use kernels_library::{KernelType, apply_predefined_kernel};
 
 // Re-export auto-enhancement functions
 pub use auto_enhance::{
-    histogram_equalization, adaptive_histogram_equalization,
+    histogram_equalization,
     auto_contrast, auto_brightness, auto_enhance,
     exposure_adjust, auto_level, normalize,
     smart_enhance, auto_white_balance

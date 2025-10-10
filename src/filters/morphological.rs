@@ -94,6 +94,7 @@ pub fn morphological_gradient(image: &DynamicImage, radius: u32) -> Result<Dynam
 }
 
 /// Apply top hat transform (original - opening)
+    #[allow(dead_code)]
 pub fn top_hat(image: &DynamicImage, radius: u32) -> Result<DynamicImage, ImgrsError> {
     let opened = opening(image, radius)?;
     let gray_img = image.to_luma8();
@@ -118,6 +119,7 @@ pub fn top_hat(image: &DynamicImage, radius: u32) -> Result<DynamicImage, ImgrsE
 }
 
 /// Apply black hat transform (closing - original)
+    #[allow(dead_code)]
 pub fn black_hat(image: &DynamicImage, radius: u32) -> Result<DynamicImage, ImgrsError> {
     let closed = closing(image, radius)?;
     let gray_img = image.to_luma8();

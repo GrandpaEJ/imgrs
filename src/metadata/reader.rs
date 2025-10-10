@@ -16,6 +16,7 @@ pub fn read_exif_from_path(path: impl AsRef<Path>) -> Result<ImageMetadata, Imgr
 }
 
 /// Read EXIF from bytes
+    #[allow(dead_code)]
 pub fn read_exif_from_bytes(data: &[u8]) -> Result<ImageMetadata, ImgrsError> {
     let mut cursor = Cursor::new(data);
     read_exif(&mut cursor)
@@ -176,6 +177,7 @@ fn parse_gps_coordinate(value: &exif::Value) -> Option<f64> {
 }
 
 /// Get specific EXIF field value
+    #[allow(dead_code)]
 pub fn get_exif_field(path: impl AsRef<Path>, tag_name: &str) -> Result<Option<String>, ImgrsError> {
     let metadata = read_exif_from_path(path)?;
     

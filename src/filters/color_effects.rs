@@ -1,4 +1,4 @@
-use image::{DynamicImage, ImageBuffer, Rgb, Rgba};
+use image::{DynamicImage, ImageBuffer, Rgb};
 use crate::errors::ImgrsError;
 
 /// Apply duotone effect with two colors
@@ -23,6 +23,7 @@ pub fn duotone(image: &DynamicImage, shadow_color: (u8, u8, u8), highlight_color
 }
 
 /// Apply tritone effect with three colors
+    #[allow(dead_code)]
 pub fn tritone(image: &DynamicImage, shadow: (u8, u8, u8), midtone: (u8, u8, u8), highlight: (u8, u8, u8)) -> Result<DynamicImage, ImgrsError> {
     let gray_img = image.to_luma8();
     let (width, height) = gray_img.dimensions();
@@ -65,7 +66,7 @@ pub fn color_splash(image: &DynamicImage, target_hue: f32, tolerance: f32) -> Re
             for y in 0..height {
                 for x in 0..width {
                     let pixel = rgb_img.get_pixel(x, y);
-                    let (h, s, v) = rgb_to_hsv(pixel[0], pixel[1], pixel[2]);
+                    let (h, _s, _v) = rgb_to_hsv(pixel[0], pixel[1], pixel[2]);
                     
                     let hue_diff = (h - target_hue).abs();
                     let hue_diff = hue_diff.min(360.0 - hue_diff);
@@ -124,6 +125,7 @@ pub fn channel_shift(image: &DynamicImage, r_offset: (i32, i32), g_offset: (i32,
 }
 
 /// Apply false color effect
+    #[allow(dead_code)]
 pub fn false_color(image: &DynamicImage) -> Result<DynamicImage, ImgrsError> {
     let gray_img = image.to_luma8();
     let (width, height) = gray_img.dimensions();
@@ -149,6 +151,7 @@ pub fn false_color(image: &DynamicImage) -> Result<DynamicImage, ImgrsError> {
 }
 
 /// Apply color quantization
+    #[allow(dead_code)]
 pub fn color_quantize(image: &DynamicImage, levels: u8) -> Result<DynamicImage, ImgrsError> {
     if levels == 0 {
         return Err(ImgrsError::InvalidOperation("Quantization levels must be > 0".to_string()));

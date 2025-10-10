@@ -1,6 +1,5 @@
 use image::{DynamicImage, ImageBuffer, Rgb, Rgba};
 use crate::errors::ImgrsError;
-use super::advanced_blur::median_blur;
 
 /// Apply oil painting effect
 pub fn oil_painting(image: &DynamicImage, radius: u32, intensity: u32) -> Result<DynamicImage, ImgrsError> {

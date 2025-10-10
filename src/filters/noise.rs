@@ -106,6 +106,7 @@ pub fn add_salt_pepper_noise(image: &DynamicImage, amount: f32) -> Result<Dynami
 }
 
 /// Add uniform noise to an image
+    #[allow(dead_code)]
 pub fn add_uniform_noise(image: &DynamicImage, min: f32, max: f32) -> Result<DynamicImage, ImgrsError> {
     match image {
         DynamicImage::ImageRgb8(rgb_img) => {
@@ -142,6 +143,7 @@ pub fn denoise(image: &DynamicImage, radius: u32) -> Result<DynamicImage, ImgrsE
 }
 
 /// Non-local means denoising (simplified version)
+    #[allow(dead_code)]
 pub fn nl_means_denoise(image: &DynamicImage, h: f32, template_window_size: u32, search_window_size: u32) -> Result<DynamicImage, ImgrsError> {
     match image {
         DynamicImage::ImageRgb8(rgb_img) => {

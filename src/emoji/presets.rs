@@ -22,9 +22,13 @@ pub enum EmojiType {
     YellowHeart,
     PurpleHeart,
     OrangeHeart,
+    #[allow(dead_code)]
     BlackHeart,
+    #[allow(dead_code)]
     WhiteHeart,
+    #[allow(dead_code)]
     BrokenHeart,
+    #[allow(dead_code)]
     SparklingHeart,
     
     // Gestures
@@ -179,6 +183,7 @@ impl EmojiType {
     }
     
     /// Get all available emoji types
+    #[allow(dead_code)]
     pub fn all() -> Vec<EmojiType> {
         vec![
             // Smileys

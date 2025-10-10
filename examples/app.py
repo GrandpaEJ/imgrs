@@ -1,7 +1,13 @@
 import imgrs 
 from imgrs.image import Image
 
-img = imgrs.new('RGB',(300,200), 'green')
-img = img.add_text("Imgrs is cool", (50, 50), size=48, color=(0, 0, 0, 255))
+img = imgrs.new('RGB',(800, 400), 'green')
+img = img.add_text_styled(
+    "Imgrs is cool",
+    (210, 180),
+    size=64,
+    color=(255, 255, 0, 255),
+    outline=(255, 0, 0, 255, 2.0)
+)
 
 img.save("img.jpg", format="JPEG")

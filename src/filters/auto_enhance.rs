@@ -136,6 +136,7 @@ fn create_equalization_lut(histogram: &[u32], total_pixels: u32) -> Vec<u8> {
 }
 
 /// Apply adaptive histogram equalization (CLAHE - Contrast Limited Adaptive Histogram Equalization)
+    #[allow(dead_code)]
 pub fn adaptive_histogram_equalization(
     image: &DynamicImage,
     clip_limit: f32,
@@ -473,6 +474,7 @@ pub fn normalize(image: &DynamicImage) -> Result<DynamicImage, ImgrsError> {
 }
 
 /// Automatically optimize contrast and brightness
+    #[allow(dead_code)]
 pub fn auto_optimize(image: &DynamicImage) -> Result<DynamicImage, ImgrsError> {
     // Step 1: Normalize to use full range
     let normalized = auto_level(image, 0.01, 0.01)?;
