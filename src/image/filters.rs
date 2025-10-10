@@ -407,6 +407,79 @@ impl PyImage {
         }).map(|filtered| PyImage { lazy_image: LazyImage::Loaded(filtered), format }).map_err(|e| e.into())
     }
 
+    // Auto-Enhancement Features
+    pub fn histogram_equalization_impl(&mut self) -> PyResult<Self> {
+        let format = self.format;
+        let image = self.get_image()?;
+        Python::with_gil(|py| {
+            py.allow_threads(|| filters::histogram_equalization(image))
+        }).map(|filtered| PyImage { lazy_image: LazyImage::Loaded(filtered), format }).map_err(|e| e.into())
+    }
+
+    pub fn auto_contrast_impl(&mut self) -> PyResult<Self> {
+        let format = self.format;
+        let image = self.get_image()?;
+        Python::with_gil(|py| {
+            py.allow_threads(|| filters::auto_contrast(image))
+        }).map(|filtered| PyImage { lazy_image: LazyImage::Loaded(filtered), format }).map_err(|e| e.into())
+    }
+
+    pub fn auto_brightness_impl(&mut self) -> PyResult<Self> {
+        let format = self.format;
+        let image = self.get_image()?;
+        Python::with_gil(|py| {
+            py.allow_threads(|| filters::auto_brightness(image))
+        }).map(|filtered| PyImage { lazy_image: LazyImage::Loaded(filtered), format }).map_err(|e| e.into())
+    }
+
+    pub fn auto_enhance_impl(&mut self) -> PyResult<Self> {
+        let format = self.format;
+        let image = self.get_image()?;
+        Python::with_gil(|py| {
+            py.allow_threads(|| filters::auto_enhance(image))
+        }).map(|filtered| PyImage { lazy_image: LazyImage::Loaded(filtered), format }).map_err(|e| e.into())
+    }
+
+    pub fn exposure_adjust_impl(&mut self, exposure: f32) -> PyResult<Self> {
+        let format = self.format;
+        let image = self.get_image()?;
+        Python::with_gil(|py| {
+            py.allow_threads(|| filters::exposure_adjust(image, exposure))
+        }).map(|filtered| PyImage { lazy_image: LazyImage::Loaded(filtered), format }).map_err(|e| e.into())
+    }
+
+    pub fn auto_level_impl(&mut self, black_clip: f32, white_clip: f32) -> PyResult<Self> {
+        let format = self.format;
+        let image = self.get_image()?;
+        Python::with_gil(|py| {
+            py.allow_threads(|| filters::auto_level(image, black_clip, white_clip))
+        }).map(|filtered| PyImage { lazy_image: LazyImage::Loaded(filtered), format }).map_err(|e| e.into())
+    }
+
+    pub fn normalize_impl(&mut self) -> PyResult<Self> {
+        let format = self.format;
+        let image = self.get_image()?;
+        Python::with_gil(|py| {
+            py.allow_threads(|| filters::normalize(image))
+        }).map(|filtered| PyImage { lazy_image: LazyImage::Loaded(filtered), format }).map_err(|e| e.into())
+    }
+
+    pub fn smart_enhance_impl(&mut self, strength: f32) -> PyResult<Self> {
+        let format = self.format;
+        let image = self.get_image()?;
+        Python::with_gil(|py| {
+            py.allow_threads(|| filters::smart_enhance(image, strength))
+        }).map(|filtered| PyImage { lazy_image: LazyImage::Loaded(filtered), format }).map_err(|e| e.into())
+    }
+
+    pub fn auto_white_balance_impl(&mut self) -> PyResult<Self> {
+        let format = self.format;
+        let image = self.get_image()?;
+        Python::with_gil(|py| {
+            py.allow_threads(|| filters::auto_white_balance(image))
+        }).map(|filtered| PyImage { lazy_image: LazyImage::Loaded(filtered), format }).map_err(|e| e.into())
+    }
+
     // CSS-like filters
     pub fn sepia_impl(&mut self, amount: f32) -> PyResult<Self> {
         let format = self.format;

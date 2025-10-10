@@ -328,6 +328,43 @@ impl PyImage {
         self.add_emojis_batch_impl(emojis)
     }
 
+    // Auto-Enhancement Features
+    fn histogram_equalization(&mut self) -> PyResult<Self> {
+        self.histogram_equalization_impl()
+    }
+
+    fn auto_contrast(&mut self) -> PyResult<Self> {
+        self.auto_contrast_impl()
+    }
+
+    fn auto_brightness(&mut self) -> PyResult<Self> {
+        self.auto_brightness_impl()
+    }
+
+    fn auto_enhance(&mut self) -> PyResult<Self> {
+        self.auto_enhance_impl()
+    }
+
+    fn exposure_adjust(&mut self, exposure: f32) -> PyResult<Self> {
+        self.exposure_adjust_impl(exposure)
+    }
+
+    fn auto_level(&mut self, black_clip: f32, white_clip: f32) -> PyResult<Self> {
+        self.auto_level_impl(black_clip, white_clip)
+    }
+
+    fn normalize(&mut self) -> PyResult<Self> {
+        self.normalize_impl()
+    }
+
+    fn smart_enhance(&mut self, strength: f32) -> PyResult<Self> {
+        self.smart_enhance_impl(strength)
+    }
+
+    fn auto_white_balance(&mut self) -> PyResult<Self> {
+        self.auto_white_balance_impl()
+    }
+
     // Pixel operation methods (from pixel_ops.rs)
     fn getpixel(&mut self, x: u32, y: u32) -> PyResult<(u8, u8, u8, u8)> {
         self.getpixel_impl(x, y)

@@ -18,6 +18,7 @@ mod noise;
 mod morphological;
 mod artistic;
 mod color_effects;
+mod auto_enhance;
 
 // Re-export basic functions
 pub use blur::blur;
@@ -75,4 +76,12 @@ pub use color_effects::{
 
 // Re-export kernel library
 pub use kernels_library::{KernelType, apply_predefined_kernel};
+
+// Re-export auto-enhancement functions
+pub use auto_enhance::{
+    histogram_equalization, adaptive_histogram_equalization,
+    auto_contrast, auto_brightness, auto_enhance,
+    exposure_adjust, auto_level, normalize,
+    smart_enhance, auto_white_balance
+};
 
