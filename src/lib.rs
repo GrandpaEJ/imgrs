@@ -12,6 +12,7 @@ mod errors;
 mod filters;
 mod image;
 mod formats;
+mod metadata;
 mod operations;
 mod pixels;
 mod shadows;

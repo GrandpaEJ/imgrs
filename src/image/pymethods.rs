@@ -365,6 +365,23 @@ impl PyImage {
         self.auto_white_balance_impl()
     }
 
+    // Metadata Operations
+    fn get_metadata(&mut self, path: String) -> PyResult<Py<pyo3::types::PyDict>> {
+        self.get_metadata_impl(path)
+    }
+
+    fn get_metadata_summary(&mut self, path: String) -> PyResult<String> {
+        self.get_metadata_summary_impl(path)
+    }
+
+    fn has_exif(&mut self, path: String) -> PyResult<bool> {
+        self.has_exif_impl(path)
+    }
+
+    fn has_gps(&mut self, path: String) -> PyResult<bool> {
+        self.has_gps_impl(path)
+    }
+
     // Pixel operation methods (from pixel_ops.rs)
     fn getpixel(&mut self, x: u32, y: u32) -> PyResult<(u8, u8, u8, u8)> {
         self.getpixel_impl(x, y)
