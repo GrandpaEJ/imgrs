@@ -9,7 +9,7 @@ description = "A modern, high-performance image processing library for Python, p
 authors = [
     {name = "Ebtisam Jubair", email = ""},
 ]
-license = {text = "MIT"}
+license = {text = "IRADL"}
 readme = "README.md"
 requires-python = ">=3.8"
 classifiers = [

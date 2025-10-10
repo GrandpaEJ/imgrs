@@ -29,35 +29,35 @@ impl PyImage {
         let image = match mode {
             "RGB" => {
                 let (r, g, b, _) = color.unwrap_or((0, 0, 0, 255));
-                DynamicImage::ImageRgb8(
-                    image::RgbImage::from_pixel(width, height, image::Rgb([r, g, b]))
-                )
+                let mut img = image::RgbImage::new(width, height);
+                for pixel in img.pixels_mut() {
+                    *pixel = image::Rgb([r, g, b]);
+                }
+                DynamicImage::ImageRgb8(img)
             }
             "RGBA" => {
-                let (r, g, b, a) = color.unwrap_or((0, 0, 0, 0));
-                DynamicImage::ImageRgba8(
-                    image::RgbaImage::from_pixel(width, height, image::Rgba([r, g, b, a]))
-                )
+                let (r, g, b, a) = color.unwrap_or((0, 0, 0, 255));
+                let mut img = image::RgbaImage::new(width, height);
+                for pixel in img.pixels_mut() {
+                    *pixel = image::Rgba([r, g, b, a]);
+                }
+                DynamicImage::ImageRgba8(img)
             }
             "L" => {
                 let (gray, _, _, _) = color.unwrap_or((0, 0, 0, 255));
-                DynamicImage::ImageLuma8(
-                    image::GrayImage::from_pixel(width, height, image::Luma([gray]))
-                )
-            }
-            "LA" => {
-                let (gray, _, _, a) = color.unwrap_or((0, 0, 0, 255));
-                DynamicImage::ImageLumaA8(
-                    image::GrayAlphaImage::from_pixel(width, height, image::LumaA([gray, a]))
-                )
+                let mut img = image::GrayImage::new(width, height);
+                for pixel in img.pixels_mut() {
+                    *pixel = image::Luma([gray]);
+                }
+                DynamicImage::ImageLuma8(img)
             }
             _ => {
-                return Err(ImgrsError::InvalidOperation(
-                    format!("Unsupported image mode: {}", mode)
+                return Err(ImgrsError::UnsupportedFormat(
+                    format!("Unsupported mode: {}. Use 'RGB', 'RGBA', or 'L'", mode)
                 ).into());
             }
         };
-        
+
         Ok(PyImage {
             lazy_image: LazyImage::Loaded(image),
             format: None,
@@ -189,5 +189,78 @@ impl PyImage {
             ).into())
         }
     }
-}
 
+    /// Create image from raw bytes (no NumPy needed!)
+    /// Mobile-friendly alternative to fromarray()
+    pub fn frombytes_impl(
+        mode: &str,
+        size: (u32, u32),
+        data: &[u8],
+    ) -> PyResult<Self> {
+        let (width, height) = size;
+        
+        if width == 0 || height == 0 {
+            return Err(ImgrsError::InvalidOperation(
+                "Image dimensions must be greater than 0".to_string()
+            ).into());
+        }
+
+        let image = match mode {
+            "RGB" => {
+                let expected_len = (width * height * 3) as usize;
+                if data.len() != expected_len {
+                    return Err(ImgrsError::InvalidOperation(
+                        format!("Expected {} bytes for {}x{} RGB, got {}", expected_len, width, height, data.len())
+                    ).into());
+                }
+                
+                let rgb_image = image::RgbImage::from_raw(width, height, data.to_vec())
+                    .ok_or_else(|| ImgrsError::InvalidOperation(
+                        "Failed to create RGB image from bytes".to_string()
+                    ))?;
+                
+                DynamicImage::ImageRgb8(rgb_image)
+            }
+            "RGBA" => {
+                let expected_len = (width * height * 4) as usize;
+                if data.len() != expected_len {
+                    return Err(ImgrsError::InvalidOperation(
+                        format!("Expected {} bytes for {}x{} RGBA, got {}", expected_len, width, height, data.len())
+                    ).into());
+                }
+                
+                let rgba_image = image::RgbaImage::from_raw(width, height, data.to_vec())
+                    .ok_or_else(|| ImgrsError::InvalidOperation(
+                        "Failed to create RGBA image from bytes".to_string()
+                    ))?;
+                
+                DynamicImage::ImageRgba8(rgba_image)
+            }
+            "L" => {
+                let expected_len = (width * height) as usize;
+                if data.len() != expected_len {
+                    return Err(ImgrsError::InvalidOperation(
+                        format!("Expected {} bytes for {}x{} grayscale, got {}", expected_len, width, height, data.len())
+                    ).into());
+                }
+                
+                let gray_image = image::GrayImage::from_raw(width, height, data.to_vec())
+                    .ok_or_else(|| ImgrsError::InvalidOperation(
+                        "Failed to create grayscale image from bytes".to_string()
+                    ))?;
+                
+                DynamicImage::ImageLuma8(gray_image)
+            }
+            _ => {
+                return Err(ImgrsError::UnsupportedFormat(
+                    format!("Unsupported mode: {}. Use 'RGB', 'RGBA', or 'L'", mode)
+                ).into());
+            }
+        };
+
+        Ok(PyImage {
+            lazy_image: LazyImage::Loaded(image),
+            format: None,
+        })
+    }
+}

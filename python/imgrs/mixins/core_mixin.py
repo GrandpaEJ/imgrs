@@ -102,7 +102,8 @@ class CoreMixin:
         
         if not HAS_NUMPY:
             raise ImportError(
-                "NumPy is required for fromarray. Install with: pip install numpy"
+                "NumPy is required for fromarray. Install with: pip install numpy\n"
+                "Or use frombytes() for mobile/lightweight alternative."
             )
 
         if not isinstance(obj, np.ndarray):
@@ -119,6 +120,41 @@ class CoreMixin:
             obj = np.ascontiguousarray(obj)
 
         rust_image = RustImage.fromarray(obj, mode)
+        return cls(rust_image)
+
+    @classmethod
+    def frombytes(
+        cls,
+        mode: str,
+        size: Tuple[int, int],
+        data: bytes,
+    ) -> "Image":
+        """
+        Create an image from raw bytes (NumPy-free!).
+        
+        Mobile-friendly alternative to fromarray() - works without NumPy.
+
+        Args:
+            mode: Image mode ('RGB', 'RGBA', or 'L')
+            size: Image size as (width, height)
+            data: Raw pixel data as bytes
+                  - RGB: width * height * 3 bytes
+                  - RGBA: width * height * 4 bytes
+                  - L: width * height bytes
+
+        Returns:
+            Image instance
+
+        Example:
+            # Create 2x2 red RGB image
+            data = bytes([255,0,0, 255,0,0, 255,0,0, 255,0,0])
+            img = Image.frombytes('RGB', (2, 2), data)
+            
+            # Works on mobile without NumPy!
+        """
+        from .._core import Image as RustImage
+        
+        rust_image = RustImage.frombytes(mode, size, data)
         return cls(rust_image)
 
     @staticmethod
@@ -228,4 +264,3 @@ class CoreMixin:
             and self.mode == other.mode
             and self.to_bytes() == other.to_bytes()
         )
-

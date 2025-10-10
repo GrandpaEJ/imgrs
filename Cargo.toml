@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 authors = ["Grandpa EJ"]
 description = "A high-performance, memory-safe image processing library for Python"
-license = "MIT"
+license = "IRADL"
 repository = "https://github.com/grandpaej/imgrs"
 
 [lib]

@@ -26,6 +26,12 @@ impl PyImage {
         Self::fromarray_impl(array, _mode)
     }
 
+    #[staticmethod]
+    #[pyo3(signature = (mode, size, data))]
+    fn frombytes(mode: &str, size: (u32, u32), data: &[u8]) -> PyResult<Self> {
+        Self::frombytes_impl(mode, size, data)
+    }
+
     // I/O methods (from io.rs)
     #[pyo3(signature = (path_or_buffer, format=None))]
     fn save(&mut self, path_or_buffer: &Bound<'_, PyAny>, format: Option<String>) -> PyResult<()> {
