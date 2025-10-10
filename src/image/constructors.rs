@@ -66,25 +66,39 @@ impl PyImage {
 
     pub fn open_impl(path_or_bytes: &Bound<'_, PyAny>) -> PyResult<Self> {
         if let Ok(path) = path_or_bytes.extract::<String>() {
-            // Store path for lazy loading
+            // Eager loading - load image immediately like Pillow
             let path_buf = PathBuf::from(&path);
             let format = ImageFormat::from_path(&path).ok();
+            
+            let image = Python::with_gil(|py| {
+                py.allow_threads(|| {
+                    image::open(&path_buf)
+                        .map_err(ImgrsError::ImageError)
+                })
+            })?;
+            
             Ok(PyImage {
-                lazy_image: LazyImage::Path { path: path_buf },
+                lazy_image: LazyImage::Loaded(image),
                 format
             })
         } else if let Ok(bytes) = path_or_bytes.downcast::<PyBytes>() {
-            // Store bytes for lazy loading
-            let data = bytes.as_bytes().to_vec();
-            // Try to guess format from bytes header
-            let format = {
-                let cursor = Cursor::new(&data);
-                image::ImageReader::new(cursor).with_guessed_format()
-                    .ok()
-                    .and_then(|r| r.format())
-            };
+            // Eager loading from bytes
+            let data = bytes.as_bytes();
+            
+            let (image, format) = Python::with_gil(|py| {
+                py.allow_threads(|| {
+                    let cursor = Cursor::new(data);
+                    let reader = image::ImageReader::new(cursor)
+                        .with_guessed_format()
+                        .map_err(ImgrsError::Io)?;
+                    let fmt = reader.format();
+                    let img = reader.decode().map_err(ImgrsError::ImageError)?;
+                    Ok::<_, ImgrsError>((img, fmt))
+                })
+            })?;
+            
             Ok(PyImage {
-                lazy_image: LazyImage::Bytes { data },
+                lazy_image: LazyImage::Loaded(image),
                 format
             })
         } else {
