@@ -51,7 +51,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        target: [x64, x86, aarch64]
+        target: [x64]  # Only x64 - x86 (32-bit) and aarch64 not supported
     
     steps:
       - name: Checkout
@@ -240,7 +240,7 @@ jobs:
           echo ""
           echo "✅ Built wheels for:"
           echo "  • Linux (x86_64, aarch64, armv7, s390x, ppc64le) - manylinux"
-          echo "  • Windows (x64, x86, aarch64)"
+          echo "  • Windows (x64 only - covers 99%+ users)"
           echo "  • macOS (x86_64, aarch64/Apple Silicon)"
           echo "  • Android (aarch64, armv7, x86_64, i686)"
           echo ""
