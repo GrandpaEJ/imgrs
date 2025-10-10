@@ -301,7 +301,7 @@ Contributions are welcome! Areas where help is needed:
 
 ## 📄 License
 
-IRADL License - see [LICENSE](LICENSE) file for details.
+Apache Software License - see [LICENSE](LICENSE) file for details.
 
 ## 🙏 Acknowledgments
 
