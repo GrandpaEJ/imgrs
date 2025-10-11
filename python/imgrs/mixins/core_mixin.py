@@ -4,6 +4,10 @@ Core image operations mixin - I/O, constructors, properties
 
 from pathlib import Path
 from typing import Any, Optional, Tuple, Union
+import tempfile
+import os
+import sys
+import subprocess
 
 try:
     import numpy as np
@@ -210,6 +214,58 @@ class CoreMixin:
         if isinstance(fp, Path):
             fp = str(fp)
         self._rust_image.save(fp, format)
+
+    def show(self, title: Optional[str] = None) -> None:
+        """
+        Display the image using the default image viewer.
+        
+        This method saves the image to a temporary file and opens it with the
+        system's default image viewer. The temporary file is deleted after viewing.
+        
+        Args:
+            title: Optional title for the image window (may not be supported on all platforms)
+            
+        Example:
+            >>> img = imgrs.Image.open("photo.jpg")
+            >>> img = img.blur(5)
+            >>> img.show()  # Opens in default image viewer
+            
+        Note:
+            - On Windows: Uses default photo viewer
+            - On macOS: Uses Preview or default app
+            - On Linux: Uses xdg-open to find the default viewer
+            - Requires a GUI environment
+        """
+        # Create a temporary file
+        suffix = ".png"  # PNG for best compatibility
+        with tempfile.NamedTemporaryFile(suffix=suffix, delete=False) as tmp_file:
+            tmp_path = tmp_file.name
+        
+        try:
+            # Save the image to temp file
+            self.save(tmp_path)
+            
+            # Open with platform-specific viewer
+            if sys.platform.startswith('win'):
+                # Windows
+                os.startfile(tmp_path)
+            elif sys.platform == 'darwin':
+                # macOS
+                subprocess.run(['open', tmp_path], check=True)
+            else:
+                # Linux and others
+                subprocess.run(['xdg-open', tmp_path], check=True)
+                
+            # Note: We don't delete the temp file immediately as the viewer might not have
+            # opened it yet. The OS will clean it up eventually from the temp directory.
+            
+        except Exception as e:
+            # Clean up on error
+            try:
+                os.unlink(tmp_path)
+            except:
+                pass
+            raise RuntimeError(f"Failed to show image: {e}") from e
 
     def to_bytes(self) -> bytes:
         """Convert image to bytes."""
