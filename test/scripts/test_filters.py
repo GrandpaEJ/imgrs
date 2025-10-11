@@ -75,4 +75,3 @@ print("   ✅ Multiple filters chained")
 print("\n" + "=" * 60)
 print("✅ All filter operations working!")
 print("=" * 60)
-

@@ -34,7 +34,7 @@ canvas = canvas.add_text_styled(
     size=72,
     color=(255, 215, 0, 255),
     outline=(255, 140, 0, 255, 4.0),
-    shadow=(5, 5, 0, 0, 0, 200)
+    shadow=(5, 5, 0, 0, 0, 200),
 )
 canvas.save("test/advanced_03_text_styled.png")
 print("   ✅ add_text_styled() - Not in Pillow")
@@ -99,4 +99,3 @@ print("  • Drop shadows and glow")
 print("  • EXIF metadata reading")
 print("  • Much faster performance (Rust)")
 print("=" * 60)
-

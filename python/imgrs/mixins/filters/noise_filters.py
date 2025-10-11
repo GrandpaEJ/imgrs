@@ -15,4 +15,3 @@ class NoiseFiltersMixin:
     def denoise(self, radius: int) -> "Image":
         """Apply denoising filter."""
         return self.__class__(self._rust_image.denoise(radius))
-

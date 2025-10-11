@@ -27,4 +27,3 @@ class StylisticFiltersMixin:
     def solarize(self, threshold: int) -> "Image":
         """Apply solarize effect."""
         return self.__class__(self._rust_image.solarize(threshold))
-

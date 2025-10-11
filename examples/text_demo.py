@@ -3,15 +3,16 @@ Comprehensive demo of rich text rendering features
 Demonstrates all text capabilities with various styles
 """
 
-import imgrs
 import os
+
+import imgrs
 
 # Create output directory
 os.makedirs("examples/output/text_demo", exist_ok=True)
 
-print("="*70)
+print("=" * 70)
 print("🎨 RICH TEXT RENDERING DEMO")
-print("="*70)
+print("=" * 70)
 print()
 
 # Create a clean canvas
@@ -37,14 +38,14 @@ img2 = img2.add_text_styled(
     (100, 50),
     size=80,
     color=(255, 255, 255, 255),
-    outline=(0, 0, 0, 255, 3.0)
+    outline=(0, 0, 0, 255, 3.0),
 )
 img2 = img2.add_text_styled(
     "Colored Outline",
     (100, 180),
     size=64,
     color=(255, 255, 0, 255),
-    outline=(255, 0, 0, 255, 2.0)
+    outline=(255, 0, 0, 255, 2.0),
 )
 img2.save("examples/output/text_demo/02_outline.png")
 print("   ✅ Text with outlines")
@@ -59,14 +60,14 @@ img3 = img3.add_text_styled(
     (100, 50),
     size=72,
     color=(0, 0, 0, 255),
-    shadow=(3, 3, 100, 100, 100, 180)
+    shadow=(3, 3, 100, 100, 100, 180),
 )
 img3 = img3.add_text_styled(
     "Colorful Shadow",
     (100, 180),
     size=60,
     color=(255, 100, 0, 255),
-    shadow=(5, 5, 0, 100, 255, 200)
+    shadow=(5, 5, 0, 100, 255, 200),
 )
 img3.save("examples/output/text_demo/03_shadow.png")
 print("   ✅ Text with shadows")
@@ -81,14 +82,14 @@ img4 = img4.add_text_styled(
     (50, 50),
     size=48,
     color=(255, 255, 255, 255),
-    background=(0, 0, 0, 180)
+    background=(0, 0, 0, 180),
 )
 img4 = img4.add_text_styled(
     "Colored BG",
     (50, 120),
     size=40,
     color=(255, 255, 255, 255),
-    background=(0, 128, 255, 200)
+    background=(0, 128, 255, 200),
 )
 img4.save("examples/output/text_demo/04_background.png")
 print("   ✅ Text with backgrounds")
@@ -99,9 +100,15 @@ print("   ✅ Text with backgrounds")
 print("5. Text Alignment")
 img5 = imgrs.Image.new("RGBA", (600, 400), (255, 255, 255, 255))
 
-img5 = img5.add_text_styled("Left Aligned", (50, 50), size=36, color=(0, 0, 0, 255), align="left")
-img5 = img5.add_text_styled("Center Aligned", (300, 120), size=36, color=(0, 0, 0, 255), align="center")
-img5 = img5.add_text_styled("Right Aligned", (550, 190), size=36, color=(0, 0, 0, 255), align="right")
+img5 = img5.add_text_styled(
+    "Left Aligned", (50, 50), size=36, color=(0, 0, 0, 255), align="left"
+)
+img5 = img5.add_text_styled(
+    "Center Aligned", (300, 120), size=36, color=(0, 0, 0, 255), align="center"
+)
+img5 = img5.add_text_styled(
+    "Right Aligned", (550, 190), size=36, color=(0, 0, 0, 255), align="right"
+)
 img5.save("examples/output/text_demo/05_alignment.png")
 print("   ✅ Text alignment (left, center, right)")
 
@@ -126,11 +133,7 @@ Line 3: Third Line
 Line 4: Fourth Line"""
 
 img7 = img7.add_text_multiline(
-    multiline_text,
-    (50, 50),
-    size=32,
-    color=(0, 0, 0, 255),
-    line_spacing=1.5
+    multiline_text, (50, 50), size=32, color=(0, 0, 0, 255), line_spacing=1.5
 )
 img7.save("examples/output/text_demo/07_multiline.png")
 print("   ✅ Multi-line text")
@@ -140,9 +143,15 @@ print("   ✅ Multi-line text")
 # =============================================================================
 print("8. Text Opacity")
 img8 = imgrs.Image.open("examples/img/gradient.png")
-img8 = img8.add_text_styled("Opacity 1.0", (50, 30), size=48, color=(255, 255, 255, 255), opacity=1.0)
-img8 = img8.add_text_styled("Opacity 0.7", (50, 90), size=48, color=(255, 255, 255, 255), opacity=0.7)
-img8 = img8.add_text_styled("Opacity 0.4", (50, 150), size=48, color=(255, 255, 255, 255), opacity=0.4)
+img8 = img8.add_text_styled(
+    "Opacity 1.0", (50, 30), size=48, color=(255, 255, 255, 255), opacity=1.0
+)
+img8 = img8.add_text_styled(
+    "Opacity 0.7", (50, 90), size=48, color=(255, 255, 255, 255), opacity=0.7
+)
+img8 = img8.add_text_styled(
+    "Opacity 0.4", (50, 150), size=48, color=(255, 255, 255, 255), opacity=0.4
+)
 img8.save("examples/output/text_demo/08_opacity.png")
 print("   ✅ Text with varying opacity")
 
@@ -158,7 +167,7 @@ img9 = img9.add_text_styled(
     color=(255, 215, 0, 255),  # Gold
     outline=(255, 140, 0, 255, 4.0),  # Dark orange outline
     shadow=(5, 5, 0, 0, 0, 200),  # Black shadow
-    align="center"
+    align="center",
 )
 img9.save("examples/output/text_demo/09_combined.png")
 print("   ✅ Combined effects (outline + shadow)")
@@ -176,7 +185,7 @@ meme = meme.add_text_styled(
     size=56,
     color=(255, 255, 255, 255),
     outline=(0, 0, 0, 255, 3.0),
-    align="center"
+    align="center",
 )
 meme = meme.add_text_styled(
     "BOTTOM TEXT",
@@ -184,7 +193,7 @@ meme = meme.add_text_styled(
     size=56,
     color=(255, 255, 255, 255),
     outline=(0, 0, 0, 255, 3.0),
-    align="center"
+    align="center",
 )
 meme.save("examples/output/text_demo/10_meme_style.png")
 print("   ✅ Meme-style text")
@@ -198,14 +207,10 @@ quote_bg = quote_bg.add_text_multiline(
     size=36,
     color=(230, 230, 230, 255),
     line_spacing=1.4,
-    align="center"
+    align="center",
 )
 quote_bg = quote_bg.add_text_styled(
-    "- Steve Jobs",
-    (300, 320),
-    size=24,
-    color=(180, 180, 180, 255),
-    align="center"
+    "- Steve Jobs", (300, 320), size=24, color=(180, 180, 180, 255), align="center"
 )
 quote_bg.save("examples/output/text_demo/11_quote.png")
 print("   ✅ Quote-style layout")
@@ -218,7 +223,7 @@ banner = banner.add_text_styled(
     size=64,
     color=(255, 255, 255, 255),
     align="center",
-    shadow=(3, 3, 0, 0, 0, 150)
+    shadow=(3, 3, 0, 0, 0, 150),
 )
 banner = banner.add_text_styled(
     "50% OFF",
@@ -226,15 +231,15 @@ banner = banner.add_text_styled(
     size=48,
     color=(255, 255, 0, 255),
     align="center",
-    outline=(255, 140, 0, 255, 2.0)
+    outline=(255, 140, 0, 255, 2.0),
 )
 banner.save("examples/output/text_demo/12_banner.png")
 print("   ✅ Banner-style design")
 
 print()
-print("="*70)
+print("=" * 70)
 print("✨ TEXT RENDERING DEMO COMPLETE!")
-print("="*70)
+print("=" * 70)
 print()
 print("Features Demonstrated:")
 print("  ✅ Basic text rendering")
@@ -250,5 +255,4 @@ print("  ✅ Combined effects")
 print("  ✅ Real-world examples (memes, quotes, banners)")
 print()
 print(f"📁 Output: examples/output/text_demo/ ({12} files)")
-print("="*70)
-
+print("=" * 70)

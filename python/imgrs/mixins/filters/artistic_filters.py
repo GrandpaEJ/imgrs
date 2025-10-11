@@ -23,4 +23,3 @@ class ArtisticFiltersMixin:
     def glitch(self, intensity: float) -> "Image":
         """Apply glitch effect."""
         return self.__class__(self._rust_image.glitch(intensity))
-

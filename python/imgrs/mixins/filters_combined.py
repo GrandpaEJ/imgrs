@@ -4,17 +4,17 @@ This replaces the old monolithic filter_mixin.py
 """
 
 from .filters import (
+    ArtisticFiltersMixin,
+    AutoEnhanceFiltersMixin,
     BasicFiltersMixin,
     BlurFiltersMixin,
-    EdgeFiltersMixin,
-    SharpenFiltersMixin,
-    StylisticFiltersMixin,
-    NoiseFiltersMixin,
-    MorphologicalFiltersMixin,
-    ArtisticFiltersMixin,
     ColorFiltersMixin,
     CSSFiltersMixin,
-    AutoEnhanceFiltersMixin,
+    EdgeFiltersMixin,
+    MorphologicalFiltersMixin,
+    NoiseFiltersMixin,
+    SharpenFiltersMixin,
+    StylisticFiltersMixin,
 )
 
 
@@ -33,7 +33,7 @@ class FilterMixin(
 ):
     """
     Combined filter mixin providing all filter operations.
-    
+
     Organized into 11 categories:
     - BasicFiltersMixin: blur, sharpen, edge_detect, emboss, brightness, contrast
     - BlurFiltersMixin: box_blur, motion_blur, median_blur, bilateral_blur, radial_blur, zoom_blur
@@ -47,5 +47,5 @@ class FilterMixin(
     - CSSFiltersMixin: sepia, grayscale_filter, invert, hue_rotate, saturate
     - AutoEnhanceFiltersMixin: histogram_equalization, auto_contrast, auto_enhance, exposure_adjust, etc.
     """
-    pass  # All functionality from component mixins
 
+    pass  # All functionality from component mixins

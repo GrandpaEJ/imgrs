@@ -6,8 +6,9 @@ Demonstrates the new img.show() feature that displays images
 in the default system viewer.
 """
 
-import imgrs
 import time
+
+import imgrs
 
 print("🖼️  Imgrs .show() Method Demo")
 print("=" * 60)
@@ -66,4 +67,3 @@ print("   - Works on Windows, macOS, and Linux")
 print("   - Requires GUI environment")
 print("   - Uses system's default image viewer")
 print("=" * 60)
-

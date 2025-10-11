@@ -29,4 +29,3 @@ class EdgeFiltersMixin:
         return self.__class__(
             self._rust_image.canny_edge_detect(low_threshold, high_threshold)
         )
-

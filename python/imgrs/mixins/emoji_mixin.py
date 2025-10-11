@@ -75,13 +75,9 @@ class EmojiMixin:
         Returns:
             New Image instance with emoji added
         """
-        return self.__class__(
-            self._rust_image.add_emoji_quick(emoji_name, x, y, size)
-        )
+        return self.__class__(self._rust_image.add_emoji_quick(emoji_name, x, y, size))
 
-    def add_emojis(
-        self, emojis: List[Tuple[str, int, int, int, float]]
-    ) -> "Image":
+    def add_emojis(self, emojis: List[Tuple[str, int, int, int, float]]) -> "Image":
         """
         Add multiple emojis at once.
 
@@ -99,4 +95,3 @@ class EmojiMixin:
             ])
         """
         return self.__class__(self._rust_image.add_emojis(emojis))
-

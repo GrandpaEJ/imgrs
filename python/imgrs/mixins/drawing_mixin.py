@@ -77,9 +77,7 @@ class DrawingMixin:
         Returns:
             New Image instance with line drawn
         """
-        return self.__class__(
-            self._rust_image.draw_line(x0, y0, x1, y1, color)
-        )
+        return self.__class__(self._rust_image.draw_line(x0, y0, x1, y1, color))
 
     def draw_text(
         self,
@@ -102,7 +100,4 @@ class DrawingMixin:
         Returns:
             New Image instance with text drawn
         """
-        return self.__class__(
-            self._rust_image.draw_text(text, x, y, color, scale)
-        )
-
+        return self.__class__(self._rust_image.draw_text(text, x, y, color, scale))

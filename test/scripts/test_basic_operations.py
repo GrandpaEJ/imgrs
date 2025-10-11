@@ -79,4 +79,3 @@ print(f"   ✅ Pasted blue square on white canvas")
 print("\n" + "=" * 60)
 print("✅ All basic Pillow operations working with imgrs!")
 print("=" * 60)
-

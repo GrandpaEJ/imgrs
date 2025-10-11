@@ -23,4 +23,3 @@ class MorphologicalFiltersMixin:
     def morphological_gradient(self, radius: int) -> "Image":
         """Apply morphological gradient."""
         return self.__class__(self._rust_image.morphological_gradient(radius))
-

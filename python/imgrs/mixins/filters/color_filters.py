@@ -19,4 +19,3 @@ class ColorFiltersMixin:
     def chromatic_aberration(self, strength: float) -> "Image":
         """Apply chromatic aberration effect."""
         return self.__class__(self._rust_image.chromatic_aberration(strength))
-

@@ -27,4 +27,3 @@ class BasicFiltersMixin:
     def contrast(self, factor: float) -> "Image":
         """Adjust image contrast."""
         return self.__class__(self._rust_image.contrast(factor))
-

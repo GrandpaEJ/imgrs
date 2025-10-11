@@ -4,11 +4,11 @@ Simplified Image class using mixins for better maintainability
 
 from .mixins import (
     CoreMixin,
-    TransformMixin,
-    FilterMixin,
-    PixelMixin,
     DrawingMixin,
     EffectsMixin,
+    FilterMixin,
+    PixelMixin,
+    TransformMixin,
 )
 
 
@@ -36,4 +36,3 @@ class Image(
     """
 
     pass  # All functionality is provided by mixins
-

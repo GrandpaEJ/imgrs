@@ -9,16 +9,17 @@ Demonstrates automatic image enhancement features:
 - Auto-Enhance (Combined optimization)
 """
 
-import imgrs
 import os
+
+import imgrs
 
 # Create output directory
 output_dir = "examples/output/auto_enhance"
 os.makedirs(output_dir, exist_ok=True)
 
-print("="*70)
+print("=" * 70)
 print("🎨 AUTO-ENHANCEMENT DEMO - Automatic Image Optimization")
-print("="*70)
+print("=" * 70)
 print()
 
 # Load test image
@@ -200,9 +201,9 @@ print()
 # ========================================================================
 # SUMMARY
 # ========================================================================
-print("="*70)
+print("=" * 70)
 print("✨ AUTO-ENHANCEMENT DEMO COMPLETE! ✨")
-print("="*70)
+print("=" * 70)
 print()
 print(f"Created 17 demo images in: {output_dir}/")
 print()
@@ -228,5 +229,4 @@ print("  # Smart enhancement")
 print("  img.smart_enhance(0.7).save('smart.jpg')")
 print()
 print("🚀 All features use high-performance Rust implementation!")
-print("="*70)
-
+print("=" * 70)

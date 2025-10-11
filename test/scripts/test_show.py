@@ -2,8 +2,9 @@
 Test script for img.show() method
 """
 
-import imgrs
 import sys
+
+import imgrs
 
 print("Testing img.show() method...")
 print("=" * 50)
@@ -25,16 +26,15 @@ try:
     print("✅ img.show() executed successfully!")
     print("   Image should have opened in your default viewer")
     print(f"   Platform: {sys.platform}")
-    
+
 except RuntimeError as e:
     print(f"❌ Error: {e}")
     print("   This is expected if running in a non-GUI environment")
     print("   (e.g., SSH session, Docker container, CI/CD)")
-    
+
 except Exception as e:
     print(f"❌ Unexpected error: {e}")
     sys.exit(1)
 
 print("\n" + "=" * 50)
 print("✅ Test complete!")
-

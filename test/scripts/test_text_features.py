@@ -25,7 +25,7 @@ canvas = canvas.add_text_styled(
     size=56,
     color=(255, 255, 255, 255),
     outline=(0, 0, 0, 255, 3.0),
-    shadow=(3, 3, 100, 100, 100, 180)
+    shadow=(3, 3, 100, 100, 100, 180),
 )
 canvas.save("test/text_02_styled.png")
 print("   ✅ Text with outline and shadow")
@@ -42,8 +42,9 @@ print(f"   ✅ Text centered using textbox ({w}x{h})")
 # 4. Multi-line text
 print("\n4. Multi-line Text")
 multiline = "Line 1\nLine 2\nLine 3"
-canvas = canvas.add_text_multiline(multiline, (50, 350), size=32, 
-                                   color=(128, 0, 128, 255), line_spacing=1.5)
+canvas = canvas.add_text_multiline(
+    multiline, (50, 350), size=32, color=(128, 0, 128, 255), line_spacing=1.5
+)
 canvas.save("test/text_04_multiline.png")
 print("   ✅ Multi-line text rendered")
 
@@ -54,7 +55,7 @@ canvas = canvas.add_text_styled(
     (50, 500),
     size=40,
     color=(255, 255, 255, 255),
-    background=(0, 128, 255, 200)
+    background=(0, 128, 255, 200),
 )
 canvas.save("test/text_05_background.png")
 print("   ✅ Text with background")
@@ -67,4 +68,3 @@ print("✅ All text features working!")
 print("   (Note: Pillow requires ImageDraw import)")
 print("   (imgrs has text built-in - easier to use!)")
 print("=" * 60)
-

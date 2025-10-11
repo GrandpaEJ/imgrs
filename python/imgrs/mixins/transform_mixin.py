@@ -8,9 +8,7 @@ from typing import Optional, Tuple, Union
 class TransformMixin:
     """Mixin for image transformation operations"""
 
-    def resize(
-        self, size: Tuple[int, int], resample: Optional[str] = None
-    ) -> "Image":
+    def resize(self, size: Tuple[int, int], resample: Optional[str] = None) -> "Image":
         """
         Resize the image to the specified size.
 
@@ -163,4 +161,3 @@ class TransformMixin:
         rust_mask = mask._rust_image if mask is not None else None
         rust_image = self._rust_image.paste(im._rust_image, position, rust_mask)
         return self.__class__(rust_image)
-

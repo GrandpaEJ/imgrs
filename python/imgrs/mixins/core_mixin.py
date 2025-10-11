@@ -2,15 +2,16 @@
 Core image operations mixin - I/O, constructors, properties
 """
 
+import os
+import subprocess
+import sys
+import tempfile
 from pathlib import Path
 from typing import Any, Optional, Tuple, Union
-import tempfile
-import os
-import sys
-import subprocess
 
 try:
     import numpy as np
+
     HAS_NUMPY = True
 except ImportError:
     np = None
@@ -23,7 +24,7 @@ class CoreMixin:
     def __init__(self, rust_image=None):
         """Initialize an Image instance."""
         from .._core import Image as RustImage
-        
+
         if RustImage is None:
             raise ImportError(
                 "Imgrs Rust extension not available. "
@@ -53,7 +54,7 @@ class CoreMixin:
             Image instance
         """
         from .._core import Image as RustImage
-        
+
         if isinstance(fp, Path):
             fp = str(fp)
 
@@ -79,7 +80,7 @@ class CoreMixin:
             New Image instance
         """
         from .._core import Image as RustImage
-        
+
         # Convert color to RGBA tuple
         rgba_color = cls._parse_color(color, mode)
 
@@ -103,7 +104,7 @@ class CoreMixin:
             Image instance
         """
         from .._core import Image as RustImage
-        
+
         if not HAS_NUMPY:
             raise ImportError(
                 "NumPy is required for fromarray. Install with: pip install numpy\n"
@@ -115,9 +116,7 @@ class CoreMixin:
 
         # Validate array
         if obj.ndim not in (2, 3):
-            raise ValueError(
-                f"Expected 2D or 3D array, got {obj.ndim}D array"
-            )
+            raise ValueError(f"Expected 2D or 3D array, got {obj.ndim}D array")
 
         # Convert to contiguous array if needed
         if not obj.flags["C_CONTIGUOUS"]:
@@ -135,7 +134,7 @@ class CoreMixin:
     ) -> "Image":
         """
         Create an image from raw bytes (NumPy-free!).
-        
+
         Mobile-friendly alternative to fromarray() - works without NumPy.
 
         Args:
@@ -153,11 +152,11 @@ class CoreMixin:
             # Create 2x2 red RGB image
             data = bytes([255,0,0, 255,0,0, 255,0,0, 255,0,0])
             img = Image.frombytes('RGB', (2, 2), data)
-            
+
             # Works on mobile without NumPy!
         """
         from .._core import Image as RustImage
-        
+
         rust_image = RustImage.frombytes(mode, size, data)
         return cls(rust_image)
 
@@ -218,18 +217,18 @@ class CoreMixin:
     def show(self, title: Optional[str] = None) -> None:
         """
         Display the image using the default image viewer.
-        
+
         This method saves the image to a temporary file and opens it with the
         system's default image viewer. The temporary file is deleted after viewing.
-        
+
         Args:
             title: Optional title for the image window (may not be supported on all platforms)
-            
+
         Example:
             >>> img = imgrs.Image.open("photo.jpg")
             >>> img = img.blur(5)
             >>> img.show()  # Opens in default image viewer
-            
+
         Note:
             - On Windows: Uses default photo viewer
             - On macOS: Uses Preview or default app
@@ -240,25 +239,25 @@ class CoreMixin:
         suffix = ".png"  # PNG for best compatibility
         with tempfile.NamedTemporaryFile(suffix=suffix, delete=False) as tmp_file:
             tmp_path = tmp_file.name
-        
+
         try:
             # Save the image to temp file
             self.save(tmp_path)
-            
+
             # Open with platform-specific viewer
-            if sys.platform.startswith('win'):
+            if sys.platform.startswith("win"):
                 # Windows
                 os.startfile(tmp_path)
-            elif sys.platform == 'darwin':
+            elif sys.platform == "darwin":
                 # macOS
-                subprocess.run(['open', tmp_path], check=True)
+                subprocess.run(["open", tmp_path], check=True)
             else:
                 # Linux and others
-                subprocess.run(['xdg-open', tmp_path], check=True)
-                
+                subprocess.run(["xdg-open", tmp_path], check=True)
+
             # Note: We don't delete the temp file immediately as the viewer might not have
             # opened it yet. The OS will clean it up eventually from the temp directory.
-            
+
         except Exception as e:
             # Clean up on error
             try:

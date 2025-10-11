@@ -5,6 +5,7 @@ Shows imgrs as a drop-in replacement
 
 # This is the ONLY line you need to change from Pillow!
 from imgrs import Image
+
 # Instead of: from PIL import Image
 
 print("Pillow Compatibility Test")
@@ -95,4 +96,3 @@ print("  Change: from PIL import Image")
 print("  To:     from imgrs import Image")
 print("\nThat's it! Your code works unchanged.")
 print("=" * 60)
-

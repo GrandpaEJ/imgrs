@@ -21,9 +21,7 @@ class PixelMixin:
         """
         return self._rust_image.getpixel(x, y)
 
-    def putpixel(
-        self, x: int, y: int, color: Tuple[int, int, int, int]
-    ) -> "Image":
+    def putpixel(self, x: int, y: int, color: Tuple[int, int, int, int]) -> "Image":
         """
         Set pixel value at coordinates.
 
@@ -82,9 +80,7 @@ class PixelMixin:
             New Image instance with replaced colors
         """
         return self.__class__(
-            self._rust_image.replace_color(
-                target_color, replacement_color, tolerance
-            )
+            self._rust_image.replace_color(target_color, replacement_color, tolerance)
         )
 
     def threshold(self, threshold_value: int) -> "Image":
@@ -110,4 +106,3 @@ class PixelMixin:
             New posterized Image instance
         """
         return self.__class__(self._rust_image.posterize(levels))
-

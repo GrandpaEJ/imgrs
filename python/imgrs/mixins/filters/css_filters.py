@@ -23,4 +23,3 @@ class CSSFiltersMixin:
     def saturate(self, amount: float = 1.0) -> "Image":
         """Apply saturation filter."""
         return self.__class__(self._rust_image.saturate(amount))
-

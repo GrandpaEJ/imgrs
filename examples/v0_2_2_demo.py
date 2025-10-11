@@ -7,8 +7,9 @@ Showcases new features:
 2. New shape drawing (star, triangle, polygon, ellipse, regular polygons)
 """
 
-import imgrs
 import os
+
+import imgrs
 
 # Create output directory
 output_dir = "output/v0_2_2_demo"
@@ -82,7 +83,7 @@ img = imgrs.Image.new("RGB", (500, 400), (250, 250, 255))
 
 # Irregular polygon (arrow shape)
 arrow_points = [
-    (250, 50),   # Top
+    (250, 50),  # Top
     (350, 150),  # Right mid
     (300, 150),  # Inner right
     (300, 300),  # Bottom right
@@ -104,10 +105,10 @@ img = imgrs.Image.new("RGB", (500, 400), (255, 255, 255))
 
 # Various ellipses
 ellipses = [
-    (150, 100, 120, 60, (255, 0, 0, 200)),      # Horizontal red
-    (350, 100, 60, 90, (0, 255, 0, 200)),       # Vertical green
-    (150, 280, 100, 80, (0, 0, 255, 200)),      # Blue
-    (350, 280, 80, 80, (255, 200, 0, 200)),     # Circle (equal radii)
+    (150, 100, 120, 60, (255, 0, 0, 200)),  # Horizontal red
+    (350, 100, 60, 90, (0, 255, 0, 200)),  # Vertical green
+    (150, 280, 100, 80, (0, 0, 255, 200)),  # Blue
+    (350, 280, 80, 80, (255, 200, 0, 200)),  # Circle (equal radii)
 ]
 
 for x, y, rx, ry, color in ellipses:
@@ -151,6 +152,7 @@ img = imgrs.Image.new("RGB", (800, 600), (20, 20, 30))
 
 # Background stars
 import random
+
 random.seed(42)
 for _ in range(20):
     x = random.randint(50, 750)
@@ -172,7 +174,9 @@ colors = [
 for i, (sides, color) in enumerate(zip(range(3, 9), colors)):
     radius = 200 - i * 25
     rotation = i * 15.0
-    img = img.draw_regular_polygon(center_x, center_y, radius, sides, color, rotation=rotation)
+    img = img.draw_regular_polygon(
+        center_x, center_y, radius, sides, color, rotation=rotation
+    )
 
 # Add title with rotation
 title_img = imgrs.Image.new("RGBA", (300, 80), (0, 0, 0, 0))
@@ -219,4 +223,3 @@ print("   4. Custom polygon drawing")
 print("   5. Ellipse drawing")
 print("   6. Regular polygons (pentagon, hexagon, etc.)")
 print("\n🚀 All features working perfectly!")
-

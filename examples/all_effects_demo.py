@@ -3,8 +3,9 @@ Comprehensive Demo of 50+ Image Effects in imgrs
 Showcases all advanced filters, kernels, and convolution operations
 """
 
-import imgrs
 import os
+
+import imgrs
 
 # Create output directory
 output_dir = "examples/output/all_effects"
@@ -17,9 +18,9 @@ print(f"Image loaded: {img.width}x{img.height}")
 
 effects_count = 0
 
-print("\n" + "="*70)
+print("\n" + "=" * 70)
 print("COMPREHENSIVE EFFECTS DEMO - 50+ Image Processing Operations")
-print("="*70)
+print("=" * 70)
 
 # ============================================================================
 # BLUR EFFECTS (7 effects)
@@ -294,16 +295,18 @@ img.blur(2.0).saturate(1.5).brightness(10).save(f"{output_dir}/54_dream.png")
 effects_count += 1
 
 print("55. Dramatic B&W (Contrast + Edge Enhance)...")
-img.convert("L").contrast(1.8).edge_enhance(0.5).save(f"{output_dir}/55_dramatic_bw.png")
+img.convert("L").contrast(1.8).edge_enhance(0.5).save(
+    f"{output_dir}/55_dramatic_bw.png"
+)
 effects_count += 1
 
 # ============================================================================
 # SUMMARY
 # ============================================================================
-print("\n" + "="*70)
+print("\n" + "=" * 70)
 print(f"✓ Successfully applied {effects_count} different effects!")
 print(f"✓ All results saved to: {output_dir}/")
-print("="*70)
+print("=" * 70)
 
 print("\n### EFFECTS CATEGORIES ###")
 print(f"  • Blur Effects: 8")
@@ -329,7 +332,6 @@ print("  • Emboss kernels (N, S, E, W directions)")
 print("  • High-pass, Low-pass, Band-pass filters")
 print("  • Edge enhancement, Ridge detection, and more!")
 
-print("\n" + "="*70)
+print("\n" + "=" * 70)
 print("Demo completed successfully!")
-print("="*70 + "\n")
-
+print("=" * 70 + "\n")

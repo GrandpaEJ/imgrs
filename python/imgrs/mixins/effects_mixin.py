@@ -28,9 +28,7 @@ class EffectsMixin:
             New Image instance with drop shadow
         """
         return self.__class__(
-            self._rust_image.drop_shadow(
-                offset_x, offset_y, blur_radius, shadow_color
-            )
+            self._rust_image.drop_shadow(offset_x, offset_y, blur_radius, shadow_color)
         )
 
     def inner_shadow(
@@ -53,9 +51,7 @@ class EffectsMixin:
             New Image instance with inner shadow
         """
         return self.__class__(
-            self._rust_image.inner_shadow(
-                offset_x, offset_y, blur_radius, shadow_color
-            )
+            self._rust_image.inner_shadow(offset_x, offset_y, blur_radius, shadow_color)
         )
 
     def glow(
@@ -75,7 +71,4 @@ class EffectsMixin:
         Returns:
             New Image instance with glow effect
         """
-        return self.__class__(
-            self._rust_image.glow(blur_radius, glow_color, intensity)
-        )
-
+        return self.__class__(self._rust_image.glow(blur_radius, glow_color, intensity))

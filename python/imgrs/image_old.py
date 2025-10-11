@@ -491,7 +491,9 @@ class Image:
         """Apply median blur filter."""
         return Image(self._rust_image.median_blur(radius))
 
-    def bilateral_blur(self, radius: int, sigma_color: float, sigma_space: float) -> "Image":
+    def bilateral_blur(
+        self, radius: int, sigma_color: float, sigma_space: float
+    ) -> "Image":
         """Apply bilateral blur filter."""
         return Image(self._rust_image.bilateral_blur(radius, sigma_color, sigma_space))
 
@@ -626,7 +628,9 @@ class Image:
         return Image(self._rust_image.glitch(intensity))
 
     # Color Effects
-    def duotone(self, shadow: Tuple[int, int, int], highlight: Tuple[int, int, int]) -> "Image":
+    def duotone(
+        self, shadow: Tuple[int, int, int], highlight: Tuple[int, int, int]
+    ) -> "Image":
         """Apply duotone effect."""
         return Image(self._rust_image.duotone(shadow, highlight))
 

@@ -31,4 +31,3 @@ class BlurFiltersMixin:
     def zoom_blur(self, strength: float) -> "Image":
         """Apply zoom blur effect."""
         return self.__class__(self._rust_image.zoom_blur(strength))
-
