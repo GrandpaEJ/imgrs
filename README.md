@@ -51,6 +51,9 @@ rotated = img.rotate(90)
 # Save image
 img.save("output.png")
 
+# to preview
+img.show()
+
 # Create new image
 new_img = imgrs.new("RGB", (800, 600), "red")
 
@@ -218,6 +221,7 @@ img.thumbnail((200, 200))
 # Save image
 img.save("output.jpg", format="JPEG")
 img.save("output.png")  # Format auto-detected from extension
+img.show() # to preview 
 ```
 
 ### Properties
