@@ -87,16 +87,45 @@ impl PyImage {
         
         Python::with_gil(|py| {
             py.allow_threads(|| {
+                // Fast paths for 90-degree increments
                 let rotated = if (angle - 90.0).abs() < f64::EPSILON {
                     image.rotate90()
                 } else if (angle - 180.0).abs() < f64::EPSILON {
                     image.rotate180()
                 } else if (angle - 270.0).abs() < f64::EPSILON {
                     image.rotate270()
+                } else if angle.abs() < f64::EPSILON {
+                    // 0 degrees, return as is
+                    image.clone()
                 } else {
-                    return Err(ImgrsError::InvalidOperation(
-                        "Only 90, 180, 270 degree rotations supported".to_string()
-                    ).into());
+                    // Arbitrary angle rotation using bilinear interpolation
+                    use imageproc::geometric_transformations::{rotate_about_center, Interpolation};
+                    use image::Rgba;
+                    
+                    // Convert to RGBA for rotation
+                    let rgba_img = image.to_rgba8();
+                    
+                    // Convert angle to radians (imageproc expects radians)
+                    let radians = angle.to_radians() as f32;
+                    
+                    // Background color (transparent or black)
+                    let background = Rgba([0u8, 0u8, 0u8, 0u8]);
+                    
+                    // Rotate with bilinear interpolation for smooth results
+                    let rotated_rgba = rotate_about_center(
+                        &rgba_img,
+                        radians,
+                        Interpolation::Bilinear,
+                        background,
+                    );
+                    
+                    // Convert back to original format if needed
+                    match image {
+                        DynamicImage::ImageRgb8(_) => DynamicImage::ImageRgb8(
+                            DynamicImage::ImageRgba8(rotated_rgba).to_rgb8()
+                        ),
+                        _ => DynamicImage::ImageRgba8(rotated_rgba),
+                    }
                 };
                 Ok(PyImage {
                     lazy_image: LazyImage::Loaded(rotated),

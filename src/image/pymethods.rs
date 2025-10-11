@@ -549,6 +549,27 @@ impl PyImage {
         self.draw_line_impl(x0, y0, x1, y1, color)
     }
 
+    fn draw_star(&mut self, center_x: i32, center_y: i32, outer_radius: u32, inner_radius: u32, points: u32, color: (u8, u8, u8, u8)) -> PyResult<Self> {
+        self.draw_star_impl(center_x, center_y, outer_radius, inner_radius, points, color)
+    }
+
+    fn draw_triangle(&mut self, x1: i32, y1: i32, x2: i32, y2: i32, x3: i32, y3: i32, color: (u8, u8, u8, u8)) -> PyResult<Self> {
+        self.draw_triangle_impl(x1, y1, x2, y2, x3, y3, color)
+    }
+
+    fn draw_polygon(&mut self, points: Vec<(i32, i32)>, color: (u8, u8, u8, u8)) -> PyResult<Self> {
+        self.draw_polygon_impl(points, color)
+    }
+
+    fn draw_ellipse(&mut self, center_x: i32, center_y: i32, radius_x: u32, radius_y: u32, color: (u8, u8, u8, u8)) -> PyResult<Self> {
+        self.draw_ellipse_impl(center_x, center_y, radius_x, radius_y, color)
+    }
+
+    #[pyo3(signature = (center_x, center_y, radius, sides, color, rotation=0.0))]
+    fn draw_regular_polygon(&mut self, center_x: i32, center_y: i32, radius: u32, sides: u32, color: (u8, u8, u8, u8), rotation: f32) -> PyResult<Self> {
+        self.draw_regular_polygon_impl(center_x, center_y, radius, sides, rotation, color)
+    }
+
     fn draw_text(&mut self, text: &str, x: i32, y: i32, color: (u8, u8, u8, u8), scale: u32) -> PyResult<Self> {
         self.draw_text_impl(text, x, y, color, scale)
     }
