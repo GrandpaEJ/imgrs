@@ -3,11 +3,6 @@ name: Test Installation (No Rust Required)
 # Test that users can install without Rust
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths:
-      - 'python/**'
-      - 'pyproject.toml'
 
 jobs:
   test-install-from-pypi:
