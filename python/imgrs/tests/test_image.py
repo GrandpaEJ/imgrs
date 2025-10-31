@@ -475,7 +475,7 @@ class TestNewFeaturesErrorHandling:
         # This test would need to be run in an environment without numpy
         # For now, we'll just test the error message structure
         if not HAS_NUMPY:
-            with pytest.raises(ImportError, match="numpy is required"):
+            with pytest.raises(ImportError, match="NumPy is required"):
                 Image.fromarray([1, 2, 3])
 
 
