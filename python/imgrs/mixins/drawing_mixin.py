@@ -2,7 +2,7 @@
 Drawing operations mixin - shapes and text
 """
 
-from typing import Tuple, TYPE_CHECKING
+from typing import TYPE_CHECKING, Tuple
 
 if TYPE_CHECKING:
     from .image import Image

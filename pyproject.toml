@@ -92,3 +92,8 @@ force_grid_wrap = 0
 use_parentheses = true
 line_length = 88
 skip_glob = ["target/*", "benchmark_env/*", ".venv/*", "venv/*"]
+
+[dependency-groups]
+dev = [
+    "isort>=5.13.2",
+]
