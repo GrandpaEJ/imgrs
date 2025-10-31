@@ -1,130 +1,163 @@
-name: Publish To PyPI
+# CI Pipeline for IMGRS - Python image package with Rust powered cored by Maturin
+name: BUILD
 
 on:
   workflow_dispatch:
-  push:
-    tags:
-      - "v*"
-  release:
-    types: [published]
-
-env:
-  PYTHON_VERSION: "3.12"
-
-defaults:
-  run:
-    shell: bash
 
 jobs:
-  build:
-    name: Build wheels (${{ matrix.os }} - ${{ matrix.target }})
+  test:
+    name: Test on ${{ matrix.os }} with Python ${{ matrix.python-version }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        include:
-          # Linux
-          - os: ubuntu-latest
-            target: x86_64
-          - os: ubuntu-latest
-            target: aarch64
-          # Windows
-          - os: windows-latest
-            target: x64
-          - os: windows-latest
-            target: x86
-          # macOS
-          - os: macos-latest
-            target: x86_64
-          - os: macos-latest
-            target: aarch64
-          # Android
-          - os: ubuntu-latest
-            target: aarch64-linux-android
-          - os: ubuntu-latest
-            target: armv7-linux-androideabi
-          - os: ubuntu-latest
-            target: i686-linux-android
-          - os: ubuntu-latest
-            target: x86_64-linux-android
-          # iOS
-          - os: macos-latest
-            target: aarch64-apple-ios
-          - os: macos-latest
-            target: aarch64-apple-ios-sim
-          - os: macos-latest
-            target: x86_64-apple-ios
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-python@v5
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
         with:
-          python-version: ${{ env.PYTHON_VERSION }}
+          python-version: ${{ matrix.python-version }}
 
-      - name: Cache cargo registry
-        uses: actions/cache@v4
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: stable
+
+      - name: Cache Rust dependencies
+        uses: actions/cache@v3
         with:
           path: |
             ~/.cargo/registry
             ~/.cargo/git
             target
-          key: ${{ runner.os }}-${{ matrix.target }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-
+
+      - name: Cache Python dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements*.txt', '**/pyproject.toml') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install maturin pytest pytest-cov flake8 black isort
+          pip install -r requirements.txt
+
+      - name: Lint Python code with flake8
+        run: |
+          # Stop build on Python syntax errors or undefined names
+          flake8 python/ --count --select=E9,F63,F7,F82 --show-source --statistics
+          # Treat all other errors as warnings
+          flake8 python/ --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+
+      - name: Check Python code formatting with black
+        run: |
+          black --check python/
+
+      - name: Check Python import sorting with isort
+        run: |
+          isort --check-only python/
+
+      # - name: Lint Rust code
+      #   run: |
+      #     cargo clippy -- -D warnings
+
+      # - name: Check Rust code formatting
+      #   run: |
+      #     cargo fmt --check
+
+      - name: Build and install Rust extension with maturin
+        run: |
+          # Install in editable mode using pip install -e .
+          # This ensures maturin builds and installs properly
+          pip install -e . --verbose
+          # Verify installation
+          python -c "import imgrs; print('imgrs installed successfully')"
+
+      - name: Run Python tests
+        run: |
+          pytest python/imgrs/tests/ -v
+
+  build-wheels:
+    name: Build wheels on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    needs: test
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@stable
 
       - name: Install maturin
-        run: pip install maturin
-
-      - name: Setup Android NDK (if needed)
-        if: contains(matrix.target, 'android')
-        uses: nttld/setup-ndk@v1
-        with:
-          ndk-version: r25b
-
-      - name: Build wheels
         run: |
-          maturin build --release --out dist --find-interpreter --target ${{ matrix.target }}
+          python -m pip install --upgrade pip
+          pip install maturin
 
-      - uses: actions/upload-artifact@v4
+      - name: Build wheels with maturin
+        run: |
+          maturin build --release --out dist --find-interpreter
+
+      - name: Upload wheels as artifacts
+        uses: actions/upload-artifact@v4
         with:
-          name: wheels-${{ matrix.os }}-${{ matrix.target }}
-          path: dist
+          name: wheels-${{ matrix.os }}
+          path: dist/*.whl
 
-  sdist:
+  benchmark:
+    name: Performance benchmarks
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - run: pip install maturin
-      - run: maturin sdist --out dist
-      - uses: actions/upload-artifact@v4
-        with:
-          name: sdist
-          path: dist
-
-  release:
-    name: Publish to PyPI
-    runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/tags/v') || github.event_name == 'release'
-    needs: [build, sdist]
-    environment: release
-    permissions:
-      id-token: write
+    needs: test
+    if: github.event_name == 'pull_request'
 
     steps:
-      - uses: actions/download-artifact@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
         with:
-          pattern: "wheels-*"
-          path: dist
-          merge-multiple: true
+          python-version: "3.11"
 
-      - uses: actions/download-artifact@v4
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install maturin
+          pip install -r requirements.txt
+          pip install -r requirements_benchmark.txt
+
+      - name: Build package
+        run: |
+          pip install -e . --verbose
+
+      - name: Run benchmarks
+        run: |
+          python benchmark.py --iterations 5 --output-dir benchmark_results
+
+      - name: Upload benchmark results
+        uses: actions/upload-artifact@v4
         with:
-          name: sdist
-          path: dist
-
-      - name: Display structure of files
-        run: ls -R dist/
-
-      - name: Publish to PyPI
-        env:
-          MATURIN_PYPI_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
-        run: maturin upload --non-interactive --skip-existing dist/*
+          name: benchmark-results
+          path: benchmark_results/
