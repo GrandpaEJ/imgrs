@@ -62,14 +62,14 @@ def test_basic_operations():
         resized = img.resize((200, 150))
         print(f"✓ Resized to: {resized.size}")
         resized.save(str(output_dir / "resized.png"))
-        print(f"✓ Saved resized image")
+        print("✓ Saved resized image")
 
         # Test 4: Crop image
         print("\n3. Cropping image...")
         cropped = img.crop((50, 50, 250, 200))
         print(f"✓ Cropped to: {cropped.size}")
         cropped.save(str(output_dir / "cropped.png"))
-        print(f"✓ Saved cropped image")
+        print("✓ Saved cropped image")
 
         # Test 5: Rotate image
         print("\n4. Rotating image...")
@@ -84,7 +84,7 @@ def test_basic_operations():
         rotated_90.save(str(output_dir / "rotated_90.png"))
         rotated_180.save(str(output_dir / "rotated_180.png"))
         rotated_270.save(str(output_dir / "rotated_270.png"))
-        print(f"✓ Saved rotated images")
+        print("✓ Saved rotated images")
 
         # Test 6: Transpose operations
         print("\n5. Transpose operations...")
@@ -98,7 +98,7 @@ def test_basic_operations():
 
         flipped_h.save(str(output_dir / "flipped_horizontal.png"))
         flipped_v.save(str(output_dir / "flipped_vertical.png"))
-        print(f"✓ Saved flipped images")
+        print("✓ Saved flipped images")
 
         # Test 7: Copy image
         print("\n6. Copying image...")
@@ -118,7 +118,7 @@ def test_basic_operations():
         new_rgb.save(str(output_dir / "new_rgb.png"))
         new_rgba.save(str(output_dir / "new_rgba.png"))
         new_gray.save(str(output_dir / "new_gray.png"))
-        print(f"✓ Saved new images")
+        print("✓ Saved new images")
 
         # Test 9: Thumbnail
         print("\n8. Creating thumbnail...")
@@ -126,7 +126,7 @@ def test_basic_operations():
         thumb_img.thumbnail((100, 100))
         print(f"✓ Thumbnail size: {thumb_img.size}")
         thumb_img.save(str(output_dir / "thumbnail.png"))
-        print(f"✓ Saved thumbnail")
+        print("✓ Saved thumbnail")
 
         # Test 10: Different resampling methods
         print("\n9. Testing resampling methods...")

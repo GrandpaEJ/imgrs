@@ -84,7 +84,7 @@ def create_image_gallery():
 
     # Save gallery
     gallery.save(str(output_dir / "complete_gallery.png"))
-    print(f"✓ Gallery saved: complete_gallery.png")
+    print("✓ Gallery saved: complete_gallery.png")
 
     return True
 
@@ -140,7 +140,7 @@ def demonstrate_advanced_compositing():
 
     # Save composition
     final_composition.save(str(output_dir / "advanced_composition.png"))
-    print(f"✓ Advanced composition saved")
+    print("✓ Advanced composition saved")
 
     return True
 
@@ -199,7 +199,7 @@ def demonstrate_channel_manipulation():
             comparison = comparison.paste(channel_rgb, (x, y))
 
     comparison.save(str(output_dir / "channel_manipulation.png"))
-    print(f"✓ Channel manipulation comparison saved")
+    print("✓ Channel manipulation comparison saved")
 
     return True
 
@@ -258,7 +258,7 @@ def demonstrate_filter_chains():
             grid = grid.paste(result, pos)
 
     grid.save(str(output_dir / "filter_chains_comparison.png"))
-    print(f"✓ Filter chains comparison saved")
+    print("✓ Filter chains comparison saved")
 
     return True
 

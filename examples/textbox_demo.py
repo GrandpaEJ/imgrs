@@ -20,9 +20,9 @@ print("1. Basic Text Size")
 text = "Hello World"
 width, height = imgrs.Image.get_text_size(text, size=48)
 print(f"   Text: '{text}'")
-print(f"   Size: 48px")
+print("   Size: 48px")
 print(f"   Dimensions: {width}x{height} pixels")
-print(f"   ✅ get_text_size() working")
+print("   ✅ get_text_size() working")
 print()
 
 # =============================================================================
@@ -31,10 +31,10 @@ print()
 print("2. Multiline Text Size")
 multiline = "Line 1\nLine 2\nLine 3"
 width, height, lines = imgrs.Image.get_multiline_text_size(multiline, size=32)
-print(f"   Text: 3 lines")
+print("   Text: 3 lines")
 print(f"   Dimensions: {width}x{height} pixels")
 print(f"   Line count: {lines}")
-print(f"   ✅ get_multiline_text_size() working")
+print("   ✅ get_multiline_text_size() working")
 print()
 
 # =============================================================================
@@ -49,7 +49,7 @@ print(f"   Bottom Y: {box['bottom_y']}")
 print(f"   Right X: {box['right_x']}")
 print(f"   Ascent: {box['ascent']}")
 print(f"   Descent: {box['descent']}")
-print(f"   ✅ get_text_box() working")
+print("   ✅ get_text_box() working")
 print()
 
 # =============================================================================
@@ -75,7 +75,7 @@ y2 = y1 + h1 + 20
 img = img.add_text(text2, (x2, y2), size=32, color=(128, 128, 128, 255))
 
 img.save("examples/output/textbox_demo/01_dynamic_positioning.png")
-print(f"   ✅ Dynamic centering based on measured sizes")
+print("   ✅ Dynamic centering based on measured sizes")
 print()
 
 # =============================================================================
@@ -104,7 +104,7 @@ for text, x, y in texts:
     img2 = img2.add_text(text, (x, y), size=32, color=(0, 0, 0, 255))
 
 img2.save("examples/output/textbox_demo/02_corner_alignment.png")
-print(f"   ✅ Corner-aligned text using measured boxes")
+print("   ✅ Corner-aligned text using measured boxes")
 print()
 
 # =============================================================================
@@ -134,7 +134,7 @@ for test_size in range(100, 10, -5):
         break
 
 img3.save("examples/output/textbox_demo/03_auto_fit.png")
-print(f"   ✅ Auto-sized text to fit in box")
+print("   ✅ Auto-sized text to fit in box")
 print()
 
 # =============================================================================
@@ -156,7 +156,7 @@ for text, size in texts_sizes:
     x += box["width"] + 30
 
 img4.save("examples/output/textbox_demo/04_baseline_align.png")
-print(f"   ✅ Multiple sizes aligned on same baseline")
+print("   ✅ Multiple sizes aligned on same baseline")
 print()
 
 # =============================================================================
@@ -199,5 +199,5 @@ print("  ✅ Auto-sizing text to fit areas")
 print("  ✅ Baseline alignment")
 print("  ✅ Multi-line centered layouts")
 print()
-print(f"📁 Output: examples/output/textbox_demo/ (5 files)")
+print("📁 Output: examples/output/textbox_demo/ (5 files)")
 print("=" * 70)

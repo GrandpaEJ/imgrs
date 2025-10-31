@@ -1,6 +1,9 @@
 """Color effect filter operations"""
 
-from typing import Tuple
+from typing import Tuple, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ..image import Image
 
 
 class ColorFiltersMixin:

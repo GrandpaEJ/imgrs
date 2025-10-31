@@ -470,7 +470,6 @@ class TestNewFeaturesErrorHandling:
     def test_fromarray_without_numpy(self):
         """Test fromarray raises ImportError when numpy not available."""
         # Temporarily disable numpy
-        original_has_numpy = HAS_NUMPY
 
         # This test would need to be run in an environment without numpy
         # For now, we'll just test the error message structure

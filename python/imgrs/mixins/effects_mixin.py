@@ -2,7 +2,10 @@
 Effects mixin - shadows, glows, and special effects
 """
 
-from typing import Tuple
+from typing import Tuple, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from .image import Image
 
 
 class EffectsMixin:

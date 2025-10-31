@@ -30,7 +30,7 @@ print(f"   ✅ Cropped to: {cropped.width}x{cropped.height}")
 print("\n4. Rotate")
 rotated = img.rotate(90)
 rotated.save("test/output_04_rotate.png")
-print(f"   ✅ Rotated 90°")
+print("   ✅ Rotated 90°")
 
 # 5. Thumbnail
 print("\n5. Thumbnail")
@@ -43,11 +43,11 @@ print(f"   ✅ Thumbnail: {thumb.width}x{thumb.height}")
 print("\n6. Convert")
 gray = img.convert("L")
 gray.save("test/output_06_grayscale.png")
-print(f"   ✅ Converted to grayscale")
+print("   ✅ Converted to grayscale")
 
 rgba = img.convert("RGBA")
 rgba.save("test/output_07_rgba.png")
-print(f"   ✅ Converted to RGBA")
+print("   ✅ Converted to RGBA")
 
 # 7. Properties
 print("\n7. Properties")
@@ -55,18 +55,18 @@ print(f"   Size: {img.size}")
 print(f"   Width: {img.width}")
 print(f"   Height: {img.height}")
 print(f"   Mode: {img.mode}")
-print(f"   ✅ All properties accessible")
+print("   ✅ All properties accessible")
 
 # 8. Copy
 print("\n8. Copy")
 copy = img.copy()
-print(f"   ✅ Image copied")
+print("   ✅ Image copied")
 
 # 9. Create new image
 print("\n9. New Image")
 new_img = Image.new("RGB", (200, 200), (255, 0, 0))
 new_img.save("test/output_08_new.png")
-print(f"   ✅ Created red 200x200 image")
+print("   ✅ Created red 200x200 image")
 
 # 10. Paste
 print("\n10. Paste")
@@ -74,7 +74,7 @@ base = Image.new("RGB", (300, 300), (255, 255, 255))
 overlay = Image.new("RGB", (100, 100), (0, 0, 255))
 result = base.paste(overlay, (100, 100))
 result.save("test/output_09_paste.png")
-print(f"   ✅ Pasted blue square on white canvas")
+print("   ✅ Pasted blue square on white canvas")
 
 print("\n" + "=" * 60)
 print("✅ All basic Pillow operations working with imgrs!")

@@ -22,6 +22,7 @@ pub fn color_type_to_mode_string(color_type: ColorType) -> String {
 }
 
 #[derive(Clone)]
+#[allow(dead_code)]
 pub enum LazyImage {
     Loaded(DynamicImage),
     /// Image data stored as file path

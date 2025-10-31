@@ -150,7 +150,7 @@ def test_paste_operations():
     alpha_overlay = imgrs.open(str(img_dir / "alpha_test.png"))
     alpha_result = base.paste(alpha_overlay, (150, 100))
     alpha_result.save(str(output_dir / "paste_with_alpha.png"))
-    print(f"✓ Pasted with alpha transparency")
+    print("✓ Pasted with alpha transparency")
 
     # Create a complex composition
     composition = imgrs.new("RGB", (600, 400), (50, 50, 50))  # Dark gray background
@@ -169,7 +169,7 @@ def test_paste_operations():
         composition = composition.paste(overlay_img, pos)
 
     composition.save(str(output_dir / "complex_composition.png"))
-    print(f"✓ Created complex composition")
+    print("✓ Created complex composition")
 
     return True
 

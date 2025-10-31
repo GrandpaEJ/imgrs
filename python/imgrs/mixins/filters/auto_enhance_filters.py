@@ -1,5 +1,10 @@
 """Auto-enhancement filter operations"""
 
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ..image import Image
+
 
 class AutoEnhanceFiltersMixin:
     """Mixin for automatic enhancement operations"""

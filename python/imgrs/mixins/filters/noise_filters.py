@@ -1,5 +1,10 @@
 """Noise filter operations"""
 
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ..image import Image
+
 
 class NoiseFiltersMixin:
     """Mixin for noise operations"""

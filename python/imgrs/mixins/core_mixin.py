@@ -7,7 +7,10 @@ import subprocess
 import sys
 import tempfile
 from pathlib import Path
-from typing import Any, Optional, Tuple, Union
+from typing import Any, Optional, Tuple, Union, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from .image import Image
 
 try:
     import numpy as np

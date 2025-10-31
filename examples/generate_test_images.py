@@ -4,7 +4,6 @@ Generate test images for Imgrs examples using PIL/Pillow.
 This script creates various test images that can be used to demonstrate Imgrs functionality.
 """
 
-import os
 import sys
 from pathlib import Path
 

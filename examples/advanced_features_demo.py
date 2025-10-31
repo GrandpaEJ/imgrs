@@ -93,7 +93,7 @@ def test_pixel_manipulation():
     try:
         modified = img.putpixel(50, 50, (255, 0, 0, 255))
         modified.save(str(output_dir / "putpixel_test.png"))
-        print(f"✓ putpixel: Modified pixel at (50, 50)")
+        print("✓ putpixel: Modified pixel at (50, 50)")
     except Exception as e:
         print(f"✗ putpixel failed: {e}")
 
@@ -124,7 +124,7 @@ def test_pixel_manipulation():
     try:
         replaced = img.replace_color((255, 255, 255, 255), (255, 0, 0, 255), 10)
         replaced.save(str(output_dir / "replace_color.png"))
-        print(f"✓ replace_color: Replaced white with red")
+        print("✓ replace_color: Replaced white with red")
     except Exception as e:
         print(f"✗ replace_color failed: {e}")
 
@@ -132,7 +132,7 @@ def test_pixel_manipulation():
     try:
         thresholded = img.threshold(128)
         thresholded.save(str(output_dir / "threshold.png"))
-        print(f"✓ threshold: Applied threshold at 128")
+        print("✓ threshold: Applied threshold at 128")
     except Exception as e:
         print(f"✗ threshold failed: {e}")
 
@@ -140,7 +140,7 @@ def test_pixel_manipulation():
     try:
         posterized = img.posterize(4)
         posterized.save(str(output_dir / "posterize.png"))
-        print(f"✓ posterize: Reduced to 4 levels")
+        print("✓ posterize: Reduced to 4 levels")
     except Exception as e:
         print(f"✗ posterize failed: {e}")
 
@@ -164,34 +164,34 @@ def test_drawing_operations():
     # Test draw_rectangle
     try:
         canvas = canvas.draw_rectangle(50, 50, 100, 80, (255, 0, 0, 255))
-        print(f"✓ draw_rectangle: Red rectangle at (50, 50)")
+        print("✓ draw_rectangle: Red rectangle at (50, 50)")
     except Exception as e:
         print(f"✗ draw_rectangle failed: {e}")
 
     # Test draw_circle
     try:
         canvas = canvas.draw_circle(200, 150, 40, (0, 255, 0, 255))
-        print(f"✓ draw_circle: Green circle at (200, 150)")
+        print("✓ draw_circle: Green circle at (200, 150)")
     except Exception as e:
         print(f"✗ draw_circle failed: {e}")
 
     # Test draw_line
     try:
         canvas = canvas.draw_line(10, 10, 390, 290, (0, 0, 255, 255))
-        print(f"✓ draw_line: Blue diagonal line")
+        print("✓ draw_line: Blue diagonal line")
     except Exception as e:
         print(f"✗ draw_line failed: {e}")
 
     # Test draw_text
     try:
         canvas = canvas.draw_text("IMGRS", 150, 200, (0, 0, 0, 255), 2)
-        print(f"✓ draw_text: 'IMGRS' text at (150, 200)")
+        print("✓ draw_text: 'IMGRS' text at (150, 200)")
     except Exception as e:
         print(f"✗ draw_text failed: {e}")
 
     # Save canvas
     canvas.save(str(output_dir / "drawing_test.png"))
-    print(f"✓ Drawing test saved")
+    print("✓ Drawing test saved")
 
     return True
 
@@ -214,7 +214,7 @@ def test_shadow_effects():
     try:
         shadow = img.drop_shadow(10, 10, 5.0, (0, 0, 0, 128))
         shadow.save(str(output_dir / "drop_shadow.png"))
-        print(f"✓ drop_shadow: Applied drop shadow")
+        print("✓ drop_shadow: Applied drop shadow")
     except Exception as e:
         print(f"✗ drop_shadow failed: {e}")
 
@@ -222,7 +222,7 @@ def test_shadow_effects():
     try:
         inner = img.inner_shadow(5, 5, 3.0, (0, 0, 0, 100))
         inner.save(str(output_dir / "inner_shadow.png"))
-        print(f"✓ inner_shadow: Applied inner shadow")
+        print("✓ inner_shadow: Applied inner shadow")
     except Exception as e:
         print(f"✗ inner_shadow failed: {e}")
 
@@ -230,7 +230,7 @@ def test_shadow_effects():
     try:
         glow = img.glow(8.0, (255, 255, 0, 150), 1.5)
         glow.save(str(output_dir / "glow.png"))
-        print(f"✓ glow: Applied yellow glow")
+        print("✓ glow: Applied yellow glow")
     except Exception as e:
         print(f"✗ glow failed: {e}")
 

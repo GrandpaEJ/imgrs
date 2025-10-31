@@ -2,7 +2,10 @@
 Emoji operations mixin - add emojis to images
 """
 
-from typing import List, Tuple
+from typing import List, Tuple, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from .image import Image
 
 
 class EmojiMixin:

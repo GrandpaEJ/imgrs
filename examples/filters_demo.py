@@ -55,7 +55,7 @@ def test_blur_filters():
     # Test functional API
     func_blurred = imgrs.blur(img, 3.0)
     func_blurred.save(str(output_dir / "blur_functional.png"))
-    print(f"✓ Functional blur API")
+    print("✓ Functional blur API")
 
     return True
 
@@ -86,7 +86,7 @@ def test_sharpening_filters():
     # Test functional API
     func_sharpened = imgrs.sharpen(img, 1.5)
     func_sharpened.save(str(output_dir / "sharpen_functional.png"))
-    print(f"✓ Functional sharpen API")
+    print("✓ Functional sharpen API")
 
     return True
 
@@ -121,7 +121,7 @@ def test_edge_detection():
     img = imgrs.open(str(img_dir / "gradient.png"))
     func_edges = imgrs.edge_detect(img)
     func_edges.save(str(output_dir / "edges_functional.png"))
-    print(f"✓ Functional edge detection API")
+    print("✓ Functional edge detection API")
 
     return True
 
@@ -156,7 +156,7 @@ def test_emboss_filter():
     img = imgrs.open(str(img_dir / "gradient.png"))
     func_embossed = imgrs.emboss(img)
     func_embossed.save(str(output_dir / "emboss_functional.png"))
-    print(f"✓ Functional emboss API")
+    print("✓ Functional emboss API")
 
     return True
 
@@ -187,7 +187,7 @@ def test_brightness_adjustment():
     # Test functional API
     func_bright = imgrs.brightness(img, 75)
     func_bright.save(str(output_dir / "brightness_functional.png"))
-    print(f"✓ Functional brightness API")
+    print("✓ Functional brightness API")
 
     return True
 
@@ -218,7 +218,7 @@ def test_contrast_adjustment():
     # Test functional API
     func_contrast = imgrs.contrast(img, 1.8)
     func_contrast.save(str(output_dir / "contrast_functional.png"))
-    print(f"✓ Functional contrast API")
+    print("✓ Functional contrast API")
 
     return True
 
@@ -240,22 +240,22 @@ def test_filter_combinations():
     # Combination 1: Blur + Sharpen
     combo1 = img.blur(2.0).sharpen(1.5)
     combo1.save(str(output_dir / "combo_blur_sharpen.png"))
-    print(f"✓ Blur + Sharpen combination")
+    print("✓ Blur + Sharpen combination")
 
     # Combination 2: Brightness + Contrast
     combo2 = img.brightness(30).contrast(1.3)
     combo2.save(str(output_dir / "combo_bright_contrast.png"))
-    print(f"✓ Brightness + Contrast combination")
+    print("✓ Brightness + Contrast combination")
 
     # Combination 3: Multiple filters
     combo3 = img.brightness(20).contrast(1.2).sharpen(0.8)
     combo3.save(str(output_dir / "combo_multiple.png"))
-    print(f"✓ Multiple filters combination")
+    print("✓ Multiple filters combination")
 
     # Combination 4: Edge detection on blurred image
     combo4 = img.blur(1.0).edge_detect()
     combo4.save(str(output_dir / "combo_blur_edges.png"))
-    print(f"✓ Blur + Edge detection combination")
+    print("✓ Blur + Edge detection combination")
 
     return True
 
