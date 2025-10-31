@@ -28,7 +28,7 @@ class TextMixin:
         position: "tuple[int, int]",
         size: float = 32.0,
         color: "tuple[int, int, int, int]" = (0, 0, 0, 255),
-        font_path: str | None = None,
+        font_path: "str | None" = None,
     ) -> "Image":
         """
         Draw text on image with basic styling.
@@ -56,16 +56,16 @@ class TextMixin:
         position: "tuple[int, int]",
         size: float = 32.0,
         color: "tuple[int, int, int, int]" = (0, 0, 0, 255),
-        font_path: str | None = None,
-        align: str | None = None,
+        font_path: "str | None" = None,
+        align: "str | None" = None,
         background: "tuple[int, int, int, int] | None" = None,
         outline: "tuple[int, int, int, int, float] | None" = None,
         shadow: "tuple[int, int, int, int, int, int] | None" = None,
-        opacity: float | None = None,
-        line_spacing: float | None = None,
-        letter_spacing: float | None = None,
-        max_width: int | None = None,
-        rotation: float | None = None,
+        opacity: "float | None" = None,
+        line_spacing: "float | None" = None,
+        letter_spacing: "float | None" = None,
+        max_width: "int | None" = None,
+        rotation: "float | None" = None,
     ) -> "Image":
         """
         Draw text with full styling options.
@@ -134,7 +134,7 @@ class TextMixin:
         y: int,
         size: float = 32.0,
         color: "tuple[int, int, int, int]" = (0, 0, 0, 255),
-        font_path: str | None = None,
+        font_path: "str | None" = None,
     ) -> "Image":
         """
         Draw horizontally centered text.
@@ -161,9 +161,9 @@ class TextMixin:
         position: "tuple[int, int]",
         size: float = 32.0,
         color: "tuple[int, int, int, int]" = (0, 0, 0, 255),
-        font_path: str | None = None,
-        line_spacing: float | None = None,
-        align: str | None = None,
+        font_path: "str | None" = None,
+        line_spacing: "float | None" = None,
+        align: "str | None" = None,
     ) -> "Image":
         """
         Draw multi-line text with line breaks.
@@ -194,7 +194,7 @@ class TextMixin:
     def get_text_size(
         text: str,
         size: float = 32.0,
-        font_path: str | None = None,
+        font_path: "str | None" = None,
     ) -> "tuple[int, int]":
         """
         Get text dimensions without rendering.
@@ -220,7 +220,7 @@ class TextMixin:
         text: str,
         size: float = 32.0,
         line_spacing: float = 1.2,
-        font_path: str | None = None,
+        font_path: "str | None" = None,
     ) -> "tuple[int, int, int]":
         """
         Get multiline text dimensions.
@@ -249,7 +249,7 @@ class TextMixin:
         x: int,
         y: int,
         size: float = 32.0,
-        font_path: str | None = None,
+        font_path: "str | None" = None,
     ) -> "dict":
         """
         Get complete text bounding box information.
