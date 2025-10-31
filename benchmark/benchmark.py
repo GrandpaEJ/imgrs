@@ -29,7 +29,6 @@ except ImportError:
     print("⚠️ imgrs not installed. Install with: pip install -e .")
 
 
-
 class BenchmarkRunner:
     """Run and record benchmarks."""
 

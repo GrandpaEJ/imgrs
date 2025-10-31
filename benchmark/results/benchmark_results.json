@@ -1,146 +1,74 @@
 {
-  "open_pillow": {
-    "name": "Pillow",
-    "iterations": 50,
-    "total_time": 0.024267694003356155,
-    "avg_time": 0.0004853538800671231,
-    "min_time": 7.922200165921822e-05,
-    "max_time": 0.01990391700383043
-  },
   "open_imgrs": {
-    "name": "imgrs",
+    "name": "imgrs - Open",
     "iterations": 50,
-    "total_time": 0.00012356799561530352,
-    "avg_time": 2.4713599123060703e-06,
-    "min_time": 1.510998117737472e-06,
-    "max_time": 4.280099528841674e-05
-  },
-  "save_pillow": {
-    "name": "Pillow",
-    "iterations": 50,
-    "total_time": 6.705694344986114,
-    "avg_time": 0.13411388689972228,
-    "min_time": 0.08936064499721397,
-    "max_time": 0.5365110929997172
-  },
-  "save_imgrs": {
-    "name": "imgrs",
-    "iterations": 50,
-    "total_time": 0.7874095779770869,
-    "avg_time": 0.015748191559541738,
-    "min_time": 0.011839500999485608,
-    "max_time": 0.09544618200015975
-  },
-  "convert_pillow": {
-    "name": "Pillow",
-    "iterations": 50,
-    "total_time": 0.15324654499272583,
-    "avg_time": 0.0030649308998545164,
-    "min_time": 0.002309105999302119,
-    "max_time": 0.01464202199713327
-  },
-  "convert_imgrs": {
-    "name": "imgrs",
-    "iterations": 50,
-    "total_time": 0.25506466598744737,
-    "avg_time": 0.005101293319748948,
-    "min_time": 0.003953096995246597,
-    "max_time": 0.013495638006133959
-  },
-  "rotate_pillow": {
-    "name": "Pillow",
-    "iterations": 50,
-    "total_time": 0.2413964060106082,
-    "avg_time": 0.004827928120212164,
-    "min_time": 0.003112372003670316,
-    "max_time": 0.014833617002295796
-  },
-  "rotate_imgrs": {
-    "name": "imgrs",
-    "iterations": 50,
-    "total_time": 0.4553995770038455,
-    "avg_time": 0.00910799154007691,
-    "min_time": 0.00728871700266609,
-    "max_time": 0.022125753996078856
-  },
-  "flip_pillow": {
-    "name": "Pillow",
-    "iterations": 50,
-    "total_time": 0.1704253900097683,
-    "avg_time": 0.003408507800195366,
-    "min_time": 0.0021278159983921796,
-    "max_time": 0.013403324999671895
-  },
-  "flip_imgrs": {
-    "name": "imgrs",
-    "iterations": 50,
-    "total_time": 0.44068063502345467,
-    "avg_time": 0.008813612700469093,
-    "min_time": 0.00758024300012039,
-    "max_time": 0.022460129999672063
-  },
-  "resize_pillow": {
-    "name": "Pillow",
-    "iterations": 50,
-    "total_time": 0.8167168789732386,
-    "avg_time": 0.016334337579464772,
-    "min_time": 0.014834766996500548,
-    "max_time": 0.027109800998005085
+    "total_time": 0.3365477700572228,
+    "avg_time": 0.0067309554011444565,
+    "min_time": 0.005767511000158265,
+    "max_time": 0.014366533010615967
   },
   "resize_imgrs": {
-    "name": "imgrs",
+    "name": "imgrs - Resize",
     "iterations": 50,
-    "total_time": 0.5293259829850285,
-    "avg_time": 0.010586519659700571,
-    "min_time": 0.009002371996757574,
-    "max_time": 0.019369150999409612
+    "total_time": 0.36516770502203144,
+    "avg_time": 0.007303354100440629,
+    "min_time": 0.006458174000727013,
+    "max_time": 0.010811910004122183
   },
-  "crop_pillow": {
-    "name": "Pillow",
+  "blur_imgrs": {
+    "name": "imgrs - Blur",
     "iterations": 50,
-    "total_time": 0.015745051961857826,
-    "avg_time": 0.0003149010392371565,
-    "min_time": 7.166599971242249e-05,
-    "max_time": 0.011858025995024946
+    "total_time": 115.59259403591568,
+    "avg_time": 2.3118518807183137,
+    "min_time": 2.217183536005905,
+    "max_time": 2.600777977000689
   },
-  "crop_imgrs": {
-    "name": "imgrs",
+  "sharpen_imgrs": {
+    "name": "imgrs - Sharpen",
     "iterations": 50,
-    "total_time": 0.03960813697631238,
-    "avg_time": 0.0007921627395262476,
-    "min_time": 0.0005218619990046136,
-    "max_time": 0.009182738001982216
+    "total_time": 3.5798859689675737,
+    "avg_time": 0.07159771937935147,
+    "min_time": 0.06713819899596274,
+    "max_time": 0.0849004820047412
   },
-  "split_pillow": {
-    "name": "Pillow",
+  "brightness_imgrs": {
+    "name": "imgrs - Brightness",
     "iterations": 50,
-    "total_time": 0.1631865889794426,
-    "avg_time": 0.003263731779588852,
-    "min_time": 0.0022792769959778525,
-    "max_time": 0.012114418001146987
+    "total_time": 0.47994229799951427,
+    "avg_time": 0.009598845959990285,
+    "min_time": 0.008958292994066142,
+    "max_time": 0.015815027989447117
   },
-  "split_imgrs": {
-    "name": "imgrs",
+  "rotate_imgrs": {
+    "name": "imgrs - Rotate",
     "iterations": 50,
-    "total_time": 0.38404495703434804,
-    "avg_time": 0.007680899140686961,
-    "min_time": 0.006254198000533506,
-    "max_time": 0.01624425300542498
+    "total_time": 0.2711817419913132,
+    "avg_time": 0.005423634839826263,
+    "min_time": 0.004470556988962926,
+    "max_time": 0.009313536997069605
   },
-  "workflow_pillow": {
-    "name": "Pillow",
+  "convert_imgrs": {
+    "name": "imgrs - Convert",
     "iterations": 50,
-    "total_time": 1.981756280962145,
-    "avg_time": 0.0396351256192429,
-    "min_time": 0.026126261000172235,
-    "max_time": 0.11312688599718967
+    "total_time": 0.24721681502705906,
+    "avg_time": 0.004944336300541181,
+    "min_time": 0.003571540000848472,
+    "max_time": 0.012004887001239695
   },
-  "workflow_imgrs": {
-    "name": "imgrs",
+  "save_imgrs": {
+    "name": "imgrs - Save",
     "iterations": 50,
-    "total_time": 2.2506828059922555,
-    "avg_time": 0.04501365611984511,
-    "min_time": 0.02546678899670951,
-    "max_time": 0.10854815799393691
+    "total_time": 0.5116604619106511,
+    "avg_time": 0.01023320923821302,
+    "min_time": 0.006707328007905744,
+    "max_time": 0.014347420001286082
+  },
+  "pipeline_imgrs": {
+    "name": "imgrs - Pipeline",
+    "iterations": 50,
+    "total_time": 12.598413496030844,
+    "avg_time": 0.2519682699206169,
+    "min_time": 0.2395012070046505,
+    "max_time": 0.29627417599840555
   }
 }
