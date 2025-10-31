@@ -1,5 +1,5 @@
 # CI Pipeline for IMGRS - Python image package with Rust powered cored by Maturin
-name: BUILD
+name: Publish to PyPI
 
 on:
   workflow_dispatch:
