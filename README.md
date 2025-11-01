@@ -5,7 +5,7 @@
 [![Rust](https://img.shields.io/badge/rust-1.70+-orange.svg)](https://www.rust-lang.org/)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
-A **blazingly fast**, modern image processing library for Python, powered by Rust. Imgrs provides a Pillow-compatible API while delivering significantly better performance for common image operations.
+Imgrs is a **blazingly fast**, modern image processing library for Python, powered by Rust. Imgrs provides a Pillow-compatible API while delivering significantly better performance for common image operations.
 
 ## 📚 Documentation
 
