@@ -25,7 +25,7 @@ Imgrs is a **blazingly fast**, modern image processing library for Python, power
 
 ## 🚀 Quick Start
 
-### Installation
+### Imgrs Installation
 
 ```bash
 pip install imgrs
