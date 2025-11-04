@@ -25,10 +25,10 @@ ab_glyph = "0.2"
 kamadak-exif = "0.5"
 
 [features]
-default = ["desktop"]
-
+default = []
 desktop = ["pyo3/extension-module"]
 android = ["pyo3/abi3", "pyo3/abi3-py38"]
+
 
 [profile.release]
 lto = true
