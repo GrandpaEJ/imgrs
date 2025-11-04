@@ -157,14 +157,19 @@ jobs:
         env:
           ANDROID_NDK: ${{ steps.setup-ndk.outputs.ndk-path }}
           PYO3_NO_PYTHON: "1"
-          PYO3_CONFIG_FILE: /dev/null
         run: |
           echo "Using NDK at $ANDROID_NDK"
+      
+          # Configure compilers
           export CC_aarch64_linux_android="$ANDROID_NDK/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android21-clang"
+      
+          # Sysroot and linker flags
           export CFLAGS="--sysroot=$ANDROID_NDK/toolchains/llvm/prebuilt/linux-x86_64/sysroot"
           export RUSTFLAGS="-C linker=$CC_aarch64_linux_android -C link-arg=-fuse-ld=lld"
-  
-          maturin build --release --target ${{ matrix.target }} --out dist --compatibility manylinux2014
+      
+          # Build wheel
+          maturin build --release --target aarch64-linux-android --out dist --compatibility manylinux2014
+
   
       - name: Upload Android wheels
         uses: actions/upload-artifact@v4
