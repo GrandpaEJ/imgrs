@@ -168,8 +168,7 @@ jobs:
           export RUSTFLAGS="-C linker=$CC_aarch64_linux_android -C link-arg=-fuse-ld=lld"
       
           # Build wheel
-          maturin build --release --target aarch64-linux-android --out dist --compatibility manylinux2014 --verbose
-
+          cargo build --release --target aarch64-linux-android --no-default-features --features android
   
       - name: Upload Android wheels
         uses: actions/upload-artifact@v4
