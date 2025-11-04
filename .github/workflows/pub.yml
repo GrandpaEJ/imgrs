@@ -118,7 +118,7 @@ jobs:
   build-android:
     name: Build Android wheels
     runs-on: ubuntu-latest
-    needs: test
+    # needs: test
     strategy:
       matrix:
         target:
