@@ -160,11 +160,19 @@ jobs:
       - name: Build Android wheel
         env:
           ANDROID_NDK_HOME: ${{ env.ANDROID_NDK_HOME }}
+          PYO3_CONFIG_FILE: /dev/null
+          PYO3_NO_PYTHON: "1"
         run: |
           echo "Using NDK at $ANDROID_NDK_HOME"
           export CC_aarch64_linux_android="$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android21-clang"
           export CC_armv7_linux_androideabi="$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/armv7a-linux-androideabi21-clang"
-          maturin build --release --target ${{ matrix.target }} --out dist
+      
+          # Ensure cross-compilation doesn’t try to link to host Python
+          export CFLAGS="--sysroot=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/sysroot"
+          export RUSTFLAGS="-C linker-flavor=clang -C link-arg=-fuse-ld=lld"
+          
+          maturin build --release --target ${{ matrix.target }} --out dist --compatibility manylinux2014
+
 
       - name: Upload Android wheels
         uses: actions/upload-artifact@v4
