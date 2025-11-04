@@ -123,57 +123,49 @@ jobs:
       matrix:
         target:
           - aarch64-linux-android
-          - armv7-linux-androideabi
-
+  
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
+  
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: "3.11"
-
+  
       - name: Set up Rust
         uses: dtolnay/rust-toolchain@stable
-
-      # ✅ Install Android NDK with stable caching
+  
       - name: Install Android NDK
+        id: setup-ndk
         uses: nttld/setup-ndk@v1
         with:
           ndk-version: r26
           add-to-path: true
           local-cache: true
-
-      # ✅ Add Rust targets for Android
-      - name: Add Android Rust targets
+  
+      - name: Add Android Rust target
         run: |
-          rustup target add aarch64-linux-android armv7-linux-androideabi
-
-      # ✅ Install maturin (no "cross" subcommand anymore)
+          rustup target add aarch64-linux-android
+  
       - name: Install maturin
         run: |
           python -m pip install --upgrade pip
           pip install maturin
-
-      # ✅ Configure NDK and build for each target
+  
       - name: Build Android wheel
         env:
-          ANDROID_NDK_HOME: ${{ env.ANDROID_NDK_HOME }}
-          PYO3_CONFIG_FILE: /dev/null
+          ANDROID_NDK: ${{ steps.setup-ndk.outputs.ndk-path }}
           PYO3_NO_PYTHON: "1"
+          PYO3_CONFIG_FILE: /dev/null
         run: |
-          echo "Using NDK at $ANDROID_NDK_HOME"
-          export CC_aarch64_linux_android="$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android21-clang"
-          export CC_armv7_linux_androideabi="$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/armv7a-linux-androideabi21-clang"
-      
-          # Ensure cross-compilation doesn’t try to link to host Python
-          export CFLAGS="--sysroot=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/sysroot"
-          export RUSTFLAGS="-C linker-flavor=clang -C link-arg=-fuse-ld=lld"
-          
+          echo "Using NDK at $ANDROID_NDK"
+          export CC_aarch64_linux_android="$ANDROID_NDK/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android21-clang"
+          export CFLAGS="--sysroot=$ANDROID_NDK/toolchains/llvm/prebuilt/linux-x86_64/sysroot"
+          export RUSTFLAGS="-C linker=$CC_aarch64_linux_android -C link-arg=-fuse-ld=lld"
+  
           maturin build --release --target ${{ matrix.target }} --out dist --compatibility manylinux2014
-
-
+  
       - name: Upload Android wheels
         uses: actions/upload-artifact@v4
         with:
