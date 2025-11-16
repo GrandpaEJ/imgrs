@@ -16,6 +16,9 @@ mod emoji;
 mod metadata_ops;
 mod text_ops;
 mod fast_resize;
+mod color_ops;
+mod advanced_color_ops;
+mod color_analysis;
 
 // Python bindings
 mod pymethods;
