@@ -12,7 +12,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        target: [x86_64, aarch64, armv7, s390x, ppc64le]
+        target: [x86_64, aarch64]
     
     steps:
       - name: Checkout
@@ -51,7 +51,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        target: [x64, x86, aarch64]
+        target: [x64, aarch64]
     
     steps:
       - name: Checkout
@@ -239,8 +239,8 @@ jobs:
           echo "🎉 Successfully published to PyPI!"
           echo ""
           echo "✅ Built wheels for:"
-          echo "  • Linux (x86_64, aarch64, armv7, s390x, ppc64le) - manylinux"
-          echo "  • Windows (x64, x86, aarch64) - cross-build"
+          echo "  • Linux (x86_64, aarch64) - manylinux"
+          echo "  • Windows (x64, aarch64) - cross-build"
           echo "  • macOS (x86_64, aarch64/Apple Silicon)"
           echo "  • Android (aarch64, armv7, x86_64, i686)"
           echo ""
