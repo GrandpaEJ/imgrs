@@ -12,7 +12,7 @@ import sys
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 try:
-    from PIL import Image as PILImage, ImageFilter, ImageEnhance
+    from PIL import Image as PILImage
 
     HAS_PILLOW = True
 except ImportError:
