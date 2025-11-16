@@ -1,4 +1,3 @@
-
 name: PUBLISH TO PYPI
 
 # Manual trigger only - no auto-run
@@ -45,10 +44,10 @@ jobs:
           path: dist/*.whl
           retention-days: 7
 
-  # Build wheels for Windows
+  # Build wheels for Windows (manywindows cross-build)
   build-windows:
     name: Build Windows Wheels (${{ matrix.target }})
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
@@ -69,7 +68,7 @@ jobs:
       - name: Install maturin
         run: pip install maturin
 
-      - name: Build Windows wheels
+      - name: Build Windows cross-build wheels
         uses: PyO3/maturin-action@v1
         with:
           target: ${{ matrix.target }}
@@ -241,7 +240,7 @@ jobs:
           echo ""
           echo "✅ Built wheels for:"
           echo "  • Linux (x86_64, aarch64, armv7, s390x, ppc64le) - manylinux"
-          echo "  • Windows (x64, x86, aarch64)"
+          echo "  • Windows (x64, x86, aarch64) - cross-build"
           echo "  • macOS (x86_64, aarch64/Apple Silicon)"
           echo "  • Android (aarch64, armv7, x86_64, i686)"
           echo ""
