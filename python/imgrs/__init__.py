@@ -26,8 +26,8 @@ from .operations import (
     split,
 )
 
-__version__ = "0.1.0"
-__author__ = "Bilal Tonga"
+__version__ = "0.2.4"
+__author__ = "Grandpa EJ"
 
 __all__ = [
     "Image",
