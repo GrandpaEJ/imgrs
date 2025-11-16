@@ -112,10 +112,10 @@ def create_text_image(width=500, height=200, filename="text_sample.png"):
         font = ImageFont.truetype(
             "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 36
         )
-    except:
+    except Exception:
         try:
             font = ImageFont.load_default()
-        except:
+        except Exception:
             font = None
 
     text = "Imgrs Image Processing"

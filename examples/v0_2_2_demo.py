@@ -8,6 +8,7 @@ Showcases new features:
 """
 
 import os
+import random
 
 import imgrs
 
@@ -151,8 +152,6 @@ print("\n7️⃣  Creating Combined Design...")
 img = imgrs.Image.new("RGB", (800, 600), (20, 20, 30))
 
 # Background stars
-import random
-
 random.seed(42)
 for _ in range(20):
     x = random.randint(50, 750)

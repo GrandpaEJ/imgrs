@@ -54,7 +54,7 @@ print()
 try:
     base_img = imgrs.Image.open("examples/img/gradient.png")
     print(f"✅ Loaded test image: {base_img.width}x{base_img.height}")
-except:
+except Exception:
     base_img = imgrs.Image.new("RGB", (300, 200), (100, 150, 200))
     print("✅ Created test image: 300x200")
 

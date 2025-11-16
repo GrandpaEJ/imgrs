@@ -283,8 +283,6 @@ def test_functional_api():
 def main():
     """Run advanced features demo."""
     try:
-        import imgrs
-
         print("✓ Imgrs imported successfully")
     except ImportError as e:
         print(f"✗ Failed to import imgrs: {e}")

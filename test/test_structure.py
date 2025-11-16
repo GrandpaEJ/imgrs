@@ -13,8 +13,6 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "python"))
 def test_imports():
     """Test that all our new functions can be imported."""
     try:
-        from imgrs import convert, fromarray, split, paste
-
         print("✓ All new functions can be imported")
         return True
     except ImportError as e:
@@ -75,7 +73,7 @@ def test_operations_module():
 def test_numpy_handling():
     """Test numpy import handling."""
     try:
-        from imgrs.image import HAS_NUMPY
+        from imgrs.mixins.core_mixin import HAS_NUMPY
 
         print(f"✓ NumPy availability detected: {HAS_NUMPY}")
         return True

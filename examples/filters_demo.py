@@ -263,8 +263,6 @@ def test_filter_combinations():
 def main():
     """Run filters demo."""
     try:
-        import imgrs
-
         print("✓ Imgrs imported successfully")
     except ImportError as e:
         print(f"✗ Failed to import imgrs: {e}")

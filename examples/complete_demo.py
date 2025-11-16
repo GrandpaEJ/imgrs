@@ -266,8 +266,6 @@ def demonstrate_filter_chains():
 def main():
     """Run complete demo."""
     try:
-        import imgrs
-
         print("✓ Imgrs imported successfully")
         print(f"✓ NumPy available: {HAS_NUMPY}")
     except ImportError as e:

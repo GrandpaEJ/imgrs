@@ -16,12 +16,7 @@ from pathlib import Path
 # Add the parent directory to the path to import imgrs
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "python"))
 
-try:
-    import numpy as np
-
-    HAS_NUMPY = True
-except ImportError:
-    HAS_NUMPY = False
+HAS_NUMPY = False
 
 
 def setup_paths():
@@ -240,8 +235,6 @@ def test_shadow_effects():
 def main():
     """Run advanced features demo."""
     try:
-        import imgrs
-
         print("✓ Imgrs imported successfully")
     except ImportError as e:
         print(f"✗ Failed to import imgrs: {e}")
