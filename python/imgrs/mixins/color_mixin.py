@@ -2,7 +2,7 @@
 Enhanced color operations mixin - transparency, masking, and advanced color manipulation
 """
 
-from typing import TYPE_CHECKING, Any, List, Optional, Tuple, Union
+from typing import TYPE_CHECKING, List, Optional, Tuple
 
 if TYPE_CHECKING:
     from .image import Image
@@ -32,7 +32,9 @@ class ColorMixin:
         """
         return self._rust_image.get_alpha()
 
-    def add_transparency(self, color: Tuple[int, int, int], tolerance: int = 0) -> "Image":
+    def add_transparency(
+        self, color: Tuple[int, int, int], tolerance: int = 0
+    ) -> "Image":
         """
         Add transparency to specific colors.
 
@@ -45,7 +47,9 @@ class ColorMixin:
         """
         return self.__class__(self._rust_image.add_transparency(color, tolerance))
 
-    def remove_transparency(self, background_color: Optional[Tuple[int, int, int]] = None) -> "Image":
+    def remove_transparency(
+        self, background_color: Optional[Tuple[int, int, int]] = None
+    ) -> "Image":
         """
         Remove transparency by compositing on background.
 
@@ -125,7 +129,9 @@ class ColorMixin:
         """
         return self.__class__(self._rust_image.create_luminance_mask(invert))
 
-    def combine_masks(self, masks: List["Image"], operation: str = "multiply") -> "Image":
+    def combine_masks(
+        self, masks: List["Image"], operation: str = "multiply"
+    ) -> "Image":
         """
         Combine multiple masks using mathematical operations.
 
@@ -137,12 +143,12 @@ class ColorMixin:
             New combined mask Image
         """
         rust_masks = [mask._rust_image for mask in masks]
-        return self.__class__(
-            self._rust_image.combine_masks(rust_masks, operation)
-        )
+        return self.__class__(self._rust_image.combine_masks(rust_masks, operation))
 
     # Enhanced Color Operations
-    def extract_color(self, target_color: Tuple[int, int, int], tolerance: int = 30) -> "Image":
+    def extract_color(
+        self, target_color: Tuple[int, int, int], tolerance: int = 30
+    ) -> "Image":
         """
         Extract pixels matching a target color.
 
@@ -197,7 +203,9 @@ class ColorMixin:
             New selectively desaturated Image
         """
         return self.__class__(
-            self._rust_image.selective_desaturate(target_color, tolerance, desaturate_factor)
+            self._rust_image.selective_desaturate(
+                target_color, tolerance, desaturate_factor
+            )
         )
 
     def color_match(self, reference_image: "Image", strength: float = 1.0) -> "Image":
@@ -290,10 +298,7 @@ class ColorMixin:
             Tuple of (RGB Image, Alpha Image)
         """
         rust_rgb, rust_alpha = self._rust_image.split_alpha()
-        return (
-            self.__class__(rust_rgb),
-            self.__class__(rust_alpha)
-        )
+        return (self.__class__(rust_rgb), self.__class__(rust_alpha))
 
     def merge_alpha(self, alpha_image: "Image") -> "Image":
         """
@@ -305,9 +310,7 @@ class ColorMixin:
         Returns:
             New Image with merged alpha
         """
-        return self.__class__(
-            self._rust_image.merge_alpha(alpha_image._rust_image)
-        )
+        return self.__class__(self._rust_image.merge_alpha(alpha_image._rust_image))
 
     def alpha_to_color(self, background_color: Tuple[int, int, int]) -> "Image":
         """
@@ -319,9 +322,7 @@ class ColorMixin:
         Returns:
             New Image with alpha converted to color
         """
-        return self.__class__(
-            self._rust_image.alpha_to_color(background_color)
-        )
+        return self.__class__(self._rust_image.alpha_to_color(background_color))
 
     # Advanced Blend Operations
     def blend_with(
@@ -369,7 +370,9 @@ class ColorMixin:
         )
 
     # Color Analysis
-    def get_color_palette(self, max_colors: int = 256) -> List[Tuple[int, int, int, int]]:
+    def get_color_palette(
+        self, max_colors: int = 256
+    ) -> List[Tuple[int, int, int, int]]:
         """
         Extract dominant colors from the image.
 

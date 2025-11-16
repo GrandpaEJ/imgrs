@@ -9,7 +9,7 @@ class ImageMode:
     # Grayscale modes
     L = "L"  # 8-bit grayscale
     LA = "LA"  # 8-bit grayscale + alpha
-    I = "I"  # 32-bit integer grayscale
+    INTEGER = "I"  # 32-bit integer grayscale
 
     # Color modes
     RGB = "RGB"  # 8-bit RGB
@@ -102,9 +102,10 @@ class Transpose:
 
 # Enhanced Color System Enums
 
+
 class BlendMode:
     """Blend mode constants for compositing operations."""
-    
+
     NORMAL = "normal"
     MULTIPLY = "multiply"
     SCREEN = "screen"
@@ -121,7 +122,7 @@ class BlendMode:
 
 class MaskType:
     """Mask type constants for masking operations."""
-    
+
     GRADIENT = "gradient"
     COLOR_BASED = "color_based"
     LUMINANCE = "luminance"
@@ -132,7 +133,7 @@ class MaskType:
 
 class ColorFormat:
     """Color format constants for color space operations."""
-    
+
     RGB = "rgb"
     RGBA = "rgba"
     HSL = "hsl"
@@ -148,7 +149,7 @@ class ColorFormat:
 
 class GradientDirection:
     """Gradient direction constants."""
-    
+
     HORIZONTAL = "horizontal"
     VERTICAL = "vertical"
     DIAGONAL = "diagonal"
@@ -159,7 +160,7 @@ class GradientDirection:
 
 class MaskOperation:
     """Mask combination operation constants."""
-    
+
     MULTIPLY = "multiply"
     ADD = "add"
     SUBTRACT = "subtract"
@@ -170,7 +171,7 @@ class MaskOperation:
 
 class ColorSpace:
     """Color space constants for conversions."""
-    
+
     SRGB = "srgb"
     ADOBE_RGB = "adobe_rgb"
     PROPHOTO_RGB = "prophoto_rgb"

@@ -265,7 +265,7 @@ class CoreMixin:
             # Clean up on error
             try:
                 os.unlink(tmp_path)
-            except:
+            except Exception:
                 pass
             raise RuntimeError(f"Failed to show image: {e}") from e
 
