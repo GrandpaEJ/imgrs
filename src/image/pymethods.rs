@@ -589,7 +589,7 @@ impl PyImage {
 
     // Enhanced Color Operations
     fn set_alpha(&mut self, alpha: f32) -> PyResult<Self> {
-        self.set_alpha_impl(alpha)
+        Ok(self.set_alpha_impl(alpha)?)
     }
 
     fn get_alpha(&mut self) -> PyResult<f32> {
@@ -597,95 +597,125 @@ impl PyImage {
     }
 
     fn add_transparency(&mut self, color: (u8, u8, u8), tolerance: u8) -> PyResult<Self> {
-        self.add_transparency_impl(color, tolerance)
+        Ok(self.add_transparency_impl(color, tolerance)?)
     }
 
     fn remove_transparency(&mut self, background_color: Option<(u8, u8, u8)>) -> PyResult<Self> {
-        self.remove_transparency_impl(background_color)
+        Ok(self.remove_transparency_impl(background_color)?)
     }
 
     fn apply_mask(&mut self, mask: &mut Self, invert: bool) -> PyResult<Self> {
-        self.apply_mask_impl(mask.get_image()?.clone(), invert)
+        Ok(self.apply_mask_impl(mask.get_image()?.clone(), invert)?)
     }
 
     fn create_gradient_mask(&mut self, direction: String, start_opacity: f32, end_opacity: f32) -> PyResult<Self> {
-        self.create_gradient_mask_impl(&direction, start_opacity, end_opacity)
+        let gradient_mask = self.create_gradient_mask_impl(&direction, start_opacity, end_opacity)?;
+        let py_image = crate::image::core::PyImage {
+            lazy_image: crate::image::core::LazyImage::Loaded(gradient_mask),
+            format: None,
+        };
+        Ok(py_image)
     }
 
     fn create_color_mask(&mut self, target_color: (u8, u8, u8), tolerance: u8, feather: u32) -> PyResult<Self> {
-        self.create_color_mask_impl(target_color, tolerance, feather)
+        let color_mask = self.create_color_mask_impl(target_color, tolerance, feather)?;
+        let py_image = crate::image::core::PyImage {
+            lazy_image: crate::image::core::LazyImage::Loaded(color_mask),
+            format: None,
+        };
+        Ok(py_image)
     }
 
     fn create_luminance_mask(&mut self, invert: bool) -> PyResult<Self> {
-        self.create_luminance_mask_impl(invert)
+        let lum_mask = self.create_luminance_mask_impl(invert)?;
+        let py_image = crate::image::core::PyImage {
+            lazy_image: crate::image::core::LazyImage::Loaded(lum_mask),
+            format: None,
+        };
+        Ok(py_image)
     }
 
-    fn combine_masks(&mut self, masks: Vec<&mut Self>, operation: String) -> PyResult<Self> {
-        let rust_masks: Vec<_> = masks.iter().map(|m| m.get_image().unwrap().clone()).collect();
-        self.combine_masks_impl(rust_masks, &operation)
+    fn combine_masks(&mut self, masks: Vec<Self>, operation: String) -> PyResult<Self> {
+        let rust_masks: Vec<_> = masks.into_iter().map(|mut m| m.get_image().unwrap().clone()).collect();
+        let combined_mask = self.combine_masks_impl(rust_masks, &operation)?;
+        let py_image = crate::image::core::PyImage {
+            lazy_image: crate::image::core::LazyImage::Loaded(combined_mask),
+            format: None,
+        };
+        Ok(py_image)
     }
 
     fn extract_color(&mut self, target_color: (u8, u8, u8), tolerance: u8) -> PyResult<Self> {
-        self.extract_color_impl(target_color, tolerance)
+        Ok(self.extract_color_impl(target_color, tolerance)?)
     }
 
     fn color_quantize(&mut self, levels: u8) -> PyResult<Self> {
-        self.color_quantize_impl(levels)
+        Ok(self.color_quantize_impl(levels)?)
     }
 
     fn color_shift(&mut self, shift_amount: f32) -> PyResult<Self> {
-        self.color_shift_impl(shift_amount)
+        Ok(self.color_shift_impl(shift_amount)?)
     }
 
     fn selective_desaturate(&mut self, target_color: (u8, u8, u8), tolerance: u8, desaturate_factor: f32) -> PyResult<Self> {
-        self.selective_desaturate_impl(target_color, tolerance, desaturate_factor)
+        Ok(self.selective_desaturate_impl(target_color, tolerance, desaturate_factor)?)
     }
 
     fn color_match(&mut self, reference_image: &mut Self, strength: f32) -> PyResult<Self> {
-        self.color_match_impl(reference_image.get_image()?.clone(), strength)
+        Ok(self.color_match_impl(reference_image.get_image()?.clone(), strength)?)
     }
 
     fn apply_gradient_overlay(&mut self, color: (u8, u8, u8, u8), direction: String, opacity: f32) -> PyResult<Self> {
-        self.apply_gradient_overlay_impl(color, &direction, opacity)
+        Ok(self.apply_gradient_overlay_impl(color, &direction, opacity)?)
     }
 
     fn create_stripe_pattern(&mut self, color: (u8, u8, u8, u8), width: u32, spacing: u32, angle: f32) -> PyResult<Self> {
-        self.create_stripe_pattern_impl(color, width, spacing, angle)
+        let stripe_pattern = self.create_stripe_pattern_impl(color, width, spacing, angle)?;
+        let py_image = crate::image::core::PyImage {
+            lazy_image: crate::image::core::LazyImage::Loaded(stripe_pattern),
+            format: None,
+        };
+        Ok(py_image)
     }
 
     fn create_checker_pattern(&mut self, color1: (u8, u8, u8, u8), color2: (u8, u8, u8, u8), size: u32) -> PyResult<Self> {
-        self.create_checker_pattern_impl(color1, color2, size)
+        let checker_pattern = self.create_checker_pattern_impl(color1, color2, size)?;
+        let py_image = crate::image::core::PyImage {
+            lazy_image: crate::image::core::LazyImage::Loaded(checker_pattern),
+            format: None,
+        };
+        Ok(py_image)
     }
 
     fn split_alpha(&mut self) -> PyResult<(Self, Self)> {
-        self.split_alpha_impl()
+        Ok(self.split_alpha_impl()?)
     }
 
     fn merge_alpha(&mut self, alpha_image: &mut Self) -> PyResult<Self> {
-        self.merge_alpha_impl(alpha_image.get_image()?.clone())
+        Ok(self.merge_alpha_impl(alpha_image.get_image()?.clone())?)
     }
 
     fn alpha_to_color(&mut self, background_color: (u8, u8, u8)) -> PyResult<Self> {
-        self.alpha_to_color_impl(background_color)
+        Ok(self.alpha_to_color_impl(background_color)?)
     }
 
     fn blend_with(&mut self, other_image: &mut Self, mode: String, opacity: f32) -> PyResult<Self> {
-        self.blend_with_impl(other_image.get_image()?.clone(), &mode, opacity)
+        Ok(self.blend_with_impl(other_image.get_image()?.clone(), &mode, opacity)?)
     }
 
     fn overlay_with(&mut self, overlay: &mut Self, mode: String, opacity: f32, position: Option<(i32, i32)>) -> PyResult<Self> {
-        self.overlay_with_impl(overlay.get_image()?.clone(), &mode, opacity, position)
+        Ok(self.overlay_with_impl(overlay.get_image()?.clone(), &mode, opacity, position)?)
     }
 
     fn get_color_palette(&mut self, max_colors: u32) -> PyResult<Vec<(u8, u8, u8, u8)>> {
-        self.get_color_palette_impl(max_colors)
+        Ok(self.get_color_palette_impl(max_colors)?)
     }
 
     fn analyze_color_distribution(&mut self) -> PyResult<Py<pyo3::types::PyDict>> {
-        self.analyze_color_distribution_impl()
+        Ok(self.analyze_color_distribution_impl()?)
     }
 
     fn find_color_regions(&mut self, target_color: (u8, u8, u8), tolerance: u8) -> PyResult<Vec<(u32, u32, u32, u32)>> {
-        self.find_color_regions_impl(target_color, tolerance)
+        Ok(self.find_color_regions_impl(target_color, tolerance)?)
     }
 }

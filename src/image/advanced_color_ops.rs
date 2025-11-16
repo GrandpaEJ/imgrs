@@ -1,15 +1,16 @@
 // Advanced gradient and pattern operations
 use image::{DynamicImage, ImageBuffer, Rgba, GenericImageView};
 use crate::errors::ImgrsError;
-use super::blending::composite::composite;
-use super::blending::modes::BlendMode;
+use crate::image::core::LazyImage; // {, PyImage};
+use crate::blending::composite;
+use crate::blending::BlendMode;
 
 impl crate::image::core::PyImage {
     
-    pub fn apply_gradient_overlay(&mut self, color: (u8, u8, u8, u8), direction: &str, opacity: f32) -> Result<Self, ImgrsError> {
-        let gradient_mask = self.create_gradient_mask(direction, opacity, opacity)?;
+    pub fn apply_gradient_overlay_impl(&mut self, color: (u8, u8, u8, u8), direction: &str, opacity: f32) -> Result<Self, ImgrsError> {
+        let gradient_mask = self.create_gradient_mask_impl(direction, opacity, opacity)?;
         let mask = gradient_mask.to_rgba8();
-        let image = self.get_image_mut()?;
+        let image = self.get_image()?;
         let rgba_image = image.to_rgba8();
         let mut result = ImageBuffer::new(rgba_image.width(), rgba_image.height());
         
@@ -27,11 +28,11 @@ impl crate::image::core::PyImage {
             }
         }
         
-        *image = DynamicImage::ImageRgba8(result);
+        self.lazy_image = LazyImage::Loaded(DynamicImage::ImageRgba8(result));
         Ok(self.clone())
     }
     
-    pub fn create_stripe_pattern(&mut self, color: (u8, u8, u8, u8), width: u32, spacing: u32, angle: f32) -> Result<DynamicImage, ImgrsError> {
+    pub fn create_stripe_pattern_impl(&mut self, color: (u8, u8, u8, u8), _width: u32, spacing: u32, angle: f32) -> Result<DynamicImage, ImgrsError> {
         let (width, height) = if let Ok(image) = self.get_image() {
             image.dimensions()
         } else {
@@ -46,7 +47,7 @@ impl crate::image::core::PyImage {
             for x in 0..width {
                 let distance = ((x as f32 * angle_rad.cos() + y as f32 * angle_rad.sin()) as i32 % ((width + spacing) as i32)) as u32;
                 
-                let is_stripe = distance < width;
+                let is_stripe = distance < _width;
                 let alpha = if is_stripe {
                     color.3
                 } else {
@@ -60,7 +61,7 @@ impl crate::image::core::PyImage {
         Ok(DynamicImage::ImageRgba8(pattern))
     }
     
-    pub fn create_checker_pattern(&mut self, color1: (u8, u8, u8, u8), color2: (u8, u8, u8, u8), size: u32) -> Result<DynamicImage, ImgrsError> {
+    pub fn create_checker_pattern_impl(&mut self, color1: (u8, u8, u8, u8), color2: (u8, u8, u8, u8), size: u32) -> Result<DynamicImage, ImgrsError> {
         let (width, height) = if let Ok(image) = self.get_image() {
             image.dimensions()
         } else {
@@ -84,7 +85,7 @@ impl crate::image::core::PyImage {
         Ok(DynamicImage::ImageRgba8(pattern))
     }
     
-    pub fn split_alpha(&mut self) -> Result<(DynamicImage, DynamicImage), ImgrsError> {
+    pub fn split_alpha_impl(&mut self) -> Result<(Self, Self), ImgrsError> {
         let image = self.get_image()?;
         let rgba_image = image.to_rgba8();
         let (width, height) = rgba_image.dimensions();
@@ -105,14 +106,14 @@ impl crate::image::core::PyImage {
             }
         }
         
-        Ok((
-            DynamicImage::ImageRgba8(rgb_image),
-            DynamicImage::ImageRgba8(alpha_image)
-        ))
+        let rgb_pyimage = crate::image::core::PyImage::new_from_image(DynamicImage::ImageRgba8(rgb_image), None);
+        let alpha_pyimage = crate::image::core::PyImage::new_from_image(DynamicImage::ImageRgba8(alpha_image), None);
+        
+        Ok((rgb_pyimage, alpha_pyimage))
     }
     
-    pub fn merge_alpha(&mut self, alpha_image: DynamicImage) -> Result<Self, ImgrsError> {
-        let mut image = self.get_image_mut()?;
+    pub fn merge_alpha_impl(&mut self, alpha_image: DynamicImage) -> Result<Self, ImgrsError> {
+        let image = self.get_image_mut()?; // mut
         let rgba_image = image.to_rgba8();
         let alpha_rgba = alpha_image.to_rgba8();
         
@@ -127,12 +128,12 @@ impl crate::image::core::PyImage {
             }
         }
         
-        *image = DynamicImage::ImageRgba8(result);
+        self.lazy_image = LazyImage::Loaded(DynamicImage::ImageRgba8(result));
         Ok(self.clone())
     }
     
-    pub fn alpha_to_color(&mut self, background_color: (u8, u8, u8)) -> Result<Self, ImgrsError> {
-        let mut image = self.get_image_mut()?;
+    pub fn alpha_to_color_impl(&mut self, background_color: (u8, u8, u8)) -> Result<Self, ImgrsError> {
+        let image = self.get_image()?;
         let rgba_image = image.to_rgba8();
         let mut result = ImageBuffer::new(rgba_image.width(), rgba_image.height());
         
@@ -149,11 +150,11 @@ impl crate::image::core::PyImage {
             }
         }
         
-        *image = DynamicImage::ImageRgba8(result);
+        self.lazy_image = LazyImage::Loaded(DynamicImage::ImageRgba8(result));
         Ok(self.clone())
     }
     
-    pub fn blend_with(&mut self, other_image: DynamicImage, mode: &str, opacity: f32) -> Result<Self, ImgrsError> {
+    pub fn blend_with_impl(&mut self, other_image: DynamicImage, mode: &str, opacity: f32) -> Result<Self, ImgrsError> {
         let blend_mode = match mode {
             "normal" => BlendMode::Normal,
             "multiply" => BlendMode::Multiply,
@@ -170,14 +171,14 @@ impl crate::image::core::PyImage {
             _ => BlendMode::Normal,
         };
         
-        let mut image = self.get_image_mut()?;
+        let image = self.get_image()?;
         let blended = composite(&image, &other_image, blend_mode, opacity)?;
         
-        *image = blended;
+        self.lazy_image = LazyImage::Loaded(blended);
         Ok(self.clone())
     }
     
-    pub fn overlay_with(&mut self, overlay: DynamicImage, mode: &str, opacity: f32, position: Option<(i32, i32)>) -> Result<Self, ImgrsError> {
+    pub fn overlay_with_impl(&mut self, overlay: DynamicImage, mode: &str, opacity: f32, position: Option<(i32, i32)>) -> Result<Self, ImgrsError> {
         let blend_mode = match mode {
             "normal" => BlendMode::Normal,
             "multiply" => BlendMode::Multiply,
@@ -194,7 +195,7 @@ impl crate::image::core::PyImage {
             _ => BlendMode::Normal,
         };
         
-        let mut image = self.get_image_mut()?;
+        let image = self.get_image()?;
         let rgba_image = image.to_rgba8();
         let overlay_rgba = overlay.to_rgba8();
         
@@ -203,12 +204,12 @@ impl crate::image::core::PyImage {
             (rgba_image.height() as i32 - overlay_rgba.height() as i32) / 2,
         ));
         
-        let mut result = ImageBuffer::new(rgba_image.width(), rgba_image.height());
-        
+        let mut result: ImageBuffer<Rgba<u8>, Vec<u8>> = ImageBuffer::new(rgba_image.width(), rgba_image.height());
+
         // Copy base image
         for y in 0..rgba_image.height() {
             for x in 0..rgba_image.width() {
-                result.put_pixel(x, y, rgba_image.get_pixel(x, y));
+                result.put_pixel(x, y, *rgba_image.get_pixel(x, y));
             }
         }
         
@@ -218,9 +219,9 @@ impl crate::image::core::PyImage {
                 let target_x = x as i32 + pos.0;
                 let target_y = y as i32 + pos.1;
                 
-                if target_x >= 0 && target_y >= 0 && 
-                   target_x as u32 < rgba_image.width() && 
-                   target_y as u32 < rgba_image.height() {
+                if target_x >= 0 && target_y >= 0 &&
+                   (target_x as u32) < rgba_image.width() &&
+                   (target_y as u32) < rgba_image.height() {
                     
                     let base_pixel = result.get_pixel(target_x as u32, target_y as u32);
                     let overlay_pixel = overlay_rgba.get_pixel(x, y);
@@ -247,14 +248,14 @@ impl crate::image::core::PyImage {
                         let final_g = (base_g * (1.0 - opacity) + blended_g * opacity) * 255.0;
                         let final_b = (base_b * (1.0 - opacity) + blended_b * opacity) * 255.0;
                         
-                        result.put_pixel(target_x as u32, target_y as u32, 
+                        result.put_pixel(target_x as u32, target_y as u32,
                                        Rgba([final_r as u8, final_g as u8, final_b as u8, 255]));
                     }
                 }
             }
         }
         
-        *image = DynamicImage::ImageRgba8(result);
+        self.lazy_image = LazyImage::Loaded(DynamicImage::ImageRgba8(result));
         Ok(self.clone())
     }
 }

@@ -14,6 +14,8 @@ pub enum ImgrsError {
     ImageError(#[from] image::ImageError),
     #[error("Invalid operation: {0}")]
     InvalidOperation(String),
+    #[error("Python error: {0}")]
+    Py(#[from] PyErr),
 }
 
 impl From<ImgrsError> for PyErr {
@@ -24,6 +26,7 @@ impl From<ImgrsError> for PyErr {
             ImgrsError::Io(err) => ImgrsIOError::new_err(err.to_string()),
             ImgrsError::ImageError(err) => ImgrsProcessingError::new_err(err.to_string()),
             ImgrsError::InvalidOperation(msg) => ImgrsProcessingError::new_err(msg),
+            ImgrsError::Py(err) => err,
         }
     }
 }

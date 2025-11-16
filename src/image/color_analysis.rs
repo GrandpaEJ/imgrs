@@ -1,5 +1,5 @@
 // Color analysis and palette extraction
-use image::{DynamicImage, ImageBuffer, Rgba, GenericImageView};
+use image::Rgba; // DynamicImage, ImageBuffer, GenericImageView}; 
 use crate::errors::ImgrsError;
 use std::collections::HashMap;
 use pyo3::prelude::*;
@@ -7,7 +7,7 @@ use pyo3::types::PyDict;
 
 impl crate::image::core::PyImage {
     
-    pub fn get_color_palette(&mut self, max_colors: u32) -> Result<Vec<(u8, u8, u8, u8)>, ImgrsError> {
+    pub fn get_color_palette_impl(&mut self, max_colors: u32) -> Result<Vec<(u8, u8, u8, u8)>, ImgrsError> {
         let image = self.get_image()?;
         let rgba_image = image.to_rgba8();
         let (width, height) = rgba_image.dimensions();
@@ -23,7 +23,7 @@ impl crate::image::core::PyImage {
         }
         
         // Sort by frequency and take top colors
-        let mut sorted_colors: Vec<(u8, u8, u8, u8)> = color_counts.into_iter()
+        let mut sorted_colors: Vec<((u8, u8, u8, u8), u32)> = color_counts.into_iter()
             .map(|(color, count)| (color, count))
             .collect();
         
@@ -37,7 +37,7 @@ impl crate::image::core::PyImage {
         Ok(palette)
     }
     
-    pub fn analyze_color_distribution(&mut self) -> Result<PyObject, ImgrsError> {
+    pub fn analyze_color_distribution_impl(&mut self) -> Result<Py<pyo3::types::PyDict>, ImgrsError> {
         let image = self.get_image()?;
         let rgba_image = image.to_rgba8();
         let (width, height) = rgba_image.dimensions();
@@ -62,10 +62,12 @@ impl crate::image::core::PyImage {
                 *brightness_histogram.entry(b).or_insert(0) += 1;
             }
         }
-        
+
+        let unique_colors = color_counts.len();
+
         // Find dominant color
         let dominant_color = color_counts.into_iter()
-            .max_by_key(|(_, count)| count)
+            .max_by_key(|(_, count)| *count)
             .map(|(color, _)| color)
             .unwrap_or((0, 0, 0, 0));
         
@@ -98,26 +100,26 @@ impl crate::image::core::PyImage {
         
         // Create Python dictionary with results
         Python::with_gil(|py| {
-            let dict = PyDict::new(py);
-            
+            let dict = PyDict::new_bound(py);
+
             // Basic statistics
             dict.set_item("total_pixels", total_pixels)?;
             dict.set_item("width", width)?;
             dict.set_item("height", height)?;
             dict.set_item("dominant_color", dominant_color)?;
             dict.set_item("average_color", avg_color)?;
-            
+
             // Color space distributions
-            dict.set_item("unique_colors", color_counts.len())?;
+            dict.set_item("unique_colors", unique_colors)?;
             dict.set_item("hue_distribution", hsb_histogram_to_list(&hue_histogram))?;
             dict.set_item("saturation_distribution", hsb_histogram_to_list(&saturation_histogram))?;
             dict.set_item("brightness_distribution", hsb_histogram_to_list(&brightness_histogram))?;
-            
-            Ok(dict.into())
+
+            Ok(dict.unbind())
         })
     }
     
-    pub fn find_color_regions(&mut self, target_color: (u8, u8, u8), tolerance: u8) -> Result<Vec<(u32, u32, u32, u32)>, ImgrsError> {
+    pub fn find_color_regions_impl(&mut self, target_color: (u8, u8, u8), tolerance: u8) -> Result<Vec<(u32, u32, u32, u32)>, ImgrsError> {
         let image = self.get_image()?;
         let rgba_image = image.to_rgba8();
         let (width, height) = rgba_image.dimensions();
@@ -160,7 +162,7 @@ impl crate::image::core::PyImage {
 }
 
 // Helper structures and functions
-#[derive(Clone, Copy)]
+#[derive(Clone)]
 struct Region {
     min_x: u32,
     min_y: u32,

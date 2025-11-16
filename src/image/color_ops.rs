@@ -1,41 +1,33 @@
 // Enhanced color operations module
-use image::{DynamicImage, ImageBuffer, Rgba, GenericImageView, imageops};
+use image::{DynamicImage, ImageBuffer, Rgba, GenericImageView};
 use crate::errors::ImgrsError;
-use super::blending::modes::BlendMode;
-use super::blending::composite::composite;
+use crate::image::core::LazyImage;
+use crate::filters::blur;
 
 /// Color operations implementation
 impl crate::image::core::PyImage {
     
     // Alpha channel operations
-    pub fn set_alpha(&mut self, alpha: f32) -> Result<crate::image::core::PyImage, ImgrsError> {
-        let mut image = self.get_image_mut()?;
+    pub fn set_alpha_impl(&mut self, alpha: f32) -> Result<Self, ImgrsError> {
+        let image = self.get_image()?;  // mut
         let alpha = (alpha.max(0.0).min(1.0) * 255.0) as u8;
         
         // Convert to RGBA if not already
-        if let DynamicImage::ImageRgba8(rgba_img) = image {
-            for y in 0..rgba_img.height() {
-                for x in 0..rgba_img.width() {
-                    let pixel = rgba_img.get_pixel(x, y);
-                    rgba_img.put_pixel(x, y, Rgba([pixel[0], pixel[1], pixel[2], alpha]));
-                }
+        let rgba_image = image.to_rgba8();
+        let mut result = ImageBuffer::new(rgba_image.width(), rgba_image.height());
+        
+        for y in 0..rgba_image.height() {
+            for x in 0..rgba_image.width() {
+                let pixel = rgba_image.get_pixel(x, y);
+                result.put_pixel(x, y, Rgba([pixel[0], pixel[1], pixel[2], alpha]));
             }
-        } else {
-            // Convert to RGBA first
-            let rgba_image = image.to_rgba8();
-            for y in 0..rgba_image.height() {
-                for x in 0..rgba_image.width() {
-                    let pixel = rgba_image.get_pixel(x, y);
-                    rgba_image.put_pixel(x, y, Rgba([pixel[0], pixel[1], pixel[2], alpha]));
-                }
-            }
-            *image = DynamicImage::ImageRgba8(rgba_image);
         }
         
+        self.lazy_image = crate::image::core::LazyImage::Loaded(DynamicImage::ImageRgba8(result));
         Ok(self.clone())
     }
     
-    pub fn get_alpha(&mut self) -> f32 {
+    pub fn get_alpha_impl(&mut self) -> f32 {
         if let Ok(image) = self.get_image() {
             match image {
                 DynamicImage::ImageRgba8(rgba_img) => {
@@ -60,8 +52,8 @@ impl crate::image::core::PyImage {
         }
     }
     
-    pub fn add_transparency(&mut self, color: (u8, u8, u8), tolerance: u8) -> Result<crate::image::core::PyImage, ImgrsError> {
-        let mut image = self.get_image_mut()?;
+    pub fn add_transparency_impl(&mut self, color: (u8, u8, u8), tolerance: u8) -> Result<Self, ImgrsError> {
+        let image = self.get_image()?;  // mut
         let rgba_image = image.to_rgba8();
         let mut result = ImageBuffer::new(rgba_image.width(), rgba_image.height());
         
@@ -81,12 +73,12 @@ impl crate::image::core::PyImage {
             }
         }
         
-        *image = DynamicImage::ImageRgba8(result);
+        self.lazy_image = LazyImage::Loaded(DynamicImage::ImageRgba8(result));
         Ok(self.clone())
     }
     
-    pub fn remove_transparency(&mut self, background_color: Option<(u8, u8, u8)>) -> Result<crate::image::core::PyImage, ImgrsError> {
-        let mut image = self.get_image_mut()?;
+    pub fn remove_transparency_impl(&mut self, background_color: Option<(u8, u8, u8)>) -> Result<Self, ImgrsError> {
+        let image = self.get_image()?;
         let bg_color = background_color.unwrap_or((255, 255, 255));
         let rgba_image = image.to_rgba8();
         let mut result = ImageBuffer::new(rgba_image.width(), rgba_image.height());
@@ -104,13 +96,13 @@ impl crate::image::core::PyImage {
             }
         }
         
-        *image = DynamicImage::ImageRgba8(result);
+        self.lazy_image = LazyImage::Loaded(DynamicImage::ImageRgba8(result));
         Ok(self.clone())
     }
     
     // Advanced masking system
-    pub fn apply_mask(&mut self, mask: DynamicImage, invert: bool) -> Result<crate::image::core::PyImage, ImgrsError> {
-        let mut image = self.get_image_mut()?;
+    pub fn apply_mask_impl(&mut self, mask: DynamicImage, invert: bool) -> Result<Self, ImgrsError> {
+        let image = self.get_image()?;
         let rgba_image = image.to_rgba8();
         let mask_rgba = mask.to_rgba8();
         
@@ -132,11 +124,11 @@ impl crate::image::core::PyImage {
             }
         }
         
-        *image = DynamicImage::ImageRgba8(result);
+        self.lazy_image = LazyImage::Loaded(DynamicImage::ImageRgba8(result));
         Ok(self.clone())
     }
     
-    pub fn create_gradient_mask(&mut self, direction: &str, start_opacity: f32, end_opacity: f32) -> Result<DynamicImage, ImgrsError> {
+    pub fn create_gradient_mask_impl(&mut self, direction: &str, start_opacity: f32, end_opacity: f32) -> Result<DynamicImage, ImgrsError> {
         let (width, height) = if let Ok(image) = self.get_image() {
             image.dimensions()
         } else {
@@ -205,7 +197,7 @@ impl crate::image::core::PyImage {
         Ok(DynamicImage::ImageRgba8(mask))
     }
     
-    pub fn create_color_mask(&mut self, target_color: (u8, u8, u8), tolerance: u8, feather: u32) -> Result<DynamicImage, ImgrsError> {
+    pub fn create_color_mask_impl(&mut self, target_color: (u8, u8, u8), tolerance: u8, feather: u32) -> Result<DynamicImage, ImgrsError> {
         let image = self.get_image()?;
         let rgba_image = image.to_rgba8();
         let (width, height) = rgba_image.dimensions();
@@ -232,13 +224,15 @@ impl crate::image::core::PyImage {
         
         // Apply feathering if specified
         if feather > 0 {
-            mask = imageops::blur(&mask, feather as f32);
+            let mask_dynamic = DynamicImage::ImageRgba8(mask);
+            let blurred_mask = blur(&mask_dynamic, feather as f32)?;
+            mask = blurred_mask.to_rgba8();
         }
         
         Ok(DynamicImage::ImageRgba8(mask))
     }
     
-    pub fn create_luminance_mask(&mut self, invert: bool) -> Result<DynamicImage, ImgrsError> {
+    pub fn create_luminance_mask_impl(&mut self, invert: bool) -> Result<DynamicImage, ImgrsError> {
         let image = self.get_image()?;
         let rgba_image = image.to_rgba8();
         let (width, height) = rgba_image.dimensions();
@@ -264,7 +258,7 @@ impl crate::image::core::PyImage {
         Ok(DynamicImage::ImageRgba8(mask))
     }
     
-    pub fn combine_masks(&mut self, masks: Vec<DynamicImage>, operation: &str) -> Result<DynamicImage, ImgrsError> {
+    pub fn combine_masks_impl(&mut self, masks: Vec<DynamicImage>, operation: &str) -> Result<DynamicImage, ImgrsError> {
         if masks.is_empty() {
             return Err(ImgrsError::InvalidOperation("No masks provided".to_string()));
         }
@@ -331,8 +325,8 @@ impl crate::image::core::PyImage {
     }
     
     // Enhanced color operations
-    pub fn extract_color(&mut self, target_color: (u8, u8, u8), tolerance: u8) -> Result<crate::image::core::PyImage, ImgrsError> {
-        let mut image = self.get_image_mut()?;
+    pub fn extract_color_impl(&mut self, target_color: (u8, u8, u8), tolerance: u8) -> Result<Self, ImgrsError> {
+        let image = self.get_image()?;
         let rgba_image = image.to_rgba8();
         let mut result = ImageBuffer::new(rgba_image.width(), rgba_image.height());
         
@@ -352,12 +346,12 @@ impl crate::image::core::PyImage {
             }
         }
         
-        *image = DynamicImage::ImageRgba8(result);
+        self.lazy_image = LazyImage::Loaded(DynamicImage::ImageRgba8(result));
         Ok(self.clone())
     }
     
-    pub fn color_quantize(&mut self, levels: u8) -> Result<crate::image::core::PyImage, ImgrsError> {
-        let mut image = self.get_image_mut()?;
+    pub fn color_quantize_impl(&mut self, levels: u8) -> Result<Self, ImgrsError> {
+        let image = self.get_image()?;
         let rgba_image = image.to_rgba8();
         let mut result = ImageBuffer::new(rgba_image.width(), rgba_image.height());
         
@@ -375,12 +369,12 @@ impl crate::image::core::PyImage {
             }
         }
         
-        *image = DynamicImage::ImageRgba8(result);
+        self.lazy_image = LazyImage::Loaded(DynamicImage::ImageRgba8(result));
         Ok(self.clone())
     }
     
-    pub fn color_shift(&mut self, shift_amount: f32) -> Result<crate::image::core::PyImage, ImgrsError> {
-        let mut image = self.get_image_mut()?;
+    pub fn color_shift_impl(&mut self, shift_amount: f32) -> Result<Self, ImgrsError> {
+        let image = self.get_image()?;
         let rgba_image = image.to_rgba8();
         let mut result = ImageBuffer::new(rgba_image.width(), rgba_image.height());
         
@@ -398,12 +392,12 @@ impl crate::image::core::PyImage {
             }
         }
         
-        *image = DynamicImage::ImageRgba8(result);
+        self.lazy_image = LazyImage::Loaded(DynamicImage::ImageRgba8(result));
         Ok(self.clone())
     }
     
-    pub fn selective_desaturate(&mut self, target_color: (u8, u8, u8), tolerance: u8, desaturate_factor: f32) -> Result<crate::image::core::PyImage, ImgrsError> {
-        let mut image = self.get_image_mut()?;
+    pub fn selective_desaturate_impl(&mut self, target_color: (u8, u8, u8), tolerance: u8, desaturate_factor: f32) -> Result<Self, ImgrsError> {
+        let image = self.get_image()?;
         let rgba_image = image.to_rgba8();
         let mut result = ImageBuffer::new(rgba_image.width(), rgba_image.height());
         
@@ -417,8 +411,8 @@ impl crate::image::core::PyImage {
                 
                 if distance <= tolerance as f32 {
                     // Desaturate this pixel
-                    let gray = (pixel[0] as f32 * 0.299 + 
-                               pixel[1] as f32 * 0.587 + 
+                    let gray = (pixel[0] as f32 * 0.299 +
+                               pixel[1] as f32 * 0.587 +
                                pixel[2] as f32 * 0.114) as u8;
                     
                     let final_r = (pixel[0] as f32 * (1.0 - desaturate_factor) + gray as f32 * desaturate_factor) as u8;
@@ -432,12 +426,12 @@ impl crate::image::core::PyImage {
             }
         }
         
-        *image = DynamicImage::ImageRgba8(result);
+        self.lazy_image = LazyImage::Loaded(DynamicImage::ImageRgba8(result));
         Ok(self.clone())
     }
     
-    pub fn color_match(&mut self, reference_image: DynamicImage, strength: f32) -> Result<crate::image::core::PyImage, ImgrsError> {
-        let mut image = self.get_image_mut()?;
+    pub fn color_match_impl(&mut self, reference_image: DynamicImage, strength: f32) -> Result<Self, ImgrsError> {
+        let image = self.get_image()?;
         let rgba_image = image.to_rgba8();
         let ref_rgba = reference_image.to_rgba8();
         
@@ -463,7 +457,7 @@ impl crate::image::core::PyImage {
             }
         }
         
-        *image = DynamicImage::ImageRgba8(result);
+        self.lazy_image = LazyImage::Loaded(DynamicImage::ImageRgba8(result));
         Ok(self.clone())
     }
 }

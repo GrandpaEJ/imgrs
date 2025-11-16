@@ -73,6 +73,14 @@ impl PyImage {
         self.lazy_image.ensure_loaded()
     }
     
+    pub fn get_image_mut(&mut self) -> Result<&mut DynamicImage, ImgrsError> {
+        self.lazy_image.ensure_loaded()?;
+        match self.lazy_image {
+            LazyImage::Loaded(ref mut img) => Ok(img),
+            _ => unreachable!("ensure_loaded should have converted to Loaded")
+        }
+    }
+    
     pub fn new_from_image(image: DynamicImage, format: Option<ImageFormat>) -> Self {
         PyImage {
             lazy_image: LazyImage::Loaded(image),
