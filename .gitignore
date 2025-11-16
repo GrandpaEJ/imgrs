@@ -281,3 +281,4 @@ uv.lock
 *.lock
 
 .zen*
+me/*
