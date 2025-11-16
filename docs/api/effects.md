@@ -1,6 +1,6 @@
 # ✨ Effects API
 
-Complete reference for shadow and glow effects.
+Complete reference for shadow, glow, and blending effects.
 
 ## Shadow Effects
 
@@ -120,6 +120,76 @@ intense = img.glow(25.0, (255, 0, 255, 255), 1.5)  # Magenta
 **Canvas expansion:**
 - Output image is larger
 - Padding = `blur_radius × 2`
+
+---
+
+## Blending Effects
+
+### `img.blend_with(other, mode, opacity)`
+
+Blend image with another using advanced blend modes.
+
+**Parameters:**
+- `other` (Image): Image to blend with
+- `mode` (str): Blend mode ("normal", "multiply", "screen", "overlay", "soft_light", "hard_light", "color_dodge", "color_burn", "darken", "lighten", "difference", "exclusion")
+- `opacity` (float): Blend opacity (0.0-1.0)
+
+**Returns:** `Image` (blended result)
+
+**Example:**
+```python
+from imgrs import Image, BlendMode
+
+background = Image.open("background.jpg")
+overlay = Image.open("overlay.png")
+
+# Different blend modes
+multiply = background.blend_with(overlay, BlendMode.MULTIPLY, 0.8)
+screen = background.blend_with(overlay, BlendMode.SCREEN, 0.6)
+overlay_blend = background.blend_with(overlay, BlendMode.OVERLAY, 0.7)
+difference = background.blend_with(overlay, BlendMode.DIFFERENCE, 1.0)
+```
+
+### `img.overlay_with(overlay, mode, opacity, position)`
+
+Overlay an image using advanced blending with positioning.
+
+**Parameters:**
+- `overlay` (Image): Image to overlay
+- `mode` (str): Blend mode
+- `opacity` (float): Overlay opacity
+- `position` (tuple): Position (x, y), defaults to center
+
+**Returns:** `Image` (overlayed result)
+
+**Example:**
+```python
+# Center overlay
+centered = background.overlay_with(watermark, "normal", 0.5)
+
+# Positioned overlay
+positioned = background.overlay_with(watermark, "multiply", 0.8, position=(50, 100))
+
+# Corner watermark
+corner = background.overlay_with(watermark, "screen", 0.3, position=(10, 10))
+```
+
+### Blend Mode Reference
+
+| Mode | Description | Use Case |
+|------|-------------|----------|
+| `normal` | Standard alpha blending | Default compositing |
+| `multiply` | Multiply colors (darker) | Shadows, darkening |
+| `screen` | Screen colors (lighter) | Highlights, lightening |
+| `overlay` | Multiply/screen based on base | Contrast enhancement |
+| `soft_light` | Soft dodge/burn | Soft lighting effects |
+| `hard_light` | Hard dodge/burn | Dramatic lighting |
+| `color_dodge` | Lighten with color | Bright highlights |
+| `color_burn` | Darken with color | Deep shadows |
+| `darken` | Keep darker pixels | Darkening effects |
+| `lighten` | Keep lighter pixels | Lightening effects |
+| `difference` | Color difference | Special effects |
+| `exclusion` | Similar to difference | High contrast |
 
 ---
 
@@ -271,6 +341,8 @@ def emboss_effect(img):
 | `drop_shadow()` | O(n×m×r²) | Blur is expensive |
 | `inner_shadow()` | O(n×m×r²) | Similar to drop shadow |
 | `glow()` | O(n×m×r²) | Blur is expensive |
+| `blend_with()` | O(n×m) | Fast pixel operations |
+| `overlay_with()` | O(n×m) | Fast pixel operations |
 
 **Tips:**
 - Smaller blur radius = faster
@@ -316,6 +388,28 @@ pressed = button.inner_shadow(0, 2, 4.0, (0, 0, 0, 120))
 
 # Floating card (drop shadow)
 card = content.drop_shadow(0, 5, 20.0, (0, 0, 0, 100))
+```
+
+### Compositing & Blending
+
+```python
+# Photo compositing
+foreground = Image.open("subject.png")
+background = Image.open("scene.jpg")
+composited = background.overlay_with(foreground, "normal", 1.0, position=(100, 50))
+
+# Color grading with blend modes
+warm_overlay = Image.new("RGB", (800, 600), (255, 200, 150))
+graded = photo.blend_with(warm_overlay, "overlay", 0.3)
+
+# Texture overlay
+texture = Image.open("paper_texture.jpg")
+textured = image.blend_with(texture, "multiply", 0.4)
+
+# Double exposure effect
+layer1 = Image.open("portrait.jpg")
+layer2 = Image.open("landscape.jpg")
+double_exposure = layer1.blend_with(layer2, "screen", 0.7)
 ```
 
 ---
