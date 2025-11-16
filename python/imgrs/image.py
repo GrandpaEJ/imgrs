@@ -3,6 +3,7 @@ Simplified Image class using mixins for better maintainability
 """
 
 from .mixins import (
+    ColorMixin,
     CoreMixin,
     DrawingMixin,
     EffectsMixin,
@@ -16,6 +17,7 @@ from .mixins import (
 
 
 class Image(
+    ColorMixin,
     CoreMixin,
     TransformMixin,
     FilterMixin,

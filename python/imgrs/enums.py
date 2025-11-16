@@ -98,3 +98,82 @@ class Transpose:
             cls.TRANSVERSE_INT: cls.TRANSVERSE,
         }
         return mapping.get(value, cls.FLIP_LEFT_RIGHT)
+
+
+# Enhanced Color System Enums
+
+class BlendMode:
+    """Blend mode constants for compositing operations."""
+    
+    NORMAL = "normal"
+    MULTIPLY = "multiply"
+    SCREEN = "screen"
+    OVERLAY = "overlay"
+    SOFT_LIGHT = "soft_light"
+    HARD_LIGHT = "hard_light"
+    COLOR_DODGE = "color_dodge"
+    COLOR_BURN = "color_burn"
+    DARKEN = "darken"
+    LIGHTEN = "lighten"
+    DIFFERENCE = "difference"
+    EXCLUSION = "exclusion"
+
+
+class MaskType:
+    """Mask type constants for masking operations."""
+    
+    GRADIENT = "gradient"
+    COLOR_BASED = "color_based"
+    LUMINANCE = "luminance"
+    SHAPE = "shape"
+    TEXTURE = "texture"
+    NOISE = "noise"
+
+
+class ColorFormat:
+    """Color format constants for color space operations."""
+    
+    RGB = "rgb"
+    RGBA = "rgba"
+    HSL = "hsl"
+    HSV = "hsv"
+    LAB = "lab"
+    XYZ = "xyz"
+    CMYK = "cmyk"
+    YCBCR = "ycbcr"
+    YUV = "yuv"
+    HSL_PRECISE = "hsl_precise"
+    HSV_PRECISE = "hsv_precise"
+
+
+class GradientDirection:
+    """Gradient direction constants."""
+    
+    HORIZONTAL = "horizontal"
+    VERTICAL = "vertical"
+    DIAGONAL = "diagonal"
+    RADIAL = "radial"
+    ANGULAR = "angular"
+    CONICAL = "conical"
+
+
+class MaskOperation:
+    """Mask combination operation constants."""
+    
+    MULTIPLY = "multiply"
+    ADD = "add"
+    SUBTRACT = "subtract"
+    OVERLAY = "overlay"
+    SCREEN = "screen"
+    DIFFERENCE = "difference"
+
+
+class ColorSpace:
+    """Color space constants for conversions."""
+    
+    SRGB = "srgb"
+    ADOBE_RGB = "adobe_rgb"
+    PROPHOTO_RGB = "prophoto_rgb"
+    DCI_P3 = "dci_p3"
+    REC2020 = "rec2020"
+    DISPLAY_P3 = "display_p3"

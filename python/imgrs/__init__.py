@@ -5,8 +5,17 @@ Provides the high-level API while addressing
 performance and memory-safety issues through a Rust backend.
 """
 
-from .enums import ImageFormat, ImageMode, Resampling, Transpose
+from .enums import (
+    BlendMode,
+    ColorFormat,
+    ImageFormat,
+    ImageMode,
+    MaskType,
+    Resampling,
+    Transpose,
+)
 from .image import Image
+from .mixins.color_mixin import ColorMixin
 from .operations import (
     blur,
     brightness,
@@ -30,9 +39,13 @@ __version__ = "0.2.4"
 __author__ = "Grandpa EJ"
 
 __all__ = [
+    "BlendMode",
+    "ColorFormat",
+    "ColorMixin",
     "Image",
     "ImageMode",
     "ImageFormat",
+    "MaskType",
     "Resampling",
     "Transpose",
     "open",
