@@ -233,6 +233,7 @@ pub fn get_multiline_text_size(
 
 /// Get text bounding box with all details
 /// Returns a TextBox struct with comprehensive information
+#[allow(dead_code)]
 pub fn get_text_box(
     text: &str,
     x: i32,
@@ -241,7 +242,7 @@ pub fn get_text_box(
     font_path: Option<&std::path::Path>,
 ) -> Result<TextBox, ImgrsError> {
     let (width, height, ascent, descent) = get_text_size(text, size, font_path)?;
-    
+
     Ok(TextBox {
         x,
         y,
@@ -257,6 +258,7 @@ pub fn get_text_box(
 
 /// Text bounding box information
 #[derive(Debug, Clone)]
+#[allow(dead_code)]
 pub struct TextBox {
     /// X coordinate (left)
     pub x: i32,
