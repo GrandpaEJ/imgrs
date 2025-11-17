@@ -1,8 +1,36 @@
 use pyo3::prelude::*;
-use image::{DynamicImage, Rgba, Rgb};
+use image::{DynamicImage, Rgba, Rgb, GenericImageView};
 use crate::errors::ImgrsError;
 use crate::filters::simd_ops::fast_rgb_to_gray;
 use super::core::{PyImage, LazyImage, color_type_to_mode_string};
+
+/// Helper function to get alpha value from mask image
+fn get_mask_alpha(mask: &DynamicImage, x: u32, y: u32) -> f32 {
+    match mask {
+        DynamicImage::ImageLuma8(gray) => {
+            gray.get_pixel(x, y).0[0] as f32 / 255.0
+        }
+        DynamicImage::ImageLumaA8(la) => {
+            la.get_pixel(x, y).0[1] as f32 / 255.0
+        }
+        DynamicImage::ImageRgb8(_) => {
+            // For RGB masks, use luminance calculation
+            let pixel = mask.get_pixel(x, y);
+            let r = pixel.0[0] as f32;
+            let g = pixel.0[1] as f32;
+            let b = pixel.0[2] as f32;
+            (0.299 * r + 0.587 * g + 0.114 * b) / 255.0
+        }
+        DynamicImage::ImageRgba8(rgba) => {
+            rgba.get_pixel(x, y).0[3] as f32 / 255.0
+        }
+        _ => {
+            // For other formats, convert to grayscale and use that
+            let gray = mask.to_luma8();
+            gray.get_pixel(x, y).0[0] as f32 / 255.0
+        }
+    }
+}
 
 impl PyImage {
     pub fn copy_impl(&self) -> Self {
@@ -164,11 +192,23 @@ impl PyImage {
 
         let (paste_x, paste_y) = position.unwrap_or((0, 0));
 
-        // Get mask image if provided
-        let mask_image = if let Some(mut mask_img) = mask {
-            Some(mask_img.get_image()?.clone())
+        // Enhanced mask handling - support both grayscale and RGBA masks
+        let (mask_image, mask_position) = if let Some(mut mask_img) = mask {
+            let mask_rust_img = mask_img.get_image()?;
+            let (mask_width, mask_height) = mask_rust_img.dimensions();
+            
+            // Validate mask size matches paste image size (Pillow behavior)
+            let (paste_width, paste_height) = paste_image.dimensions();
+            if mask_width != paste_width || mask_height != paste_height {
+                return Err(ImgrsError::InvalidOperation(
+                    format!("Mask size {}x{} does not match paste image size {}x{}",
+                           mask_width, mask_height, paste_width, paste_height)
+                ).into());
+            }
+            
+            (Some(mask_rust_img.clone()), (0, 0))
         } else {
-            None
+            (None, (0, 0))
         };
 
         Python::with_gil(|py| {
@@ -193,21 +233,18 @@ impl PyImage {
 
                                     let pixel = paste.get_pixel(x, y);
 
-                                    // Apply mask if provided
+                                    // Enhanced mask handling - support both L and RGBA masks
                                     if let Some(ref mask) = mask_image {
-                                        if let DynamicImage::ImageLuma8(mask_gray) = mask {
-                                            let mask_pixel = mask_gray.get_pixel(x, y);
-                                            let alpha = mask_pixel.0[0] as f32 / 255.0;
-
-                                            if alpha > 0.0 {
-                                                let base_pixel = base.get_pixel(target_x as u32, target_y as u32);
-                                                let blended = Rgb([
-                                                    ((1.0 - alpha) * base_pixel.0[0] as f32 + alpha * pixel.0[0] as f32) as u8,
-                                                    ((1.0 - alpha) * base_pixel.0[1] as f32 + alpha * pixel.0[1] as f32) as u8,
-                                                    ((1.0 - alpha) * base_pixel.0[2] as f32 + alpha * pixel.0[2] as f32) as u8,
-                                                ]);
-                                                base.put_pixel(target_x as u32, target_y as u32, blended);
-                                            }
+                                        let mask_alpha = get_mask_alpha(mask, x, y);
+                                        
+                                        if mask_alpha > 0.0 {
+                                            let base_pixel = base.get_pixel(target_x as u32, target_y as u32);
+                                            let blended = Rgb([
+                                                ((1.0 - mask_alpha) * base_pixel.0[0] as f32 + mask_alpha * pixel.0[0] as f32) as u8,
+                                                ((1.0 - mask_alpha) * base_pixel.0[1] as f32 + mask_alpha * pixel.0[1] as f32) as u8,
+                                                ((1.0 - mask_alpha) * base_pixel.0[2] as f32 + mask_alpha * pixel.0[2] as f32) as u8,
+                                            ]);
+                                            base.put_pixel(target_x as u32, target_y as u32, blended);
                                         }
                                     } else {
                                         base.put_pixel(target_x as u32, target_y as u32, *pixel);
@@ -231,15 +268,21 @@ impl PyImage {
                                     && (target_y as u32) < base_height {
 
                                     let pixel = paste.get_pixel(x, y);
-                                    let alpha = pixel.0[3] as f32 / 255.0;
+                                    let mut final_alpha = pixel.0[3] as f32 / 255.0;
 
-                                    if alpha > 0.0 {
+                                    // Apply mask if provided (mask combines with alpha channel)
+                                    if let Some(ref mask) = mask_image {
+                                        let mask_alpha = get_mask_alpha(mask, x, y);
+                                        final_alpha = (final_alpha * mask_alpha).min(1.0);
+                                    }
+
+                                    if final_alpha > 0.0 {
                                         let base_pixel = base.get_pixel(target_x as u32, target_y as u32);
                                         let blended = Rgba([
-                                            ((1.0 - alpha) * base_pixel.0[0] as f32 + alpha * pixel.0[0] as f32) as u8,
-                                            ((1.0 - alpha) * base_pixel.0[1] as f32 + alpha * pixel.0[1] as f32) as u8,
-                                            ((1.0 - alpha) * base_pixel.0[2] as f32 + alpha * pixel.0[2] as f32) as u8,
-                                            255, // Keep base alpha
+                                            ((1.0 - final_alpha) * base_pixel.0[0] as f32 + final_alpha * pixel.0[0] as f32) as u8,
+                                            ((1.0 - final_alpha) * base_pixel.0[1] as f32 + final_alpha * pixel.0[1] as f32) as u8,
+                                            ((1.0 - final_alpha) * base_pixel.0[2] as f32 + final_alpha * pixel.0[2] as f32) as u8,
+                                            base_pixel.0[3], // Keep base alpha for now
                                         ]);
                                         base.put_pixel(target_x as u32, target_y as u32, blended);
                                     }
@@ -267,14 +310,20 @@ impl PyImage {
                                     && (target_y as u32) < base_height {
 
                                     let pixel = paste_rgba.get_pixel(x, y);
-                                    let alpha = pixel.0[3] as f32 / 255.0;
+                                    let mut final_alpha = pixel.0[3] as f32 / 255.0;
 
-                                    if alpha > 0.0 {
+                                    // Apply mask if provided
+                                    if let Some(ref mask) = mask_image {
+                                        let mask_alpha = get_mask_alpha(mask, x, y);
+                                        final_alpha = (final_alpha * mask_alpha).min(1.0);
+                                    }
+
+                                    if final_alpha > 0.0 {
                                         let base_pixel = result_rgba.get_pixel(target_x as u32, target_y as u32);
                                         let blended = Rgba([
-                                            ((1.0 - alpha) * base_pixel.0[0] as f32 + alpha * pixel.0[0] as f32) as u8,
-                                            ((1.0 - alpha) * base_pixel.0[1] as f32 + alpha * pixel.0[1] as f32) as u8,
-                                            ((1.0 - alpha) * base_pixel.0[2] as f32 + alpha * pixel.0[2] as f32) as u8,
+                                            ((1.0 - final_alpha) * base_pixel.0[0] as f32 + final_alpha * pixel.0[0] as f32) as u8,
+                                            ((1.0 - final_alpha) * base_pixel.0[1] as f32 + final_alpha * pixel.0[1] as f32) as u8,
+                                            ((1.0 - final_alpha) * base_pixel.0[2] as f32 + final_alpha * pixel.0[2] as f32) as u8,
                                             base_pixel.0[3], // Keep base alpha
                                         ]);
                                         result_rgba.put_pixel(target_x as u32, target_y as u32, blended);

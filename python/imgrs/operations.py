@@ -183,25 +183,41 @@ def split(image: Image) -> List[Image]:
 def paste(
     base_image: Image,
     paste_image: Image,
-    box: Optional[Union[Tuple[int, int], Tuple[int, int, int, int]]] = None,
+    position: Optional[Tuple[int, int]] = None,
     mask: Optional[Image] = None,
 ) -> Image:
     """
-    Paste one image onto another.
+    Paste one image onto another with optional masking.
 
     Args:
         base_image: Base image to paste onto
         paste_image: Image to paste
-        box: Position to paste at. Can be:
-            - (x, y) tuple for position
-            - (x, y, x2, y2) tuple for position and size (size ignored)
-            - None for (0, 0)
-        mask: Optional mask image for alpha blending
+        position: Position to paste at as (x, y) tuple or None for (0, 0)
+        mask: Optional mask image. Must be the same size as paste_image.
+              Supports multiple formats:
+              - 'L' (grayscale): White areas fully visible, black areas invisible
+              - 'LA' (grayscale with alpha): Uses alpha channel for transparency
+              - 'RGB': Uses luminance for opacity calculation
+              - 'RGBA': Uses alpha channel for transparency
+              - Other formats are converted to grayscale automatically
 
     Returns:
         New Image instance with the pasted content
+
+    Raises:
+        ValueError: If mask size doesn't match paste image size
+        TypeError: If mask is not an Image instance
+
+    Example:
+        >>> base = Image.new('RGB', (200, 200), 'white')
+        >>> overlay = Image.new('RGB', (100, 100), 'red')
+        >>> result = paste(base, overlay, (50, 50))
+        >>>
+        >>> # With mask for partial transparency
+        >>> mask = Image.new('L', (100, 100), 128)  # 50% opacity
+        >>> result = paste(base, overlay, (50, 50), mask)
     """
-    return base_image.paste(paste_image, box, mask)
+    return base_image.paste(paste_image, position, mask)
 
 
 def blur(image: Image, radius: float) -> Image:
