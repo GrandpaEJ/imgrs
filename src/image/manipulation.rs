@@ -193,7 +193,7 @@ impl PyImage {
         let (paste_x, paste_y) = position.unwrap_or((0, 0));
 
         // Enhanced mask handling - support both grayscale and RGBA masks
-        let (mask_image, mask_position) = if let Some(mut mask_img) = mask {
+        let (mask_image, _mask_position) = if let Some(mut mask_img) = mask {
             let mask_rust_img = mask_img.get_image()?;
             let (mask_width, mask_height) = mask_rust_img.dimensions();
             

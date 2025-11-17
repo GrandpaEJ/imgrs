@@ -502,6 +502,179 @@ impl PyImage {
     ) -> PyResult<PyObject> {
         Ok(Self::get_text_box_impl(text, x, y, size, font_path)?)
     }
+    // Enhanced text methods (from text_ops.rs)
+    #[pyo3(signature = (text, x, y, size=32.0, color=(0, 0, 0, 255), font_family="sans", font_weight="normal", font_style="normal", font_path=None, letter_spacing=0.0, opacity=1.0))]
+    fn text_enhanced(
+        &self,
+        text: &str,
+        x: i32,
+        y: i32,
+        size: f32,
+        color: (u8, u8, u8, u8),
+        font_family: &str,
+        font_weight: &str,
+        font_style: &str,
+        font_path: Option<&str>,
+        letter_spacing: f32,
+        opacity: f32,
+    ) -> PyResult<Self> {
+        Ok(self.draw_enhanced_text_impl(text, x, y, size, color, font_family, font_weight, font_style, font_path, letter_spacing, opacity)?)
+    }
+
+    #[pyo3(signature = (
+        text, x, y,
+        size=32.0,
+        color=(0, 0, 0, 255),
+        font_family="sans",
+        font_weight="normal",
+        font_style="normal",
+        font_path=None,
+        letter_spacing=0.0,
+        opacity=1.0,
+        align=None,
+        background=None,
+        outline=None,
+        shadow=None,
+        glow=None,
+        max_width=None,
+        line_spacing=1.2,
+        text_justify="left",
+        rotation=0.0
+    ))]
+    fn text_advanced(
+        &self,
+        text: &str,
+        x: i32,
+        y: i32,
+        size: f32,
+        color: (u8, u8, u8, u8),
+        font_family: &str,
+        font_weight: &str,
+        font_style: &str,
+        font_path: Option<&str>,
+        letter_spacing: f32,
+        opacity: f32,
+        align: Option<&str>,
+        background: Option<(u8, u8, u8, u8)>,
+        outline: Option<(u8, u8, u8, u8, f32)>,
+        shadow: Option<(i32, i32, u8, u8, u8, u8)>,
+        glow: Option<(u8, u8, u8, u8, f32)>,
+        max_width: Option<u32>,
+        line_spacing: f32,
+        text_justify: &str,
+        rotation: f32,
+    ) -> PyResult<Self> {
+        Ok(self.draw_advanced_text_impl(
+            text, x, y, size, color, font_family, font_weight, font_style,
+            font_path, letter_spacing, opacity, align, background,
+            outline, shadow, glow, max_width, line_spacing, text_justify, rotation
+        )?)
+    }
+
+    #[pyo3(signature = (text, x, y, size=32.0, color=(0, 0, 0, 255), font_family="sans", font_weight="normal", font_style="normal", font_path=None, line_spacing=1.2, letter_spacing=0.0, align=None, text_justify="left", max_width=None, opacity=1.0))]
+    fn text_multiline_enhanced(
+        &self,
+        text: &str,
+        x: i32,
+        y: i32,
+        size: f32,
+        color: (u8, u8, u8, u8),
+        font_family: &str,
+        font_weight: &str,
+        font_style: &str,
+        font_path: Option<&str>,
+        line_spacing: f32,
+        letter_spacing: f32,
+        align: Option<&str>,
+        text_justify: &str,
+        max_width: Option<u32>,
+        opacity: f32,
+    ) -> PyResult<Self> {
+        Ok(self.draw_multiline_text_impl(
+            text, x, y, size, color, font_family, font_weight, font_style,
+            font_path, line_spacing, letter_spacing, align, text_justify,
+            max_width, opacity
+        )?)
+    }
+
+    #[pyo3(signature = (text, y, size=32.0, color=(0, 0, 0, 255), font_family="sans", font_weight="normal", font_style="normal", font_path=None, opacity=1.0, letter_spacing=0.0))]
+    fn text_centered_enhanced(
+        &self,
+        text: &str,
+        y: i32,
+        size: f32,
+        color: (u8, u8, u8, u8),
+        font_family: &str,
+        font_weight: &str,
+        font_style: &str,
+        font_path: Option<&str>,
+        opacity: f32,
+        letter_spacing: f32,
+    ) -> PyResult<Self> {
+        Ok(self.draw_centered_text_impl(text, y, size, color, font_family, font_weight, font_style, font_path, opacity, letter_spacing)?)
+    }
+
+    fn text_with_fonts(
+        &self,
+        text: &str,
+        x: i32,
+        y: i32,
+        fonts: &Bound<'_, PyAny>,
+    ) -> PyResult<Self> {
+        Ok(self.draw_multi_font_text_impl(text, x, y, fonts)?)
+    }
+
+    // Enhanced text measurement methods (from text_ops.rs)
+    #[staticmethod]
+    #[pyo3(signature = (text, size=32.0, font_family="sans", font_weight="normal", font_style="normal", font_path=None, letter_spacing=0.0))]
+    fn get_text_size_enhanced(
+        text: &str,
+        size: f32,
+        font_family: &str,
+        font_weight: &str,
+        font_style: &str,
+        font_path: Option<&str>,
+        letter_spacing: f32,
+    ) -> PyResult<(u32, u32)> {
+        Ok(Self::get_enhanced_text_size_impl(text, size, font_family, font_weight, font_style, font_path, letter_spacing)?)
+    }
+
+    #[staticmethod]
+    #[pyo3(signature = (text, size=32.0, line_spacing=1.2, font_family="sans", font_weight="normal", font_style="normal", font_path=None, letter_spacing=0.0, max_width=None))]
+    fn get_multiline_text_size_enhanced(
+        text: &str,
+        size: f32,
+        line_spacing: f32,
+        font_family: &str,
+        font_weight: &str,
+        font_style: &str,
+        font_path: Option<&str>,
+        letter_spacing: f32,
+        max_width: Option<u32>,
+    ) -> PyResult<(u32, u32, usize)> {
+        Ok(Self::get_enhanced_multiline_text_size_impl(text, size, line_spacing, font_family, font_weight, font_style, font_path, letter_spacing, max_width)?)
+    }
+
+    #[staticmethod]
+    #[pyo3(signature = (text, x, y, size=32.0, font_family="sans", font_weight="normal", font_style="normal", font_path=None, letter_spacing=0.0))]
+    fn get_text_box_enhanced(
+        text: &str,
+        x: i32,
+        y: i32,
+        size: f32,
+        font_family: &str,
+        font_weight: &str,
+        font_style: &str,
+        font_path: Option<&str>,
+        letter_spacing: f32,
+    ) -> PyResult<PyObject> {
+        Ok(Self::get_enhanced_text_box_impl(text, x, y, size, font_family, font_weight, font_style, font_path, letter_spacing)?)
+    }
+
+    #[staticmethod]
+    fn list_available_fonts() -> PyResult<Vec<String>> {
+        Ok(Self::list_available_fonts_impl()?)
+    }
 
     // Pixel operation methods (from pixel_ops.rs)
     fn getpixel(&mut self, x: u32, y: u32) -> PyResult<(u8, u8, u8, u8)> {
@@ -600,6 +773,7 @@ impl PyImage {
         Ok(self.add_transparency_impl(color, tolerance)?)
     }
 
+    #[pyo3(signature = (background_color=None))]
     fn remove_transparency(&mut self, background_color: Option<(u8, u8, u8)>) -> PyResult<Self> {
         Ok(self.remove_transparency_impl(background_color)?)
     }
@@ -703,6 +877,7 @@ impl PyImage {
         Ok(self.blend_with_impl(other_image.get_image()?.clone(), &mode, opacity)?)
     }
 
+    #[pyo3(signature = (overlay, mode, opacity, position=None))]
     fn overlay_with(&mut self, overlay: &mut Self, mode: String, opacity: f32, position: Option<(i32, i32)>) -> PyResult<Self> {
         Ok(self.overlay_with_impl(overlay.get_image()?.clone(), &mode, opacity, position)?)
     }

@@ -10,7 +10,7 @@ impl crate::image::core::PyImage {
     // Alpha channel operations
     pub fn set_alpha_impl(&mut self, alpha: f32) -> Result<Self, ImgrsError> {
         let image = self.get_image()?;  // mut
-        let alpha = (alpha.max(0.0).min(1.0) * 255.0) as u8;
+        let target_alpha = (alpha.max(0.0).min(1.0) * 255.0) as u8;
         
         // Convert to RGBA if not already
         let rgba_image = image.to_rgba8();
@@ -19,7 +19,21 @@ impl crate::image::core::PyImage {
         for y in 0..rgba_image.height() {
             for x in 0..rgba_image.width() {
                 let pixel = rgba_image.get_pixel(x, y);
-                result.put_pixel(x, y, Rgba([pixel[0], pixel[1], pixel[2], alpha]));
+                let r = pixel[0];
+                let g = pixel[1];
+                let b = pixel[2];
+                let original_alpha = pixel[3];
+                
+                // Only modify alpha, keep RGB unchanged
+                // If original pixel was fully transparent (alpha=0), keep it transparent
+                // If original pixel had some transparency, scale it proportionally
+                let new_alpha = if original_alpha == 0 {
+                    0  // Keep fully transparent pixels transparent
+                } else {
+                    ((original_alpha as f32 * target_alpha as f32 / 255.0).round() as u8).min(255)
+                };
+                
+                result.put_pixel(x, y, Rgba([r, g, b, new_alpha]));
             }
         }
         
