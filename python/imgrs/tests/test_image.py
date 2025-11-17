@@ -374,14 +374,14 @@ class TestNewFeatures:
     def test_paste_with_grayscale_mask(self):
         """Test paste with grayscale mask."""
         base = imgrs_new("RGB", (100, 100), (255, 255, 255))  # White background
-        paste_img = imgrs_new("RGB", (50, 50), (255, 0, 0))    # Red square
-        
+        paste_img = imgrs_new("RGB", (50, 50), (255, 0, 0))  # Red square
+
         # Create grayscale mask with 50% opacity in center
         mask = imgrs_new("L", (50, 50), 0)
         # Mask should be same size as paste_img
-        
+
         result = base.paste(paste_img, (25, 25), mask)
-        
+
         assert result.size == (100, 100)
         assert result.mode == "RGB"
         assert result is not base
@@ -389,26 +389,26 @@ class TestNewFeatures:
     def test_paste_with_rgba_mask(self):
         """Test paste with RGBA mask."""
         base = imgrs_new("RGB", (100, 100), (255, 255, 255))  # White background
-        paste_img = imgrs_new("RGB", (50, 50), (0, 255, 0))    # Green square
-        
+        paste_img = imgrs_new("RGB", (50, 50), (0, 255, 0))  # Green square
+
         # Create RGBA mask using alpha channel
         mask = imgrs_new("RGBA", (50, 50), (255, 255, 255, 128))  # 50% alpha
-        
+
         result = base.paste(paste_img, (25, 25), mask)
-        
+
         assert result.size == (100, 100)
         assert result.mode == "RGB"
 
     def test_paste_with_rgb_mask(self):
         """Test paste with RGB mask (uses luminance)."""
         base = imgrs_new("RGB", (100, 100), (255, 255, 255))  # White background
-        paste_img = imgrs_new("RGB", (50, 50), (0, 0, 255))    # Blue square
-        
+        paste_img = imgrs_new("RGB", (50, 50), (0, 0, 255))  # Blue square
+
         # Create RGB mask - white areas fully visible, black areas invisible
-        mask = imgrs_new("RGB", (50, 50), (255, 255, 255))    # White = fully visible
-        
+        mask = imgrs_new("RGB", (50, 50), (255, 255, 255))  # White = fully visible
+
         result = base.paste(paste_img, (25, 25), mask)
-        
+
         assert result.size == (100, 100)
         assert result.mode == "RGB"
 
@@ -417,15 +417,17 @@ class TestNewFeatures:
         base = imgrs_new("RGB", (100, 100), (255, 255, 255))
         paste_img = imgrs_new("RGB", (50, 50), (255, 0, 0))
         mask = imgrs_new("L", (30, 30), 128)  # Wrong size
-        
-        with pytest.raises(ValueError, match="mask size.*does not match paste image size"):
+
+        with pytest.raises(
+            ValueError, match="mask size.*does not match paste image size"
+        ):
             base.paste(paste_img, (25, 25), mask)
 
     def test_paste_invalid_mask_type(self):
         """Test paste with invalid mask type."""
         base = imgrs_new("RGB", (100, 100), (255, 255, 255))
         paste_img = imgrs_new("RGB", (50, 50), (255, 0, 0))
-        
+
         with pytest.raises(TypeError, match="mask must be an Image instance"):
             base.paste(paste_img, (25, 25), "not_an_image")
 
@@ -434,9 +436,9 @@ class TestNewFeatures:
         base = imgrs_new("RGB", (100, 100), (255, 255, 255))
         paste_img = imgrs_new("RGB", (50, 50), (255, 0, 0))
         mask = imgrs_new("L", (50, 50), 0)  # Fully transparent
-        
+
         result = base.paste(paste_img, (25, 25), mask)
-        
+
         # Should be same as original base since mask is fully transparent
         assert result == base
 
@@ -445,9 +447,9 @@ class TestNewFeatures:
         base = imgrs_new("RGB", (100, 100), (255, 255, 255))
         paste_img = imgrs_new("RGB", (50, 50), (255, 0, 0))
         mask = imgrs_new("L", (50, 50), 255)  # Fully opaque
-        
+
         result = base.paste(paste_img, (25, 25), mask)
-        
+
         # Should be fully visible paste
         assert result.size == (100, 100)
 
@@ -456,9 +458,9 @@ class TestNewFeatures:
         base = imgrs_new("RGB", (100, 100), (255, 255, 255))
         paste_img = imgrs_new("RGB", (50, 50), (0, 255, 0))
         mask = imgrs_new("L", (50, 50), 128)  # 50% opacity
-        
+
         result = paste(base, paste_img, (25, 25), mask)
-        
+
         assert result.size == (100, 100)
         assert result.mode == "RGB"
 
@@ -466,12 +468,12 @@ class TestNewFeatures:
         """Test paste with LA (grayscale + alpha) mask."""
         base = imgrs_new("RGB", (100, 100), (255, 255, 255))
         paste_img = imgrs_new("RGB", (50, 50), (255, 255, 0))  # Yellow square
-        
+
         # Create LA mask - use alpha channel for transparency
         mask = imgrs_new("LA", (50, 50), (128, 200))  # Gray=128, Alpha=200
-        
+
         result = base.paste(paste_img, (25, 25), mask)
-        
+
         assert result.size == (100, 100)
         assert result.mode == "RGB"
 

@@ -1,5 +1,5 @@
 """
-Core image operations mixin - I/O, constructors, properties
+Core image operations mixin - I/O, constructors, properties with IDE-friendly features
 """
 
 import os
@@ -7,7 +7,7 @@ import subprocess
 import sys
 import tempfile
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Optional, Tuple, Union
+from typing import TYPE_CHECKING, Any, List, Optional, Tuple, Union
 
 if TYPE_CHECKING:
     from .image import Image
@@ -22,16 +22,37 @@ except ImportError:
 
 
 class CoreMixin:
-    """Mixin for core image operations"""
+    """
+    Mixin for core image operations with comprehensive IDE support.
+
+    Provides:
+    - Image I/O operations (open, save, show)
+    - Image constructors (new, fromarray, frombytes)
+    - Image properties and metadata
+    - Utility methods (copy, bytes conversion)
+
+    All operations are immutable (return new instances) unless explicitly noted.
+    """
 
     def __init__(self, rust_image=None):
-        """Initialize an Image instance."""
+        """
+        Initialize an Image instance.
+
+        Args:
+            rust_image: Optional pre-existing Rust image instance.
+                       If None, creates a new 1x1 image.
+
+        Raises:
+            ImportError: If imgrs Rust extension is not installed
+            RuntimeError: If Rust backend fails to initialize
+        """
         from .._core import Image as RustImage
 
         if RustImage is None:
             raise ImportError(
                 "Imgrs Rust extension not available. "
-                "Please install with: pip install imgrs"
+                "Please install with: pip install imgrs\n"
+                "Alternative: Use imgrs.frombytes() for NumPy-free operation"
             )
 
         if rust_image is None:
@@ -43,18 +64,57 @@ class CoreMixin:
         cls,
         fp: Union[str, Path, bytes],
         mode: Optional[str] = None,
-        formats: Optional[list] = None,
+        formats: Optional[List[Union[str, Any]]] = None,
     ) -> "Image":
         """
-        Open an image file.
+        Open an image file with comprehensive format and mode support.
 
         Args:
-            fp: File path, file object, or bytes
-            mode: Optional mode hint
-            formats: Optional list of formats to try
+            fp: File path, file object, or raw image bytes.
+                Supported formats:
+                - str: "/path/to/image.png", relative paths, absolute paths
+                - Path: pathlib.Path objects for cross-platform compatibility
+                - bytes: Raw image data (automatically detects format)
+                - file-like: Any object with read() method
+
+            mode: Optional mode hint for format detection.
+                  Common modes: 'RGB', 'RGBA', 'L', 'LA', 'CMYK', 'YCbCr'
+                  Used when format detection is ambiguous
+
+            formats: Optional prioritized list of formats to try.
+                    Example: ['JPEG', 'PNG', 'BMP'] - tries JPEG first
+                    Useful for files with ambiguous extensions
 
         Returns:
-            Image instance
+            Image: New Image instance with loaded image data
+
+        Raises:
+            FileNotFoundError: If file doesn't exist or is not readable
+            ValueError: If file format is unsupported or corrupted
+            OSError: For I/O errors (permission denied, disk full, etc.)
+            ImportError: If imgrs Rust extension is not available
+
+        Note:
+            - Automatically detects image format from file extension or content
+            - Supports all major formats: JPEG, PNG, GIF, BMP, TIFF, WEBP, etc.
+            - Returns immutable Image instance (use copy() for modification)
+            - Preserves original image properties and metadata when possible
+
+        Example:
+            >>> # Basic usage
+            >>> img = Image.open("photo.jpg")
+            >>>
+            >>> # From Path object
+            >>> from pathlib import Path
+            >>> img = Image.open(Path("images/portrait.png"))
+            >>>
+            >>> # From bytes
+            >>> with open("image.jpg", "rb") as f:
+            ...     data = f.read()
+            >>> img = Image.open(data)
+            >>>
+            >>> # With format hint
+            >>> img = Image.open("file.dat", formats=['JPEG', 'PNG'])
         """
         from .._core import Image as RustImage
 
@@ -67,20 +127,72 @@ class CoreMixin:
     @classmethod
     def new(
         cls,
-        mode: str,
+        mode: Union[str, Any],
         size: Tuple[int, int],
-        color: Union[int, Tuple[int, ...], str] = 0,
+        color: Union[int, Tuple[int, int, int], Tuple[int, int, int, int], str] = 0,
     ) -> "Image":
         """
-        Create a new image with the given mode and size.
+        Create a new image with specified mode, size, and color.
 
         Args:
-            mode: Image mode (e.g., 'RGB', 'RGBA', 'L', 'LA')
-            size: Image size as (width, height)
-            color: Fill color
+            mode: Image color mode determining number of channels and interpretation.
+                  Common modes:
+                  - 'RGB': 3 channels (Red, Green, Blue), 8-bit per channel
+                  - 'RGBA': RGB + Alpha channel, supports transparency
+                  - 'L': Grayscale, single channel (0-255)
+                  - 'LA': Grayscale + Alpha channel
+                  - 'CMYK': Print color model (4 channels)
+                  - 'YCbCr': Digital video color model
+                  - 'HSV': Hue-Saturation-Value color model
+
+            size: Image dimensions as (width, height) tuple.
+                  Both dimensions must be positive integers (> 0).
+                  Maximum size limited by available memory.
+                  Example: (1920, 1080), (800, 600), (100, 100)
+
+            color: Fill color for the new image.
+                   Supported formats:
+                   - int: For grayscale modes ('L', 'LA')
+                     Example: 0 (black), 255 (white), 128 (mid-gray)
+                   - tuple[int, int, int]: RGB color (red, green, blue)
+                     Example: (255, 0, 0) = red, (255, 255, 255) = white
+                   - tuple[int, int, int, int]: RGBA color (red, green, blue, alpha)
+                     Example: (255, 0, 0, 128) = semi-transparent red
+                   - str: Named color (case-insensitive)
+                     Supported: 'black', 'white', 'red', 'green', 'blue',
+                               'yellow', 'cyan', 'magenta', 'transparent'
+                   - Default: 0 (black for RGB, transparent for RGBA)
 
         Returns:
-            New Image instance
+            Image: New Image instance filled with specified color
+
+        Raises:
+            ValueError: If mode is unsupported, size is invalid, or color format is wrong
+            TypeError: If mode is not string or size is not tuple of two integers
+            MemoryError: If requested size exceeds available memory
+            OverflowError: If size dimensions are too large
+
+        Note:
+            - Creates a new Image instance (does not modify existing images)
+            - Color is applied uniformly across entire image
+            - For complex patterns, use drawing methods after creation
+            - Alpha channel (if present) controls transparency
+
+        Example:
+            >>> # Basic RGB image
+            >>> img = Image.new('RGB', (800, 600))
+            >>>
+            >>> # Red image with specific size
+            >>> img = Image.new('RGB', (400, 300), (255, 0, 0))
+            >>>
+            >>> # Transparent overlay
+            >>> img = Image.new('RGBA', (200, 200), (255, 0, 0, 128))
+            >>>
+            >>> # Grayscale image
+            >>> img = Image.new('L', (100, 100), 200)
+            >>>
+            >>> # Using named color
+            >>> img = Image.new('RGB', (300, 200), 'blue')
         """
         from .._core import Image as RustImage
 
@@ -277,43 +389,155 @@ class CoreMixin:
         """Create a copy of the image."""
         return self.__class__(self._rust_image.copy())
 
-    # Properties
+    # Properties with enhanced documentation
     @property
     def size(self) -> Tuple[int, int]:
-        """Image size as (width, height)."""
+        """
+        Image dimensions as (width, height) tuple.
+
+        Returns:
+            Tuple[int, int]: (width, height) in pixels
+                   - width: Horizontal dimension in pixels
+                   - height: Vertical dimension in pixels
+
+        Example:
+            >>> img = Image.new('RGB', (800, 600))
+            >>> img.size
+            (800, 600)
+            >>> width, height = img.size
+            >>> print(f"Image is {width}x{height} pixels")
+        """
         return self._rust_image.size
 
     @property
     def width(self) -> int:
-        """Image width in pixels."""
+        """
+        Image width in pixels.
+
+        Returns:
+            int: Horizontal dimension of the image
+
+        Example:
+            >>> img = Image.new('RGB', (1920, 1080))
+            >>> img.width
+            1920
+        """
         return self._rust_image.width
 
     @property
     def height(self) -> int:
-        """Image height in pixels."""
+        """
+        Image height in pixels.
+
+        Returns:
+            int: Vertical dimension of the image
+
+        Example:
+            >>> img = Image.new('RGB', (1920, 1080))
+            >>> img.height
+            1080
+        """
         return self._rust_image.height
 
     @property
     def mode(self) -> str:
-        """Image mode (e.g., 'RGB', 'RGBA', 'L')."""
+        """
+        Image color mode determining channel interpretation.
+
+        Returns:
+            str: Color mode string
+                 Common modes:
+                 - 'RGB': 3 channels (Red, Green, Blue)
+                 - 'RGBA': RGB + Alpha channel
+                 - 'L': Grayscale (single channel)
+                 - 'LA': Grayscale + Alpha
+                 - 'CMYK': Print color model
+                 - 'YCbCr': Digital video color model
+
+        Example:
+            >>> img = Image.new('RGB', (100, 100))
+            >>> img.mode
+            'RGB'
+            >>> rgba_img = Image.new('RGBA', (100, 100))
+            >>> rgba_img.mode
+            'RGBA'
+        """
         return self._rust_image.mode
 
     @property
     def format(self) -> Optional[str]:
-        """Image format (e.g., 'JPEG', 'PNG')."""
+        """
+        Original image format if loaded from file, None for new images.
+
+        Returns:
+            Optional[str]: Image format string
+                          Possible values: 'JPEG', 'PNG', 'GIF', 'BMP', 'TIFF', etc.
+                          None: For images created with new() or other constructors
+
+        Example:
+            >>> img = Image.open('photo.jpg')
+            >>> img.format
+            'JPEG'
+            >>> new_img = Image.new('RGB', (100, 100))
+            >>> new_img.format is None
+            True
+        """
         return self._rust_image.format
 
     @property
     def info(self) -> dict:
-        """Image metadata dictionary."""
+        """
+        Image metadata dictionary (for future expansion).
+
+        Returns:
+            dict: Currently empty dict, reserved for future metadata support
+                 Planned features: EXIF data, color profiles, etc.
+
+        Note:
+            This property is provided for Pillow compatibility.
+            Currently returns empty dict, but may contain metadata in future versions.
+        """
         return {}
 
     def __repr__(self) -> str:
-        """String representation of the image."""
+        """
+        String representation of the image for debugging.
+
+        Returns:
+            str: Detailed string representation including size, mode, and format
+
+        Example:
+            >>> img = Image.new('RGB', (800, 600), 'red')
+            >>> repr(img)
+            "Image(mode='RGB', size=(800, 600), format=None)"
+        """
         return self._rust_image.__repr__()
 
     def __eq__(self, other) -> bool:
-        """Compare two images for equality."""
+        """
+        Compare two images for pixel-level equality.
+
+        Args:
+            other: Another Image instance to compare with
+
+        Returns:
+            bool: True if images have same size, mode, and pixel data
+                  False otherwise or if other is not an Image instance
+
+        Note:
+            - Compares size, mode, and raw pixel data
+            - Order of operations doesn't matter for equality
+            - Expensive operation for large images (full data comparison)
+
+        Example:
+            >>> img1 = Image.new('RGB', (100, 100), 'red')
+            >>> img2 = Image.new('RGB', (100, 100), 'red')
+            >>> img3 = Image.new('RGB', (100, 100), 'blue')
+            >>> img1 == img2
+            True
+            >>> img1 == img3
+            False
+        """
         if not isinstance(other, self.__class__):
             return False
 

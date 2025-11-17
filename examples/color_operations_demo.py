@@ -106,7 +106,9 @@ shifted.save(f"{OUTPUT_DIR}/color_shifted.png")
 print("✓ Applied color shift")
 
 # Selective desaturation
-selective_desat = base_img.selective_desaturate((255, 100, 150), tolerance=50, desaturate_factor=0.8)
+selective_desat = base_img.selective_desaturate(
+    (255, 100, 150), tolerance=50, desaturate_factor=0.8
+)
 selective_desat.save(f"{OUTPUT_DIR}/selective_desaturate.png")
 print("✓ Selectively desaturated pink areas")
 
@@ -117,19 +119,21 @@ print("\n4️⃣  Gradient and Pattern Overlays")
 print("-" * 30)
 
 # Gradient overlay
-gradient_overlay = base_img.apply_gradient_overlay((0, 255, 100, 150), "horizontal", 0.8)
+gradient_overlay = base_img.apply_gradient_overlay(
+    (0, 255, 100, 150), "horizontal", 0.8
+)
 gradient_overlay.save(f"{OUTPUT_DIR}/gradient_overlay.png")
 print("✓ Applied horizontal green gradient overlay")
 
 # Stripe pattern
-stripes = base_img.create_stripe_pattern((255, 255, 0, 120), width=15, spacing=10, angle=45.0)
+stripes = base_img.create_stripe_pattern(
+    (255, 255, 0, 120), width=15, spacing=10, angle=45.0
+)
 stripes.save(f"{OUTPUT_DIR}/stripe_pattern.png")
 print("✓ Created diagonal yellow stripe pattern")
 
 # Checker pattern
-checker = base_img.create_checker_pattern(
-    (255, 0, 0, 100), (0, 0, 255, 100), size=20
-)
+checker = base_img.create_checker_pattern((255, 0, 0, 100), (0, 0, 255, 100), size=20)
 checker.save(f"{OUTPUT_DIR}/checker_pattern.png")
 print("✓ Created red-blue checker pattern")
 
@@ -165,10 +169,19 @@ print("\n6️⃣  Advanced Blending Modes")
 print("-" * 30)
 
 # Create overlay image
-overlay_img = imgrs.Image.new("RGBA", (400, 400), (0, 150, 255, 180))  # Semi-transparent blue
+overlay_img = imgrs.Image.new(
+    "RGBA", (400, 400), (0, 150, 255, 180)
+)  # Semi-transparent blue
 
 # Different blend modes
-blend_modes = ["multiply", "screen", "overlay", "soft_light", "hard_light", "difference"]
+blend_modes = [
+    "multiply",
+    "screen",
+    "overlay",
+    "soft_light",
+    "hard_light",
+    "difference",
+]
 for mode in blend_modes:
     blended = base_img.blend_with(overlay_img, mode, 0.8)
     blended.save(f"{OUTPUT_DIR}/blend_{mode}.png")

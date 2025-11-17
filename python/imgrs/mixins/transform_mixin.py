@@ -174,11 +174,11 @@ class TransformMixin:
             >>> overlay = Image.new('RGB', (100, 100), 'red')
             >>> # Basic paste at position (50, 50)
             >>> result = base.paste(overlay, (50, 50))
-            
+
             >>> # Paste with grayscale mask
             >>> mask = Image.new('L', (100, 100), 128)  # 50% opacity
             >>> result = base.paste(overlay, (50, 50), mask)
-            
+
             >>> # Create circular mask
             >>> mask = Image.new('L', (100, 100), 0)
             >>> mask = mask.draw_circle(50, 50, 40, 255)
@@ -189,9 +189,9 @@ class TransformMixin:
 
         if mask is not None:
             # Validate mask is an Image instance
-            if not hasattr(mask, '_rust_image'):
+            if not hasattr(mask, "_rust_image"):
                 raise TypeError("mask must be an Image instance")
-            
+
             # Validate mask size matches paste image size
             if mask.size != im.size:
                 raise ValueError(
