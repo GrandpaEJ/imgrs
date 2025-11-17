@@ -4,7 +4,7 @@ build-backend = "maturin"
 
 [project]
 name = "imgrs"
-version = "0.2.4"
+version = "0.2.5"
 description = "A modern, high-performance image processing library for Python, powered by Rust."
 authors = [
     {name = "Ebtisam Jubair", email = ""},
