@@ -43,6 +43,9 @@ class TransformMixin:
         angle: float,
         expand: bool = False,
         fillcolor: Optional[Tuple[int, ...]] = None,
+        resample: Optional[str] = None,
+        center: Optional[Tuple[float, float]] = None,
+        translate: Optional[Tuple[float, float]] = None,
     ) -> "Image":
         """
         Rotate the image by the specified angle.
@@ -50,24 +53,65 @@ class TransformMixin:
         Args:
             angle: Rotation angle in degrees (counter-clockwise)
             expand: If True, expand output to fit the rotated image
-            fillcolor: Optional fill color for empty areas
+            fillcolor: Optional fill color for empty areas (not fully implemented)
+            resample: Resampling method ('nearest', 'bilinear', 'lanczos') - not implemented yet
+            center: Center of rotation as (x, y) - not implemented yet
+            translate: Translation after rotation as (x, y) - not implemented yet
 
         Returns:
             New rotated Image instance
         """
-        # Only support 90-degree rotations for now
         angle = angle % 360
 
-        if angle in [90, 180, 270]:
-            rust_image = self._rust_image.rotate(angle)
-            return self.__class__(rust_image)
-        elif angle == 0:
+        if angle == 0:
             return self.copy()
-        else:
-            raise NotImplementedError(
-                f"Arbitrary angle rotation ({angle}°) not yet implemented. "
-                "Only 90°, 180°, and 270° rotations are supported."
-            )
+
+        # Perform rotation
+        rotated = self.__class__(self._rust_image.rotate(angle, expand))
+
+        # Convert back to RGB if needed (not for arbitrary angles to keep transparency)
+        if rotated.mode == 'RGBA' and self.mode == 'RGB' and angle % 90 == 0 and not (expand and fillcolor is not None):
+            rotated = rotated.convert('RGB')
+
+        if expand and fillcolor is not None:
+            # Create RGBA background with fillcolor and paste rotated on it
+            from ..image import Image  # Assuming Image class
+            if len(fillcolor) == 3:
+                fillcolor = fillcolor + (255,)
+            bg = Image.new('RGBA', rotated.size, fillcolor)
+            rotated = bg.paste(rotated, (0, 0))
+
+        if not expand and angle % 90 != 0:
+            # Crop to original size, centered (only for arbitrary angles)
+            orig_w, orig_h = self.size
+            rot_w, rot_h = rotated.size
+            left = max(0, (rot_w - orig_w) // 2)
+            top = max(0, (rot_h - orig_h) // 2)
+            rotated = rotated.crop((left, top, orig_w, orig_h))
+
+        # TODO: Implement resample, center, translate
+
+        return rotated
+
+    def rotate90(self) -> "Image":
+        """Rotate 90 degrees counter-clockwise."""
+        return self.rotate(90)
+
+    def rotate180(self) -> "Image":
+        """Rotate 180 degrees."""
+        return self.rotate(180)
+
+    def rotate270(self) -> "Image":
+        """Rotate 270 degrees counter-clockwise."""
+        return self.rotate(270)
+
+    def rotate_left(self) -> "Image":
+        """Rotate 90 degrees counter-clockwise (same as rotate90)."""
+        return self.rotate(90)
+
+    def rotate_right(self) -> "Image":
+        """Rotate 90 degrees clockwise."""
+        return self.rotate(-90)
 
     def transpose(self, method: Union[int, str]) -> "Image":
         """

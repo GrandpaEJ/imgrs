@@ -81,7 +81,7 @@ impl PyImage {
         }))
     }
 
-    pub fn rotate_impl(&mut self, angle: f64) -> PyResult<Self> {
+    pub fn rotate_impl(&mut self, angle: f64, expand: bool) -> PyResult<Self> {
         let format = self.format;
         let image = self.get_image()?;
         
@@ -98,34 +98,50 @@ impl PyImage {
                     // 0 degrees, return as is
                     image.clone()
                 } else {
-                    // Arbitrary angle rotation using bilinear interpolation
+                    // Always expand to fit for arbitrary angles
                     use imageproc::geometric_transformations::{rotate_about_center, Interpolation};
                     use image::Rgba;
-                    
-                    // Convert to RGBA for rotation
-                    let rgba_img = image.to_rgba8();
-                    
-                    // Convert angle to radians (imageproc expects radians)
-                    let radians = angle.to_radians() as f32;
-                    
-                    // Background color (transparent or black)
-                    let background = Rgba([0u8, 0u8, 0u8, 0u8]);
-                    
-                    // Rotate with bilinear interpolation for smooth results
-                    let rotated_rgba = rotate_about_center(
-                        &rgba_img,
-                        radians,
-                        Interpolation::Bilinear,
-                        background,
-                    );
-                    
-                    // Convert back to original format if needed
-                    match image {
-                        DynamicImage::ImageRgb8(_) => DynamicImage::ImageRgb8(
-                            DynamicImage::ImageRgba8(rotated_rgba).to_rgb8()
-                        ),
-                        _ => DynamicImage::ImageRgba8(rotated_rgba),
+
+                    let radians = angle.to_radians();
+                    let w = image.width() as f64;
+                    let h = image.height() as f64;
+                    let cos_a = radians.cos();
+                    let sin_a = radians.sin();
+                    let corners = [
+                        (0.0, 0.0),
+                        (w, 0.0),
+                        (w, h),
+                        (0.0, h),
+                    ];
+                    let mut min_x = f64::INFINITY;
+                    let mut max_x = f64::NEG_INFINITY;
+                    let mut min_y = f64::INFINITY;
+                    let mut max_y = f64::NEG_INFINITY;
+                    for &(x, y) in &corners {
+                        let rx = x * cos_a - y * sin_a;
+                        let ry = x * sin_a + y * cos_a;
+                        min_x = min_x.min(rx);
+                        max_x = max_x.max(rx);
+                        min_y = min_y.min(ry);
+                        max_y = max_y.max(ry);
                     }
+                    let new_width = (max_x - min_x).ceil() as u32;
+                    let new_height = (max_y - min_y).ceil() as u32;
+
+                    let rgba_img = image.to_rgba8();
+                    let mut large_rgba = image::RgbaImage::new(new_width, new_height);
+                    let offset_x = ((new_width as f64 - w) / 2.0).round() as i64;
+                    let offset_y = ((new_height as f64 - h) / 2.0).round() as i64;
+                    image::imageops::overlay(&mut large_rgba, &rgba_img, offset_x, offset_y);
+
+                    let rotated_rgba = rotate_about_center(
+                        &large_rgba,
+                        radians as f32,
+                        Interpolation::Bilinear,
+                        Rgba([0, 0, 0, 0]),
+                    );
+
+                    DynamicImage::ImageRgba8(rotated_rgba)
                 };
                 Ok(PyImage {
                     lazy_image: LazyImage::Loaded(rotated),

@@ -82,8 +82,8 @@ impl PyImage {
         self.crop_impl(box_coords)
     }
 
-    fn rotate(&mut self, angle: f64) -> PyResult<Self> {
-        self.rotate_impl(angle)
+    fn rotate(&mut self, angle: f64, expand: bool) -> PyResult<Self> {
+        self.rotate_impl(angle, expand)
     }
 
     fn transpose(&mut self, method: String) -> PyResult<Self> {
