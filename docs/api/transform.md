@@ -66,29 +66,67 @@ face = img.crop((250, 150, 300, 350))
 
 ---
 
-### `img.rotate(angle)`
+### `img.rotate(angle, expand=False, fillcolor=None, resample=None, center=None, translate=None)`
 
-Rotate image by specified angle.
+Rotate image by specified angle with advanced options.
 
 **Parameters:**
-- `angle` (float): Rotation angle in degrees
-  - Only 90, 180, 270 are supported
+- `angle` (float): Rotation angle in degrees (counter-clockwise)
+  - Any angle supported (0°, 30°, 45°, 90°, etc.)
+- `expand` (bool, optional): Expand canvas to fit rotated image. Default: `False`
+  - `False`: Crop to original size, fill empty areas with transparent
+  - `True`: Expand canvas, fill empty areas with fillcolor or transparent
+- `fillcolor` (tuple, optional): Fill color for empty areas when `expand=True`
+  - RGB tuple: `(r, g, b)` for RGB images
+  - RGBA tuple: `(r, g, b, a)` for RGBA images
+- `resample` (str, optional): Resampling method (placeholder for future)
+- `center` (tuple, optional): Rotation center (placeholder for future)
+- `translate` (tuple, optional): Post-rotation translation (placeholder for future)
 
 **Returns:** `Image`
 
-**Example:**
+**Examples:**
 ```python
-# Rotate 90° clockwise
-rotated = img.rotate(90)
+# Basic rotations
+rotated_90 = img.rotate(90)      # 90° clockwise
+rotated_180 = img.rotate(180)    # 180°
+rotated_270 = img.rotate(270)    # 270° clockwise
 
-# Rotate 180°
-flipped = img.rotate(180)
+# Arbitrary angles
+rotated_45 = img.rotate(45)      # 45° rotation
+rotated_30 = img.rotate(30)      # 30° rotation
 
-# Rotate 270° (same as 90° counter-clockwise)
-ccw = img.rotate(270)
+# Expand vs crop behavior
+cropped = img.rotate(45, expand=False)    # Keep original size
+expanded = img.rotate(45, expand=True)    # Expand to fit
+
+# Fill expanded areas
+filled = img.rotate(45, expand=True, fillcolor=(255, 0, 0))  # Red background
+
+# Negative angles (clockwise)
+clockwise = img.rotate(-90)  # 90° clockwise
 ```
 
-**Note:** For arbitrary angles, use external libraries. Only orthogonal rotations supported.
+**Rotation Behavior:**
+- **expand=False**: Rotates within original bounds, crops overflow, transparent fill
+- **expand=True**: Expands canvas to show full rotated image
+- **90°/180°/270°**: Always change dimensions appropriately
+- **Arbitrary angles**: Smooth bilinear interpolation
+
+**Convenience Methods:**
+```python
+# Easy aliases
+img.rotate90()    # Same as rotate(90)
+img.rotate180()   # Same as rotate(180)
+img.rotate270()   # Same as rotate(270)
+img.rotate_left() # Same as rotate(90)
+img.rotate_right() # Same as rotate(-90)
+```
+
+**Performance Notes:**
+- Arbitrary angles: O(n×m) with bilinear interpolation
+- 90° increments: O(n×m) fast path
+- expand=True increases processing time and memory
 
 ---
 
@@ -278,7 +316,7 @@ result = enhance_photo(img)
 |-----------|------------|-------|
 | `resize()` | O(n×m) | LANCZOS slower than NEAREST |
 | `crop()` | O(1) | Very fast |
-| `rotate()` | O(n×m) | Fast, orthogonal only |
+| `rotate()` | O(n×m) | Arbitrary angles with bilinear interpolation |
 | `transpose()` | O(n×m) | Fast |
 | `convert()` | O(n×m) | Per-pixel conversion |
 | `split()` | O(n×m) | Creates copies |
@@ -290,4 +328,5 @@ result = enhance_photo(img)
 - [Filters API](filters.md) - Color filters
 - [Drawing API](drawing.md) - Draw shapes
 - [Examples](../examples/transform.md) - Transform examples
+
 
