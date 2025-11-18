@@ -70,15 +70,21 @@ class TransformMixin:
         rotated = self.__class__(self._rust_image.rotate(angle, expand))
 
         # Convert back to RGB if needed (not for arbitrary angles to keep transparency)
-        if rotated.mode == 'RGBA' and self.mode == 'RGB' and angle % 90 == 0 and not (expand and fillcolor is not None):
-            rotated = rotated.convert('RGB')
+        if (
+            rotated.mode == "RGBA"
+            and self.mode == "RGB"
+            and angle % 90 == 0
+            and not (expand and fillcolor is not None)
+        ):
+            rotated = rotated.convert("RGB")
 
         if expand and fillcolor is not None:
             # Create RGBA background with fillcolor and paste rotated on it
             from ..image import Image  # Assuming Image class
+
             if len(fillcolor) == 3:
                 fillcolor = fillcolor + (255,)
-            bg = Image.new('RGBA', rotated.size, fillcolor)
+            bg = Image.new("RGBA", rotated.size, fillcolor)
             rotated = bg.paste(rotated, (0, 0))
 
         if not expand and angle % 90 != 0:

@@ -30,6 +30,7 @@ def test_rotation_operations():
     """Test enhanced rotation operations."""
     try:
         import imgrs
+
         print("✓ Imgrs imported successfully")
     except ImportError as e:
         print(f"✗ Failed to import imgrs: {e}")
@@ -120,6 +121,7 @@ def test_rotation_operations():
     except Exception as e:
         print(f"\n❌ Error during rotation operations: {e}")
         import traceback
+
         traceback.print_exc()
         return False
 
