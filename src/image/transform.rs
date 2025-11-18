@@ -81,7 +81,7 @@ impl PyImage {
         }))
     }
 
-    pub fn rotate_impl(&mut self, angle: f64, expand: bool) -> PyResult<Self> {
+    pub fn rotate_impl(&mut self, angle: f64, _expand: bool) -> PyResult<Self> {
         let format = self.format;
         let image = self.get_image()?;
         

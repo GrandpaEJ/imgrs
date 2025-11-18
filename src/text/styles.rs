@@ -48,6 +48,9 @@ pub struct TextStyle {
     /// Add shadow
     pub shadow: Option<(i32, i32, u8, u8, u8, u8)>, // offset_x, offset_y, color
 
+    /// Add glow
+    pub glow: Option<(u8, u8, u8, u8, f32)>, // color + blur_radius
+
     /// Opacity (0.0 to 1.0)
     pub opacity: f32,
 
@@ -71,6 +74,7 @@ impl Default for TextStyle {
             letter_spacing: 0.0,
             outline: None,
             shadow: None,
+            glow: None,
             opacity: 1.0,
             max_width: None,
             rotation: 0.0,

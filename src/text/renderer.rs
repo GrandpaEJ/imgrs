@@ -1,3 +1,4 @@
+
 /// Text rendering implementation with full styling support
 
 use image::{DynamicImage, Rgba, RgbaImage};
@@ -121,6 +122,32 @@ fn render_text_with_effects(
         draw_text_mut(target, shadow_color, x + sx, y + sy, scale, font, text);
     }
     
+    // Draw glow if specified
+    if let Some((gr, gg, gb, ga, blur_radius)) = style.glow {
+        let _glow_color = Rgba([gr, gg, gb, ga]);
+        let radius = blur_radius.max(1.0) as i32;
+        // Draw multiple layers for glow effect
+        for layer in 1..=radius as i32 {
+            let alpha = (ga as f32 * (1.0 - layer as f32 / radius as f32)).max(0.0) as u8;
+            let layer_color = Rgba([gr, gg, gb, alpha]);
+            for dy in -layer..=layer {
+                for dx in -layer..=layer {
+                    if dx.abs() + dy.abs() == layer {
+                        draw_text_mut(
+                            target,
+                            layer_color,
+                            x + dx,
+                            y + dy,
+                            scale,
+                            font,
+                            text,
+                        );
+                    }
+                }
+            }
+        }
+    }
+
     // Draw outline if specified
     if let Some((or, og, ob, oa, width)) = style.outline {
         let outline_color = Rgba([or, og, ob, oa]);
@@ -281,7 +308,7 @@ pub struct TextBox {
 }
 
 /// Wrap text to fit within max width
-fn wrap_text(
+pub fn wrap_text(
     text: &str,
     max_width: u32,
     size: f32,

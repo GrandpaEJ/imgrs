@@ -81,7 +81,7 @@ class FontManager:
                 return str(potential_font)
 
             # Search for font files with family name
-            for ext in ["*.ttf", "*.otf"]:
+            for ext in ["*.ttf", "*.otf", "*.woff2"]:
                 for font_file in fonts_dir.glob(ext):
                     if family_lower in font_file.name.lower():
                         return str(font_file)
@@ -168,6 +168,62 @@ class TextMixin:
             opacity,
         )
         return self.__class__(rust_image)
+
+    def add_text_styled(
+        self,
+        text: str,
+        position: Union[Tuple[int, int], Tuple[float, float]],
+        size: float = 32.0,
+        color: Union[Tuple[int, int, int, int], str] = (0, 0, 0, 255),
+        font_family: str = "sans",
+        font_weight: str = "normal",
+        font_style: str = "normal",
+        font_path: Optional[str] = None,
+        letter_spacing: float = 0.0,
+        opacity: float = 1.0,
+        align: str = "left",
+        background: Optional[Union[Tuple[int, int, int, int], str]] = None,
+        outline: Optional[
+            Tuple[
+                Union[int, float],
+                Union[int, float],
+                Union[int, float],
+                Union[int, float],
+                float,
+            ]
+        ] = None,
+        shadow: Optional[
+            Tuple[
+                int,
+                int,
+                Union[int, float],
+                Union[int, float],
+                Union[int, float],
+                Union[int, float],
+            ]
+        ] = None,
+        glow: Optional[
+            Tuple[
+                Union[int, float],
+                Union[int, float],
+                Union[int, float],
+                Union[int, float],
+                float,
+            ]
+        ] = None,
+        max_width: Optional[int] = None,
+        line_spacing: float = 1.2,
+        text_justify: str = "left",
+        rotation: float = 0.0,
+    ) -> "Image":
+        """
+        Alias for add_text_advanced for compatibility.
+        """
+        return self.add_text_advanced(
+            text, position, size, color, font_family, font_weight, font_style,
+            font_path, letter_spacing, opacity, align, background, outline,
+            shadow, glow, max_width, line_spacing, text_justify, rotation
+        )
 
     def add_text_advanced(
         self,
@@ -596,7 +652,7 @@ class TextMixin:
         # Check fonts directory
         fonts_dir = Path("../../fonts")
         if fonts_dir.exists():
-            for ext in ["*.ttf", "*.otf", "*.ttc"]:
+            for ext in ["*.ttf", "*.otf", "*.ttc", "*.woff2"]:
                 fonts.extend([str(f) for f in fonts_dir.glob(ext)])
 
         # Add system fonts if they exist

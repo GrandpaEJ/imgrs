@@ -2,7 +2,7 @@
 
 use crate::errors::ImgrsError;
 use crate::image::core::{PyImage, LazyImage};
-use crate::text::{draw_text, draw_text_styled, draw_text_centered, draw_text_multiline, TextStyle, TextAlign};
+use crate::text::{draw_text, draw_text_styled, draw_text_centered, draw_text_multiline, TextStyle, TextAlign, wrap_text};
 use crate::text::styles::FontWeight;
 use crate::text::{get_text_size, get_multiline_text_size};
 use pyo3::prelude::*;
@@ -95,6 +95,7 @@ impl PyImage {
             background,
             outline,
             shadow,
+            glow: None,
             opacity: opacity.unwrap_or(1.0),
             line_spacing: line_spacing.unwrap_or(1.2),
             letter_spacing: letter_spacing.unwrap_or(0.0),
@@ -142,6 +143,7 @@ impl PyImage {
             background: None,
             outline: None,
             shadow: None,
+            glow: None,
             opacity: 1.0,
             line_spacing: 1.2,
             letter_spacing: 0.0,
@@ -196,6 +198,7 @@ impl PyImage {
             background: None,
             outline: None,
             shadow: None,
+            glow: None,
             opacity: 1.0,
             line_spacing: line_spacing.unwrap_or(1.2),
             letter_spacing: 0.0,
@@ -222,19 +225,73 @@ impl PyImage {
         font_path: Option<&str>,
         letter_spacing: f32,
         opacity: f32,
-        _align: Option<&str>,
-        _background: Option<(u8, u8, u8, u8)>,
-        _outline: Option<(u8, u8, u8, u8, f32)>,
-        _shadow: Option<(i32, i32, u8, u8, u8, u8)>,
-        _glow: Option<(u8, u8, u8, u8, f32)>,
-        _max_width: Option<u32>,
-        _line_spacing: f32,
-        _text_justify: &str,
-        _rotation: f32,
+        align: Option<&str>,
+        background: Option<(u8, u8, u8, u8)>,
+        outline: Option<(u8, u8, u8, u8, f32)>,
+        shadow: Option<(i32, i32, u8, u8, u8, u8)>,
+        glow: Option<(u8, u8, u8, u8, f32)>,
+        max_width: Option<u32>,
+        line_spacing: f32,
+        text_justify: &str,
+        rotation: f32,
     ) -> Result<PyImage, ImgrsError> {
-        // For now, use enhanced text with basic styling
-        // TODO: Implement full advanced features like glow, text_justify
-        self.draw_enhanced_text_impl(text, x, y, size, color, font_family, font_weight, font_style, font_path, letter_spacing, opacity)
+        let image = match &self.lazy_image {
+            LazyImage::Loaded(img) => img,
+            LazyImage::Path { path } => {
+                let img = image::open(path)?;
+                return Self::draw_advanced_text_impl(
+                    &PyImage::new_from_image(img, self.format),
+                    text, x, y, size, color, font_family, font_weight, font_style,
+                    font_path, letter_spacing, opacity, align, background,
+                    outline, shadow, glow, max_width, line_spacing, text_justify, rotation
+                );
+            }
+            LazyImage::Bytes { data } => {
+                let img = image::load_from_memory(data)?;
+                return Self::draw_advanced_text_impl(
+                    &PyImage::new_from_image(img, self.format),
+                    text, x, y, size, color, font_family, font_weight, font_style,
+                    font_path, letter_spacing, opacity, align, background,
+                    outline, shadow, glow, max_width, line_spacing, text_justify, rotation
+                );
+            }
+        };
+
+        let resolved_font = resolve_font_path(font_path, font_family, font_weight, font_style)?;
+        let align_enum = align.map(|a| match a {
+            "center" => TextAlign::Center,
+            "right" => TextAlign::Right,
+            _ => TextAlign::Left,
+        }).unwrap_or(TextAlign::Left);
+
+        let style = TextStyle {
+            color,
+            size,
+            weight: FontWeight::Normal,
+            align: align_enum,
+            background,
+            outline,
+            shadow,
+            glow,
+            opacity,
+            line_spacing,
+            letter_spacing,
+            max_width,
+            rotation,
+        };
+
+        let result = if text.contains('\n') || max_width.is_some() {
+            let wrapped_text = if let Some(max_width) = max_width {
+                wrap_text(text, max_width, size, resolved_font.as_deref())?
+            } else {
+                text.to_string()
+            };
+            draw_text_multiline(image, &wrapped_text, x, y, &style, resolved_font.as_deref())?
+        } else {
+            draw_text_styled(image, text, x, y, &style, resolved_font.as_deref())?
+        };
+
+        Ok(PyImage::new_from_image(result, self.format))
     }
 
     /// Multiline enhanced text drawing
@@ -294,6 +351,7 @@ impl PyImage {
             background: None,
             outline: None,
             shadow: None,
+            glow: None,
             opacity: opacity,
             line_spacing,
             letter_spacing,
@@ -348,6 +406,7 @@ impl PyImage {
             background: None,
             outline: None,
             shadow: None,
+            glow: None,
             opacity,
             line_spacing: 1.2,
             letter_spacing,
@@ -418,10 +477,10 @@ impl PyImage {
         let mut fonts = Vec::new();
         
         // Check fonts directory
-        if let Ok(entries) = std::fs::read_dir("../../fonts") {
+        if let Ok(entries) = std::fs::read_dir("fonts") {
             for entry in entries.flatten() {
                 if let Some(path) = entry.path().to_str() {
-                    if path.ends_with(".ttf") || path.ends_with(".otf") || path.ends_with(".ttc") {
+                    if path.ends_with(".ttf") || path.ends_with(".otf") || path.ends_with(".ttc") || path.ends_with(".woff2") {
                         fonts.push(path.to_string());
                     }
                 }
@@ -489,9 +548,9 @@ impl PyImage {
 /// Enhanced font resolution with family fallback
 fn resolve_font_path(
     explicit_path: Option<&str>,
-    font_family: &str,
-    font_weight: &str,
-    font_style: &str,
+    _font_family: &str,
+    _font_weight: &str,
+    _font_style: &str,
 ) -> Result<Option<std::path::PathBuf>, ImgrsError> {
     // If explicit path provided, use it
     if let Some(path) = explicit_path {
@@ -500,74 +559,7 @@ fn resolve_font_path(
             return Ok(Some(path_buf));
         }
     }
-    
-    // Try font family resolution
-    let family_lower = font_family.to_lowercase();
-    let weight_lower = font_weight.to_lowercase();
-    let style_lower = font_style.to_lowercase();
-    
-    // Font family fallback
-    let mut candidates: Vec<String> = Vec::new();
 
-    if family_lower.contains("sans") || family_lower.contains("arial") {
-        candidates.extend(vec!["DejaVuSans.ttf".to_string(), "Arial.ttf".to_string()]);
-    } else if family_lower.contains("serif") || family_lower.contains("times") {
-        candidates.extend(vec!["DejaVuSerif.ttf".to_string(), "Times.ttc".to_string()]);
-    } else if family_lower.contains("mono") || family_lower.contains("courier") {
-        candidates.extend(vec!["DejaVuSansMono.ttf".to_string(), "Menlo.ttc".to_string()]);
-    } else {
-        // Try to find font files containing the family name
-        if let Ok(entries) = std::fs::read_dir("../../fonts") {
-            for entry in entries.flatten() {
-                if let Some(path_str) = entry.path().to_str() {
-                    let filename = std::path::Path::new(path_str).file_name()
-                        .and_then(|s| s.to_str())
-                        .unwrap_or("")
-                        .to_string();
-
-                    if family_lower.contains("bold") && filename.to_lowercase().contains("bold") {
-                        candidates.push(filename);
-                    } else if filename.to_lowercase().contains(&family_lower) {
-                        candidates.push(filename);
-                    }
-                }
-            }
-        }
-    }
-    
-    // Add weight/style variations
-    let mut final_candidates = Vec::new();
-    for candidate in candidates {
-        let mut path_candidate = candidate;
-
-        // Add weight suffix
-        if weight_lower == "bold" || weight_lower == "700" || weight_lower == "800" || weight_lower == "900" {
-            if !path_candidate.to_lowercase().contains("bold") {
-                path_candidate = path_candidate.replace(".ttf", "-Bold.ttf");
-            }
-        } else if weight_lower == "light" || weight_lower == "100" || weight_lower == "200" || weight_lower == "300" {
-            if !path_candidate.to_lowercase().contains("light") {
-                path_candidate = path_candidate.replace(".ttf", "-Light.ttf");
-            }
-        }
-
-        // Add style suffix
-        if style_lower == "italic" || style_lower == "oblique" {
-            if !path_candidate.to_lowercase().contains("italic") {
-                path_candidate = path_candidate.replace(".ttf", "-Italic.ttf");
-            }
-        }
-
-        final_candidates.push(format!("../../fonts/{}", path_candidate));
-    }
-    
-    // Try candidates
-    for candidate in final_candidates {
-        if std::path::Path::new(&candidate).exists() {
-            return Ok(Some(std::path::PathBuf::from(candidate)));
-        }
-    }
-    
-    // Fallback to default
-    Ok(Some(std::path::PathBuf::from("../../fonts/DejaVuSans.ttf")))
+    // For now, always use embedded font to avoid file path issues
+    Ok(None)
 }

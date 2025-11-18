@@ -18,13 +18,16 @@ print()
 # Create a clean canvas
 img = imgrs.Image.new("RGBA", (800, 1200), (255, 255, 255, 255))
 
+# Font path for testing
+font_path = "/home/grandpa/me/code/img/imgrs/fonts/DejaVuSans.ttf"
+
 # =============================================================================
 # 1. BASIC TEXT
 # =============================================================================
 print("1. Basic Text")
-img = img.add_text("Basic Text", (50, 50), size=48, color=(0, 0, 0, 255))
-img = img.add_text("Red Text", (50, 110), size=36, color=(255, 0, 0, 255))
-img = img.add_text("Semi-transparent", (50, 160), size=32, color=(0, 128, 255, 128))
+img = img.add_text("Basic Text", (50, 50), size=48, color=(0, 0, 0, 255), font_path=font_path)
+img = img.add_text("Red Text", (50, 110), size=36, color=(255, 0, 0, 255), font_path=font_path)
+img = img.add_text("Semi-transparent", (50, 160), size=32, color=(0, 128, 255, 128), font_path=font_path)
 img.save("examples/output/text_demo/01_basic.png")
 print("   ✅ Basic text with colors")
 
@@ -39,6 +42,7 @@ img2 = img2.add_text_styled(
     size=80,
     color=(255, 255, 255, 255),
     outline=(0, 0, 0, 255, 3.0),
+    font_path=font_path,
 )
 img2 = img2.add_text_styled(
     "Colored Outline",
@@ -46,6 +50,7 @@ img2 = img2.add_text_styled(
     size=64,
     color=(255, 255, 0, 255),
     outline=(255, 0, 0, 255, 2.0),
+    font_path=font_path,
 )
 img2.save("examples/output/text_demo/02_outline.png")
 print("   ✅ Text with outlines")
@@ -61,6 +66,7 @@ img3 = img3.add_text_styled(
     size=72,
     color=(0, 0, 0, 255),
     shadow=(3, 3, 100, 100, 100, 180),
+    font_path=font_path,
 )
 img3 = img3.add_text_styled(
     "Colorful Shadow",
@@ -68,6 +74,7 @@ img3 = img3.add_text_styled(
     size=60,
     color=(255, 100, 0, 255),
     shadow=(5, 5, 0, 100, 255, 200),
+    font_path=font_path,
 )
 img3.save("examples/output/text_demo/03_shadow.png")
 print("   ✅ Text with shadows")
@@ -83,6 +90,7 @@ img4 = img4.add_text_styled(
     size=48,
     color=(255, 255, 255, 255),
     background=(0, 0, 0, 180),
+    font_path=font_path,
 )
 img4 = img4.add_text_styled(
     "Colored BG",
@@ -90,6 +98,7 @@ img4 = img4.add_text_styled(
     size=40,
     color=(255, 255, 255, 255),
     background=(0, 128, 255, 200),
+    font_path=font_path,
 )
 img4.save("examples/output/text_demo/04_background.png")
 print("   ✅ Text with backgrounds")
@@ -101,13 +110,13 @@ print("5. Text Alignment")
 img5 = imgrs.Image.new("RGBA", (600, 400), (255, 255, 255, 255))
 
 img5 = img5.add_text_styled(
-    "Left Aligned", (50, 50), size=36, color=(0, 0, 0, 255), align="left"
+    "Left Aligned", (50, 50), size=36, color=(0, 0, 0, 255), align="left", font_path=font_path
 )
 img5 = img5.add_text_styled(
-    "Center Aligned", (300, 120), size=36, color=(0, 0, 0, 255), align="center"
+    "Center Aligned", (300, 120), size=36, color=(0, 0, 0, 255), align="center", font_path=font_path
 )
 img5 = img5.add_text_styled(
-    "Right Aligned", (550, 190), size=36, color=(0, 0, 0, 255), align="right"
+    "Right Aligned", (550, 190), size=36, color=(0, 0, 0, 255), align="right", font_path=font_path
 )
 img5.save("examples/output/text_demo/05_alignment.png")
 print("   ✅ Text alignment (left, center, right)")
@@ -117,8 +126,8 @@ print("   ✅ Text alignment (left, center, right)")
 # =============================================================================
 print("6. Centered Text")
 img6 = imgrs.Image.new("RGBA", (800, 300), (255, 255, 255, 255))
-img6 = img6.add_text_centered("Centered Title", 50, size=56, color=(0, 0, 128, 255))
-img6 = img6.add_text_centered("Subtitle", 130, size=36, color=(128, 128, 128, 255))
+img6 = img6.add_text_centered("Centered Title", 50, size=56, color=(0, 0, 128, 255), font_path=font_path)
+img6 = img6.add_text_centered("Subtitle", 130, size=36, color=(128, 128, 128, 255), font_path=font_path)
 img6.save("examples/output/text_demo/06_centered.png")
 print("   ✅ Horizontally centered text")
 
@@ -133,7 +142,7 @@ Line 3: Third Line
 Line 4: Fourth Line"""
 
 img7 = img7.add_text_multiline(
-    multiline_text, (50, 50), size=32, color=(0, 0, 0, 255), line_spacing=1.5
+    multiline_text, (50, 50), size=32, color=(0, 0, 0, 255), line_spacing=1.5, font_path=font_path
 )
 img7.save("examples/output/text_demo/07_multiline.png")
 print("   ✅ Multi-line text")
@@ -144,13 +153,13 @@ print("   ✅ Multi-line text")
 print("8. Text Opacity")
 img8 = imgrs.Image.open("examples/img/gradient.png")
 img8 = img8.add_text_styled(
-    "Opacity 1.0", (50, 30), size=48, color=(255, 255, 255, 255), opacity=1.0
+    "Opacity 1.0", (50, 30), size=48, color=(255, 255, 255, 255), opacity=1.0, font_path=font_path
 )
 img8 = img8.add_text_styled(
-    "Opacity 0.7", (50, 90), size=48, color=(255, 255, 255, 255), opacity=0.7
+    "Opacity 0.7", (50, 90), size=48, color=(255, 255, 255, 255), opacity=0.7, font_path=font_path
 )
 img8 = img8.add_text_styled(
-    "Opacity 0.4", (50, 150), size=48, color=(255, 255, 255, 255), opacity=0.4
+    "Opacity 0.4", (50, 150), size=48, color=(255, 255, 255, 255), opacity=0.4, font_path=font_path
 )
 img8.save("examples/output/text_demo/08_opacity.png")
 print("   ✅ Text with varying opacity")
@@ -168,6 +177,7 @@ img9 = img9.add_text_styled(
     outline=(255, 140, 0, 255, 4.0),  # Dark orange outline
     shadow=(5, 5, 0, 0, 0, 200),  # Black shadow
     align="center",
+    font_path=font_path,
 )
 img9.save("examples/output/text_demo/09_combined.png")
 print("   ✅ Combined effects (outline + shadow)")
@@ -186,6 +196,7 @@ meme = meme.add_text_styled(
     color=(255, 255, 255, 255),
     outline=(0, 0, 0, 255, 3.0),
     align="center",
+    font_path=font_path,
 )
 meme = meme.add_text_styled(
     "BOTTOM TEXT",
@@ -194,6 +205,7 @@ meme = meme.add_text_styled(
     color=(255, 255, 255, 255),
     outline=(0, 0, 0, 255, 3.0),
     align="center",
+    font_path=font_path,
 )
 meme.save("examples/output/text_demo/10_meme_style.png")
 print("   ✅ Meme-style text")
@@ -208,9 +220,10 @@ quote_bg = quote_bg.add_text_multiline(
     color=(230, 230, 230, 255),
     line_spacing=1.4,
     align="center",
+    font_path=font_path,
 )
 quote_bg = quote_bg.add_text_styled(
-    "- Steve Jobs", (300, 320), size=24, color=(180, 180, 180, 255), align="center"
+    "- Steve Jobs", (300, 320), size=24, color=(180, 180, 180, 255), align="center", font_path=font_path
 )
 quote_bg.save("examples/output/text_demo/11_quote.png")
 print("   ✅ Quote-style layout")
@@ -224,6 +237,7 @@ banner = banner.add_text_styled(
     color=(255, 255, 255, 255),
     align="center",
     shadow=(3, 3, 0, 0, 0, 150),
+    font_path=font_path,
 )
 banner = banner.add_text_styled(
     "50% OFF",
@@ -232,6 +246,7 @@ banner = banner.add_text_styled(
     color=(255, 255, 0, 255),
     align="center",
     outline=(255, 140, 0, 255, 2.0),
+    font_path=font_path,
 )
 banner.save("examples/output/text_demo/12_banner.png")
 print("   ✅ Banner-style design")
