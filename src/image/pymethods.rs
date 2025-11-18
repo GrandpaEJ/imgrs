@@ -1,4 +1,6 @@
 use pyo3::prelude::*;
+use pyo3::Bound;
+use pyo3::types::PyType;
 use super::core::PyImage;
 
 #[pymethods]
@@ -31,6 +33,7 @@ impl PyImage {
     fn frombytes(mode: &str, size: (u32, u32), data: &[u8]) -> PyResult<Self> {
         Self::frombytes_impl(mode, size, data)
     }
+
 
     // I/O methods (from io.rs)
     #[pyo3(signature = (path_or_buffer, format=None))]
@@ -747,6 +750,7 @@ impl PyImage {
         self.draw_text_impl(text, x, y, color, scale)
     }
 
+
     // Effect methods (from effects.rs)
     fn drop_shadow(&mut self, offset_x: i32, offset_y: i32, blur_radius: f32, shadow_color: (u8, u8, u8, u8)) -> PyResult<Self> {
         self.drop_shadow_impl(offset_x, offset_y, blur_radius, shadow_color)
@@ -889,6 +893,7 @@ impl PyImage {
     fn analyze_color_distribution(&mut self) -> PyResult<Py<pyo3::types::PyDict>> {
         Ok(self.analyze_color_distribution_impl()?)
     }
+
 
     fn find_color_regions(&mut self, target_color: (u8, u8, u8), tolerance: u8) -> PyResult<Vec<(u32, u32, u32, u32)>> {
         Ok(self.find_color_regions_impl(target_color, tolerance)?)

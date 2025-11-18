@@ -87,5 +87,174 @@ impl PyImage {
             format,
         }
     }
+
+    // Shape creation methods
+    pub fn create_circle(size: u32, color: (u8, u8, u8, u8)) -> PyResult<Self> {
+        use crate::drawing;
+        Python::with_gil(|py| {
+            py.allow_threads(|| {
+                drawing::create_circle(size, color)
+            })
+        }).map(|result| PyImage {
+            lazy_image: LazyImage::Loaded(result),
+            format: None,
+        }).map_err(|e| e.into())
+    }
+
+    pub fn create_rectangle(width: u32, height: u32, color: (u8, u8, u8, u8)) -> PyResult<Self> {
+        use crate::drawing;
+        Python::with_gil(|py| {
+            py.allow_threads(|| {
+                drawing::create_rectangle(width, height, color)
+            })
+        }).map(|result| PyImage {
+            lazy_image: LazyImage::Loaded(result),
+            format: None,
+        }).map_err(|e| e.into())
+    }
+
+    pub fn create_triangle(width: u32, height: u32, color: (u8, u8, u8, u8)) -> PyResult<Self> {
+        use crate::drawing;
+        Python::with_gil(|py| {
+            py.allow_threads(|| {
+                drawing::create_triangle(width, height, color)
+            })
+        }).map(|result| PyImage {
+            lazy_image: LazyImage::Loaded(result),
+            format: None,
+        }).map_err(|e| e.into())
+    }
+
+    pub fn create_ellipse(width: u32, height: u32, color: (u8, u8, u8, u8)) -> PyResult<Self> {
+        use crate::drawing;
+        Python::with_gil(|py| {
+            py.allow_threads(|| {
+                drawing::create_ellipse(width, height, color)
+            })
+        }).map(|result| PyImage {
+            lazy_image: LazyImage::Loaded(result),
+            format: None,
+        }).map_err(|e| e.into())
+    }
+
+    pub fn create_star(size: u32, color: (u8, u8, u8, u8)) -> PyResult<Self> {
+        use crate::drawing;
+        Python::with_gil(|py| {
+            py.allow_threads(|| {
+                drawing::create_star(size, color)
+            })
+        }).map(|result| PyImage {
+            lazy_image: LazyImage::Loaded(result),
+            format: None,
+        }).map_err(|e| e.into())
+    }
+
+    pub fn create_square(size: u32, color: (u8, u8, u8, u8)) -> PyResult<Self> {
+        use crate::drawing;
+        Python::with_gil(|py| {
+            py.allow_threads(|| {
+                drawing::create_square(size, color)
+            })
+        }).map(|result| PyImage {
+            lazy_image: LazyImage::Loaded(result),
+            format: None,
+        }).map_err(|e| e.into())
+    }
+
+    pub fn create_diamond(size: u32, color: (u8, u8, u8, u8)) -> PyResult<Self> {
+        use crate::drawing;
+        Python::with_gil(|py| {
+            py.allow_threads(|| {
+                drawing::create_diamond(size, color)
+            })
+        }).map(|result| PyImage {
+            lazy_image: LazyImage::Loaded(result),
+            format: None,
+        }).map_err(|e| e.into())
+    }
+
+    pub fn create_hexagon(size: u32, color: (u8, u8, u8, u8)) -> PyResult<Self> {
+        use crate::drawing;
+        Python::with_gil(|py| {
+            py.allow_threads(|| {
+                drawing::create_hexagon(size, color)
+            })
+        }).map(|result| PyImage {
+            lazy_image: LazyImage::Loaded(result),
+            format: None,
+        }).map_err(|e| e.into())
+    }
+
+    pub fn create_parallelogram(width: u32, height: u32, skew: f32, color: (u8, u8, u8, u8)) -> PyResult<Self> {
+        use crate::drawing;
+        Python::with_gil(|py| {
+            py.allow_threads(|| {
+                drawing::create_parallelogram(width, height, skew, color)
+            })
+        }).map(|result| PyImage {
+            lazy_image: LazyImage::Loaded(result),
+            format: None,
+        }).map_err(|e| e.into())
+    }
+
+    pub fn create_pentagon(size: u32, color: (u8, u8, u8, u8)) -> PyResult<Self> {
+        use crate::drawing;
+        Python::with_gil(|py| {
+            py.allow_threads(|| {
+                drawing::create_pentagon(size, color)
+            })
+        }).map(|result| PyImage {
+            lazy_image: LazyImage::Loaded(result),
+            format: None,
+        }).map_err(|e| e.into())
+    }
+
+    pub fn create_octagon(size: u32, color: (u8, u8, u8, u8)) -> PyResult<Self> {
+        use crate::drawing;
+        Python::with_gil(|py| {
+            py.allow_threads(|| {
+                drawing::create_octagon(size, color)
+            })
+        }).map(|result| PyImage {
+            lazy_image: LazyImage::Loaded(result),
+            format: None,
+        }).map_err(|e| e.into())
+    }
+
+    pub fn create_heart(size: u32, color: (u8, u8, u8, u8)) -> PyResult<Self> {
+        use crate::drawing;
+        Python::with_gil(|py| {
+            py.allow_threads(|| {
+                drawing::create_heart(size, color)
+            })
+        }).map(|result| PyImage {
+            lazy_image: LazyImage::Loaded(result),
+            format: None,
+        }).map_err(|e| e.into())
+    }
+
+    pub fn create_arrow(width: u32, height: u32, color: (u8, u8, u8, u8)) -> PyResult<Self> {
+        use crate::drawing;
+        Python::with_gil(|py| {
+            py.allow_threads(|| {
+                drawing::create_arrow(width, height, color)
+            })
+        }).map(|result| PyImage {
+            lazy_image: LazyImage::Loaded(result),
+            format: None,
+        }).map_err(|e| e.into())
+    }
+
+    pub fn create_cross(size: u32, color: (u8, u8, u8, u8)) -> PyResult<Self> {
+        use crate::drawing;
+        Python::with_gil(|py| {
+            py.allow_threads(|| {
+                drawing::create_cross(size, color)
+            })
+        }).map(|result| PyImage {
+            lazy_image: LazyImage::Loaded(result),
+            format: None,
+        }).map_err(|e| e.into())
+    }
 }
 

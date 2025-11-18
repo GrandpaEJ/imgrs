@@ -128,5 +128,6 @@ impl PyImage {
             format,
         }).map_err(|e| e.into())
     }
+
 }
 

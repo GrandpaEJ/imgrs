@@ -263,4 +263,174 @@ impl PyImage {
             format: None,
         })
     }
+
+    // Shape generation methods (create new images)
+    pub fn create_rectangle_impl(width: u32, height: u32, color: (u8, u8, u8, u8)) -> PyResult<Self> {
+        Python::with_gil(|py| {
+            py.allow_threads(|| {
+                crate::drawing::create_rectangle(width, height, color)
+            })
+        }).map(|result| PyImage {
+            lazy_image: LazyImage::Loaded(result),
+            format: None,
+        }).map_err(|e| e.into())
+    }
+
+    pub fn create_circle_impl(size: u32, color: (u8, u8, u8, u8)) -> PyResult<Self> {
+        Python::with_gil(|py| {
+            py.allow_threads(|| {
+                crate::drawing::create_circle(size, color)
+            })
+        }).map(|result| PyImage {
+            lazy_image: LazyImage::Loaded(result),
+            format: None,
+        }).map_err(|e| e.into())
+    }
+
+    pub fn create_triangle_impl(width: u32, height: u32, color: (u8, u8, u8, u8)) -> PyResult<Self> {
+        Python::with_gil(|py| {
+            py.allow_threads(|| {
+                crate::drawing::create_triangle(width, height, color)
+            })
+        }).map(|result| PyImage {
+            lazy_image: LazyImage::Loaded(result),
+            format: None,
+        }).map_err(|e| e.into())
+    }
+
+    pub fn create_ellipse_impl(width: u32, height: u32, color: (u8, u8, u8, u8)) -> PyResult<Self> {
+        Python::with_gil(|py| {
+            py.allow_threads(|| {
+                crate::drawing::create_ellipse(width, height, color)
+            })
+        }).map(|result| PyImage {
+            lazy_image: LazyImage::Loaded(result),
+            format: None,
+        }).map_err(|e| e.into())
+    }
+
+    pub fn create_star_impl(size: u32, color: (u8, u8, u8, u8)) -> PyResult<Self> {
+        Python::with_gil(|py| {
+            py.allow_threads(|| {
+                crate::drawing::create_star(size, color)
+            })
+        }).map(|result| PyImage {
+            lazy_image: LazyImage::Loaded(result),
+            format: None,
+        }).map_err(|e| e.into())
+    }
+
+    pub fn create_square_impl(size: u32, color: (u8, u8, u8, u8)) -> PyResult<Self> {
+        Python::with_gil(|py| {
+            py.allow_threads(|| {
+                crate::drawing::create_square(size, color)
+            })
+        }).map(|result| PyImage {
+            lazy_image: LazyImage::Loaded(result),
+            format: None,
+        }).map_err(|e| e.into())
+    }
+
+    pub fn create_diamond_impl(size: u32, color: (u8, u8, u8, u8)) -> PyResult<Self> {
+        Python::with_gil(|py| {
+            py.allow_threads(|| {
+                crate::drawing::create_diamond(size, color)
+            })
+        }).map(|result| PyImage {
+            lazy_image: LazyImage::Loaded(result),
+            format: None,
+        }).map_err(|e| e.into())
+    }
+
+    pub fn create_hexagon_impl(size: u32, color: (u8, u8, u8, u8)) -> PyResult<Self> {
+        Python::with_gil(|py| {
+            py.allow_threads(|| {
+                crate::drawing::create_hexagon(size, color)
+            })
+        }).map(|result| PyImage {
+            lazy_image: LazyImage::Loaded(result),
+            format: None,
+        }).map_err(|e| e.into())
+    }
+
+    pub fn create_parallelogram_impl(width: u32, height: u32, skew: f32, color: (u8, u8, u8, u8)) -> PyResult<Self> {
+        Python::with_gil(|py| {
+            py.allow_threads(|| {
+                crate::drawing::create_parallelogram(width, height, skew, color)
+            })
+        }).map(|result| PyImage {
+            lazy_image: LazyImage::Loaded(result),
+            format: None,
+        }).map_err(|e| e.into())
+    }
+
+    pub fn create_pentagon_impl(size: u32, color: (u8, u8, u8, u8)) -> PyResult<Self> {
+        Python::with_gil(|py| {
+            py.allow_threads(|| {
+                crate::drawing::create_pentagon(size, color)
+            })
+        }).map(|result| PyImage {
+            lazy_image: LazyImage::Loaded(result),
+            format: None,
+        }).map_err(|e| e.into())
+    }
+
+    pub fn create_octagon_impl(size: u32, color: (u8, u8, u8, u8)) -> PyResult<Self> {
+        Python::with_gil(|py| {
+            py.allow_threads(|| {
+                crate::drawing::create_octagon(size, color)
+            })
+        }).map(|result| PyImage {
+            lazy_image: LazyImage::Loaded(result),
+            format: None,
+        }).map_err(|e| e.into())
+    }
+
+    pub fn create_heart_impl(size: u32, color: (u8, u8, u8, u8)) -> PyResult<Self> {
+        Python::with_gil(|py| {
+            py.allow_threads(|| {
+                crate::drawing::create_heart(size, color)
+            })
+        }).map(|result| PyImage {
+            lazy_image: LazyImage::Loaded(result),
+            format: None,
+        }).map_err(|e| e.into())
+    }
+
+    pub fn create_arrow_impl(width: u32, height: u32, color: (u8, u8, u8, u8)) -> PyResult<Self> {
+        Python::with_gil(|py| {
+            py.allow_threads(|| {
+                crate::drawing::create_arrow(width, height, color)
+            })
+        }).map(|result| PyImage {
+            lazy_image: LazyImage::Loaded(result),
+            format: None,
+        }).map_err(|e| e.into())
+    }
+
+    pub fn create_cross_impl(size: u32, color: (u8, u8, u8, u8)) -> PyResult<Self> {
+        Python::with_gil(|py| {
+            py.allow_threads(|| {
+                crate::drawing::create_cross(size, color)
+            })
+        }).map(|result| PyImage {
+            lazy_image: LazyImage::Loaded(result),
+            format: None,
+        }).map_err(|e| e.into())
+    }
+
+    pub fn create_quadrilateral(p1: (i32, i32), p2: (i32, i32), p3: (i32, i32), p4: (i32, i32), color: (u8, u8, u8, u8)) -> PyResult<Self> {
+        Python::with_gil(|py| {
+            py.allow_threads(|| {
+                crate::drawing::create_quadrilateral(p1, p2, p3, p4, color)
+            })
+        }).map(|result| PyImage {
+            lazy_image: LazyImage::Loaded(result),
+            format: None,
+        }).map_err(|e| e.into())
+    }
+
+    pub fn create_quadrilateral_impl(p1: (i32, i32), p2: (i32, i32), p3: (i32, i32), p4: (i32, i32), color: (u8, u8, u8, u8)) -> PyResult<Self> {
+        Self::create_quadrilateral(p1, p2, p3, p4, color)
+    }
 }
