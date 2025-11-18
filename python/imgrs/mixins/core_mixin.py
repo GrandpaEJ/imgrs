@@ -546,3 +546,322 @@ class CoreMixin:
             and self.mode == other.mode
             and self.to_bytes() == other.to_bytes()
         )
+
+    @classmethod
+    def circle(
+        cls, size: int, color: Tuple[int, int, int, int] = (0, 0, 0, 255)
+    ) -> "Image":
+        """
+        Create a new circular image.
+
+        Args:
+            size: Diameter of the circle in pixels
+            color: (R, G, B, A) color values
+
+        Returns:
+            New Image instance with a circle
+        """
+        return cls._create_shape("circle", size, color)
+
+    @classmethod
+    def rectangle(
+        cls, width: int, height: int, color: Tuple[int, int, int, int] = (0, 0, 0, 255)
+    ) -> "Image":
+        """
+        Create a new rectangular image.
+
+        Args:
+            width: Rectangle width
+            height: Rectangle height
+            color: (R, G, B, A) color values
+
+        Returns:
+            New Image instance with a rectangle
+        """
+        return cls._create_shape("rectangle", (width, height), color)
+
+    @classmethod
+    def triangle(
+        cls, width: int, height: int, color: Tuple[int, int, int, int] = (0, 0, 0, 255)
+    ) -> "Image":
+        """
+        Create a new triangular image.
+
+        Args:
+            width: Triangle width
+            height: Triangle height
+            color: (R, G, B, A) color values
+
+        Returns:
+            New Image instance with a triangle
+        """
+        return cls._create_shape("triangle", (width, height), color)
+
+    @classmethod
+    def ellipse(
+        cls, width: int, height: int, color: Tuple[int, int, int, int] = (0, 0, 0, 255)
+    ) -> "Image":
+        """
+        Create a new elliptical image.
+
+        Args:
+            width: Ellipse width
+            height: Ellipse height
+            color: (R, G, B, A) color values
+
+        Returns:
+            New Image instance with an ellipse
+        """
+        return cls._create_shape("ellipse", (width, height), color)
+
+    @classmethod
+    def star(
+        cls, size: int, color: Tuple[int, int, int, int] = (0, 0, 0, 255)
+    ) -> "Image":
+        """
+        Create a new star-shaped image.
+
+        Args:
+            size: Star size (diameter)
+            color: (R, G, B, A) color values
+
+        Returns:
+            New Image instance with a star
+        """
+        return cls._create_shape("star", size, color)
+
+    @classmethod
+    def square(
+        cls, size: int, color: Tuple[int, int, int, int] = (0, 0, 0, 255)
+    ) -> "Image":
+        """
+        Create a new square image.
+
+        Args:
+            size: Square size
+            color: (R, G, B, A) color values
+
+        Returns:
+            New Image instance with a square
+        """
+        return cls._create_shape("square", size, color)
+
+    @classmethod
+    def diamond(
+        cls, size: int, color: Tuple[int, int, int, int] = (0, 0, 0, 255)
+    ) -> "Image":
+        """
+        Create a new diamond-shaped image.
+
+        Args:
+            size: Diamond size
+            color: (R, G, B, A) color values
+
+        Returns:
+            New Image instance with a diamond
+        """
+        return cls._create_shape("diamond", size, color)
+
+    @classmethod
+    def hexagon(
+        cls, size: int, color: Tuple[int, int, int, int] = (0, 0, 0, 255)
+    ) -> "Image":
+        """
+        Create a new hexagonal image.
+
+        Args:
+            size: Hexagon size
+            color: (R, G, B, A) color values
+
+        Returns:
+            New Image instance with a hexagon
+        """
+        return cls._create_shape("hexagon", size, color)
+
+    @classmethod
+    def parallelogram(
+        cls,
+        width: int,
+        height: int,
+        skew: float = 0.2,
+        color: Tuple[int, int, int, int] = (0, 0, 0, 255),
+    ) -> "Image":
+        """
+        Create a new parallelogram image.
+
+        Args:
+            width: Parallelogram width
+            height: Parallelogram height
+            skew: Skew factor (0.0 = rectangle, higher = more skewed)
+            color: (R, G, B, A) color values
+
+        Returns:
+            New Image instance with a parallelogram
+        """
+        return cls._create_shape("parallelogram", (width, height, skew), color)
+
+    @classmethod
+    def pentagon(
+        cls, size: int, color: Tuple[int, int, int, int] = (0, 0, 0, 255)
+    ) -> "Image":
+        """
+        Create a new pentagonal image.
+
+        Args:
+            size: Pentagon size
+            color: (R, G, B, A) color values
+
+        Returns:
+            New Image instance with a pentagon
+        """
+        return cls._create_shape("pentagon", size, color)
+
+    @classmethod
+    def octagon(
+        cls, size: int, color: Tuple[int, int, int, int] = (0, 0, 0, 255)
+    ) -> "Image":
+        """
+        Create a new octagonal image.
+
+        Args:
+            size: Octagon size
+            color: (R, G, B, A) color values
+
+        Returns:
+            New Image instance with an octagon
+        """
+        return cls._create_shape("octagon", size, color)
+
+    @classmethod
+    def heart(
+        cls, size: int, color: Tuple[int, int, int, int] = (0, 0, 0, 255)
+    ) -> "Image":
+        """
+        Create a new heart-shaped image.
+
+        Args:
+            size: Heart size
+            color: (R, G, B, A) color values
+
+        Returns:
+            New Image instance with a heart
+        """
+        return cls._create_shape("heart", size, color)
+
+    @classmethod
+    def arrow(
+        cls, width: int, height: int, color: Tuple[int, int, int, int] = (0, 0, 0, 255)
+    ) -> "Image":
+        """
+        Create a new arrow-shaped image.
+
+        Args:
+            width: Arrow width
+            height: Arrow height
+            color: (R, G, B, A) color values
+
+        Returns:
+            New Image instance with an arrow
+        """
+        return cls._create_shape("arrow", (width, height), color)
+
+    @classmethod
+    def cross(
+        cls, size: int, color: Tuple[int, int, int, int] = (0, 0, 0, 255)
+    ) -> "Image":
+        """
+        Create a new cross-shaped image.
+
+        Args:
+            size: Cross size
+            color: (R, G, B, A) color values
+
+        Returns:
+            New Image instance with a cross
+        """
+        return cls._create_shape("cross", size, color)
+
+    @classmethod
+    def quadrilateral(
+        cls,
+        p1: Tuple[int, int],
+        p2: Tuple[int, int],
+        p3: Tuple[int, int],
+        p4: Tuple[int, int],
+        color: Tuple[int, int, int, int] = (0, 0, 0, 255),
+    ) -> "Image":
+        """
+        Create a new quadrilateral image from 4 points.
+
+        Args:
+            p1: First point (x, y)
+            p2: Second point (x, y)
+            p3: Third point (x, y)
+            p4: Fourth point (x, y)
+            color: (R, G, B, A) color values
+
+        Returns:
+            New Image instance with a quadrilateral
+        """
+        from .._core import create_quadrilateral_py
+
+        return create_quadrilateral_py(p1, p2, p3, p4, color)
+
+    @classmethod
+    def _create_shape(
+        cls, shape_type: str, params, color: Tuple[int, int, int, int]
+    ) -> "Image":
+        """Internal method to create shapes using Rust backend."""
+        from .._core import (
+            create_circle_py,
+            create_rectangle_py,
+            create_triangle_py,
+            create_ellipse_py,
+            create_star_py,
+            create_square_py,
+            create_diamond_py,
+            create_hexagon_py,
+            create_parallelogram_py,
+            create_pentagon_py,
+            create_octagon_py,
+            create_heart_py,
+            create_arrow_py,
+            create_cross_py,
+            create_quadrilateral_py,
+        )
+
+        # Map shape types to function calls
+        if shape_type == "circle":
+            return create_circle_py(params, color)
+        elif shape_type == "rectangle":
+            return create_rectangle_py(params[0], params[1], color)
+        elif shape_type == "triangle":
+            return create_triangle_py(params[0], params[1], color)
+        elif shape_type == "ellipse":
+            return create_ellipse_py(params[0], params[1], color)
+        elif shape_type == "star":
+            return create_star_py(params, color)
+        elif shape_type == "square":
+            return create_square_py(params, color)
+        elif shape_type == "diamond":
+            return create_diamond_py(params, color)
+        elif shape_type == "hexagon":
+            return create_hexagon_py(params, color)
+        elif shape_type == "parallelogram":
+            return create_parallelogram_py(params[0], params[1], params[2], color)
+        elif shape_type == "pentagon":
+            return create_pentagon_py(params, color)
+        elif shape_type == "octagon":
+            return create_octagon_py(params, color)
+        elif shape_type == "heart":
+            return create_heart_py(params, color)
+        elif shape_type == "arrow":
+            return create_arrow_py(params[0], params[1], color)
+        elif shape_type == "cross":
+            return create_cross_py(params, color)
+        elif shape_type == "quadrilateral":
+            return create_quadrilateral_py(
+                params[0], params[1], params[2], params[3], color
+            )
+        else:
+            raise ValueError(f"Unknown shape type: {shape_type}")

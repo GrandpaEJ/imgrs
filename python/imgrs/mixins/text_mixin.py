@@ -220,9 +220,25 @@ class TextMixin:
         Alias for add_text_advanced for compatibility.
         """
         return self.add_text_advanced(
-            text, position, size, color, font_family, font_weight, font_style,
-            font_path, letter_spacing, opacity, align, background, outline,
-            shadow, glow, max_width, line_spacing, text_justify, rotation
+            text,
+            position,
+            size,
+            color,
+            font_family,
+            font_weight,
+            font_style,
+            font_path,
+            letter_spacing,
+            opacity,
+            align,
+            background,
+            outline,
+            shadow,
+            glow,
+            max_width,
+            line_spacing,
+            text_justify,
+            rotation,
         )
 
     def add_text_advanced(
