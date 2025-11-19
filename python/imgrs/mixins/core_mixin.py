@@ -561,7 +561,7 @@ class CoreMixin:
         Returns:
             New Image instance with a circle
         """
-        return cls._create_shape("circle", size, color)
+        return cls(cls._create_shape("circle", size, color))
 
     @classmethod
     def rectangle(
@@ -578,7 +578,7 @@ class CoreMixin:
         Returns:
             New Image instance with a rectangle
         """
-        return cls._create_shape("rectangle", (width, height), color)
+        return cls(cls._create_shape("rectangle", (width, height), color))
 
     @classmethod
     def triangle(
@@ -595,7 +595,7 @@ class CoreMixin:
         Returns:
             New Image instance with a triangle
         """
-        return cls._create_shape("triangle", (width, height), color)
+        return cls(cls._create_shape("triangle", (width, height), color))
 
     @classmethod
     def ellipse(
@@ -612,7 +612,7 @@ class CoreMixin:
         Returns:
             New Image instance with an ellipse
         """
-        return cls._create_shape("ellipse", (width, height), color)
+        return cls(cls._create_shape("ellipse", (width, height), color))
 
     @classmethod
     def star(
@@ -628,7 +628,7 @@ class CoreMixin:
         Returns:
             New Image instance with a star
         """
-        return cls._create_shape("star", size, color)
+        return cls(cls._create_shape("star", size, color))
 
     @classmethod
     def square(
@@ -644,7 +644,7 @@ class CoreMixin:
         Returns:
             New Image instance with a square
         """
-        return cls._create_shape("square", size, color)
+        return cls(cls._create_shape("square", size, color))
 
     @classmethod
     def diamond(
@@ -660,7 +660,7 @@ class CoreMixin:
         Returns:
             New Image instance with a diamond
         """
-        return cls._create_shape("diamond", size, color)
+        return cls(cls._create_shape("diamond", size, color))
 
     @classmethod
     def hexagon(
@@ -676,7 +676,7 @@ class CoreMixin:
         Returns:
             New Image instance with a hexagon
         """
-        return cls._create_shape("hexagon", size, color)
+        return cls(cls._create_shape("hexagon", size, color))
 
     @classmethod
     def parallelogram(
@@ -698,7 +698,7 @@ class CoreMixin:
         Returns:
             New Image instance with a parallelogram
         """
-        return cls._create_shape("parallelogram", (width, height, skew), color)
+        return cls(cls._create_shape("parallelogram", (width, height, skew), color))
 
     @classmethod
     def pentagon(
@@ -714,7 +714,7 @@ class CoreMixin:
         Returns:
             New Image instance with a pentagon
         """
-        return cls._create_shape("pentagon", size, color)
+        return cls(cls._create_shape("pentagon", size, color))
 
     @classmethod
     def octagon(
@@ -730,7 +730,7 @@ class CoreMixin:
         Returns:
             New Image instance with an octagon
         """
-        return cls._create_shape("octagon", size, color)
+        return cls(cls._create_shape("octagon", size, color))
 
     @classmethod
     def heart(
@@ -746,7 +746,7 @@ class CoreMixin:
         Returns:
             New Image instance with a heart
         """
-        return cls._create_shape("heart", size, color)
+        return cls(cls._create_shape("heart", size, color))
 
     @classmethod
     def arrow(
@@ -763,7 +763,7 @@ class CoreMixin:
         Returns:
             New Image instance with an arrow
         """
-        return cls._create_shape("arrow", (width, height), color)
+        return cls(cls._create_shape("arrow", (width, height), color))
 
     @classmethod
     def cross(
@@ -779,7 +779,7 @@ class CoreMixin:
         Returns:
             New Image instance with a cross
         """
-        return cls._create_shape("cross", size, color)
+        return cls(cls._create_shape("cross", size, color))
 
     @classmethod
     def quadrilateral(
@@ -805,7 +805,7 @@ class CoreMixin:
         """
         from .._core import create_quadrilateral_py
 
-        return create_quadrilateral_py(p1, p2, p3, p4, color)
+        return cls(create_quadrilateral_py(p1, p2, p3, p4, color))
 
     @classmethod
     def _create_shape(
