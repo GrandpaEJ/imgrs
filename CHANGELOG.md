@@ -2,6 +2,109 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.10] - 2025-11-19
+
+### Added
+
+#### Emoji Operations
+- `add_emoji()` - Add preset emojis to images
+- `add_emoji_text()` - Add Unicode emojis with positioning and sizing
+- `add_emoji_quick()` - Quick emoji addition with default settings
+- `add_emojis()` - Batch emoji addition for multiple emojis
+
+#### Advanced Color Operations
+- `set_alpha()` / `get_alpha()` - Global alpha channel control
+- `add_transparency()` / `remove_transparency()` - Transparency management
+- `apply_mask()` - Apply masks for selective transparency
+- `create_gradient_mask()` - Generate gradient masks (horizontal, vertical, radial, diagonal)
+- `create_color_mask()` - Create masks based on color similarity
+- `create_luminance_mask()` - Luminance-based masking
+- `combine_masks()` - Mathematical mask combination (multiply, add, subtract, overlay, screen, difference)
+- `extract_color()` - Extract pixels matching target colors
+- `color_quantize()` - Reduce color palette size
+- `color_shift()` - Shift all colors by specified amount
+- `selective_desaturate()` - Selectively desaturate specific colors
+- `color_match()` - Match colors to reference images
+- `apply_gradient_overlay()` - Apply gradient color overlays
+- `create_stripe_pattern()` - Create stripe pattern overlays
+- `create_checker_pattern()` - Create checkerboard pattern overlays
+- `split_alpha()` / `merge_alpha()` - Alpha channel splitting and merging
+- `alpha_to_color()` - Convert alpha to solid color
+- `blend_with()` - Advanced blending modes (normal, multiply, screen, overlay, soft_light, hard_light, color_dodge, color_burn, darken, lighten, difference, exclusion)
+- `overlay_with()` - Overlay images with blending
+- `get_color_palette()` - Extract dominant colors
+- `analyze_color_distribution()` - Color distribution analysis
+- `find_color_regions()` - Find regions matching target colors
+
+#### Shape Generation
+- `circle()`, `rectangle()`, `triangle()`, `ellipse()`, `star()`, `square()`, `diamond()`, `hexagon()`, `parallelogram()`, `pentagon()`, `octagon()`, `heart()`, `arrow()`, `cross()`, `quadrilateral()` - Create various geometric shapes as images
+
+#### Enhanced Text Rendering
+- `add_text()` - Basic text with font family, weight, style, letter spacing
+- `add_text_styled()` - Full styling with outline, shadow, glow, background, alignment
+- `add_text_multiline()` - Multi-line text with line spacing and justification
+- `add_text_centered()` - Horizontally centered text
+- `add_text_with_fonts()` - Multi-font text rendering
+- `get_text_size()` - Get text dimensions
+- `get_multiline_text_size()` - Multi-line text dimensions
+- `get_text_box()` - Complete text bounding box with metrics
+- `list_available_fonts()` - List system fonts
+- Font manager with fallback support
+- CSS color parsing and text transforms (uppercase, lowercase, title)
+
+#### Drawing Operations
+- `draw_rectangle()` - Draw filled rectangles
+- `draw_circle()` - Draw filled circles
+- `draw_line()` - Draw lines with Bresenham's algorithm
+- `draw_text()` - Basic text drawing
+
+#### Effects & Shadows
+- `drop_shadow()` - Drop shadow with blur and offset
+- `inner_shadow()` - Inner shadow effects
+- `glow()` - Glow effects with customizable intensity
+
+#### Metadata & EXIF
+- `get_metadata()` - Read comprehensive EXIF data (camera, GPS, settings)
+- `get_metadata_summary()` - Human-readable metadata summary
+- `has_exif()` / `has_gps()` - Check for EXIF/GPS presence
+
+#### Pixel Operations
+- `getpixel()` / `putpixel()` - Direct pixel access
+- `histogram()` - Color histogram generation
+- `dominant_color()` / `average_color()` - Color analysis
+- `replace_color()` - Color replacement with tolerance
+- `threshold()` - Binary thresholding
+- `posterize()` - Color level reduction
+
+#### Transform Operations
+- `resize()` - Resize with resampling options
+- `crop()` - Rectangular cropping
+- `rotate()` - Rotation (90°, 180°, 270°, with expand option)
+- `rotate90()`, `rotate180()`, `rotate270()`, `rotate_left()`, `rotate_right()` - Convenience rotation methods
+- `transpose()` - Image transposition (flip, rotate)
+- `thumbnail()` - In-place thumbnail creation
+- `convert()` - Color mode conversion
+- `split()` - Split into channel images
+- `paste()` - Paste images with masking support
+
+#### Enhanced Enums
+- `BlendMode` - Blending mode constants
+- `MaskType` - Mask type constants
+- `ColorFormat` - Color format constants
+- `GradientDirection` - Gradient direction constants
+- `MaskOperation` - Mask operation constants
+- `ColorSpace` - Color space constants
+
+### Changed
+- Refactored codebase into focused mixins for better maintainability
+- Enhanced IDE support with comprehensive docstrings
+- Improved error messages and type hints
+
+### Fixed
+- Memory safety improvements
+- Performance optimizations
+- Better compatibility with existing code
+
 ## [0.2.0] - 2025-10-10
 
 ### Added
