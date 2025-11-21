@@ -126,5 +126,55 @@ impl PyImage {
         })
         .map_err(|e| e.into())
     }
+
+    /// Add text to image with emoji support
+    pub fn add_text_impl(
+        &mut self,
+        text: &str,
+        x: i32,
+        y: i32,
+        font_family: &str,
+        font_size: f64,
+        color: (u8, u8, u8),
+    ) -> PyResult<Self> {
+        let format = self.format;
+        let image = self.get_image()?;
+        let color_f64 = (color.0 as f64 / 255.0, color.1 as f64 / 255.0, color.2 as f64 / 255.0);
+
+        Python::with_gil(|py| {
+            py.allow_threads(|| emoji::add_text(image, text, x as f64, y as f64, font_family, font_size, color_f64))
+        })
+        .map(|result| PyImage {
+            lazy_image: LazyImage::Loaded(result),
+            format,
+        })
+        .map_err(|e| e.into())
+    }
+
+    /// Add textbox to image
+    pub fn add_textbox_impl(
+        &mut self,
+        x: i32,
+        y: i32,
+        width: i32,
+        height: i32,
+        fill_color: (u8, u8, u8),
+        border_color: (u8, u8, u8),
+        border_width: f64,
+    ) -> PyResult<Self> {
+        let format = self.format;
+        let image = self.get_image()?;
+        let fill_color_f64 = (fill_color.0 as f64 / 255.0, fill_color.1 as f64 / 255.0, fill_color.2 as f64 / 255.0);
+        let border_color_f64 = (border_color.0 as f64 / 255.0, border_color.1 as f64 / 255.0, border_color.2 as f64 / 255.0);
+
+        Python::with_gil(|py| {
+            py.allow_threads(|| emoji::add_textbox(image, x as f64, y as f64, width as f64, height as f64, fill_color_f64, border_color_f64, border_width))
+        })
+        .map(|result| PyImage {
+            lazy_image: LazyImage::Loaded(result),
+            format,
+        })
+        .map_err(|e| e.into())
+    }
 }
 

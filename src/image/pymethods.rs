@@ -336,6 +336,14 @@ impl PyImage {
         self.add_emojis_batch_impl(emojis)
     }
 
+    fn add_text(&mut self, text: &str, x: i32, y: i32, font_family: &str, font_size: f64, color: (u8, u8, u8)) -> PyResult<Self> {
+        self.add_text_impl(text, x, y, font_family, font_size, color)
+    }
+
+    fn add_textbox(&mut self, x: i32, y: i32, width: i32, height: i32, fill_color: (u8, u8, u8), border_color: (u8, u8, u8), border_width: f64) -> PyResult<Self> {
+        self.add_textbox_impl(x, y, width, height, fill_color, border_color, border_width)
+    }
+
     // Auto-Enhancement Features
     fn histogram_equalization(&mut self) -> PyResult<Self> {
         self.histogram_equalization_impl()
