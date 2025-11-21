@@ -9,6 +9,10 @@ use crate::errors::ImgrsError;
 use super::styles::{TextStyle, TextAlign};
 use super::fonts::{self};
 
+use cairo;
+use pango;
+use pangocairo;
+
 /// Draw text on image with basic parameters
 pub fn draw_text(
     image: &DynamicImage,
@@ -17,17 +21,50 @@ pub fn draw_text(
     y: i32,
     size: f32,
     color: (u8, u8, u8, u8),
-    font_path: Option<&std::path::Path>,
+    _font_path: Option<&std::path::Path>,
 ) -> Result<DynamicImage, ImgrsError> {
     let mut rgba_image = image.to_rgba8();
-    let font = fonts::load_font(font_path)?;
-    
-    let scale = PxScale::from(size);
-    let rgba_color = Rgba([color.0, color.1, color.2, color.3]);
-    
-    draw_text_mut(&mut rgba_image, rgba_color, x, y, scale, &font, text);
-    
-    Ok(DynamicImage::ImageRgba8(rgba_image))
+    let width = rgba_image.width() as i32;
+    let height = rgba_image.height() as i32;
+    let mut data = rgba_image.into_raw();
+
+    let surface = unsafe { cairo::ImageSurface::create_for_data_unsafe(data.as_mut_ptr(), cairo::Format::ARgb32, width, height, width * 4) }
+        .map_err(|_| ImgrsError::InvalidOperation("Failed to create Cairo surface".to_string()))?;
+
+    let cr = cairo::Context::new(&surface)
+        .map_err(|_| ImgrsError::InvalidOperation("Failed to create Cairo context".to_string()))?;
+
+    cr.set_source_rgba(color.0 as f64 / 255.0, color.1 as f64 / 255.0, color.2 as f64 / 255.0, color.3 as f64 / 255.0);
+
+    let layout = pangocairo::create_layout(&cr);
+    layout.set_text(text);
+
+    let mut desc = pango::FontDescription::new();
+    // Configure font with emoji support - prioritize emoji font
+    desc.set_family("Noto Color Emoji, DejaVu Sans");
+    desc.set_size((size as f64 * pango::SCALE as f64) as i32);
+    layout.set_font_description(Some(&desc));
+
+    cr.move_to(x as f64, y as f64);
+    pangocairo::show_layout(&cr, &layout);
+
+    // Convert back to RGBA
+    let mut rgba_data = Vec::with_capacity(data.len());
+    for chunk in data.chunks_exact(4) {
+        let b = chunk[0];
+        let g = chunk[1];
+        let r = chunk[2];
+        let a = chunk[3];
+        rgba_data.push(r);
+        rgba_data.push(g);
+        rgba_data.push(b);
+        rgba_data.push(a);
+    }
+
+    let img = image::RgbaImage::from_raw(width as u32, height as u32, rgba_data)
+        .ok_or(ImgrsError::InvalidOperation("Failed to create image".to_string()))?;
+
+    Ok(DynamicImage::ImageRgba8(img))
 }
 
 /// Draw multi-line text
