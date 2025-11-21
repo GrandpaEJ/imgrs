@@ -22,3 +22,12 @@ class ColorFiltersMixin:
     def chromatic_aberration(self, strength: float) -> "Image":
         """Apply chromatic aberration effect."""
         return self.__class__(self._rust_image.chromatic_aberration(strength))
+
+    def chroma_key(
+        self,
+        key_color: Tuple[int, int, int],
+        tolerance: float = 0.3,
+        feather: float = 0.1,
+    ) -> "Image":
+        """Apply chroma key effect (green screen removal)."""
+        return self.__class__(self._rust_image.chroma_key(key_color, tolerance, feather))

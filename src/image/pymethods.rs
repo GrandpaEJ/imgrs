@@ -319,6 +319,11 @@ impl PyImage {
         self.chromatic_aberration_impl(strength)
     }
 
+    #[pyo3(signature = (key_color, tolerance=0.3, feather=0.1))]
+    fn chroma_key(&mut self, key_color: (u8, u8, u8), tolerance: f32, feather: f32) -> PyResult<Self> {
+        self.chroma_key_impl(key_color, tolerance, feather)
+    }
+
     // Emoji Effects
     fn add_emoji(&mut self, emoji_name: &str, x: i32, y: i32, size: u32, opacity: f32) -> PyResult<Self> {
         self.add_emoji_impl(emoji_name, x, y, size, opacity)

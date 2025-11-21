@@ -194,6 +194,99 @@ pub fn chromatic_aberration(image: &DynamicImage, strength: f32) -> Result<Dynam
     )
 }
 
+/// Apply chroma key effect (green screen removal)
+pub fn chroma_key(image: &DynamicImage, key_color: (u8, u8, u8), tolerance: f32, feather: f32) -> Result<DynamicImage, ImgrsError> {
+    match image {
+        DynamicImage::ImageRgb8(rgb_img) => {
+            let (width, height) = rgb_img.dimensions();
+            let mut result = ImageBuffer::from_fn(width, height, |x, y| {
+                let pixel = rgb_img.get_pixel(x, y);
+                let r = pixel[0] as f32 / 255.0;
+                let g = pixel[1] as f32 / 255.0;
+                let b = pixel[2] as f32 / 255.0;
+
+                let key_r = key_color.0 as f32 / 255.0;
+                let key_g = key_color.1 as f32 / 255.0;
+                let key_b = key_color.2 as f32 / 255.0;
+
+                // Calculate color distance in RGB space
+                let distance = ((r - key_r).powi(2) + (g - key_g).powi(2) + (b - key_b).powi(2)).sqrt();
+
+                // Calculate alpha based on distance and tolerance
+                let mut alpha = if distance <= tolerance {
+                    0.0 // Fully transparent
+                } else if distance <= tolerance + feather {
+                    // Feather zone - smooth transition
+                    1.0 - ((distance - tolerance) / feather)
+                } else {
+                    1.0 // Fully opaque
+                };
+
+                // Clamp alpha to valid range
+                alpha = alpha.max(0.0).min(1.0);
+
+                image::Rgba([
+                    pixel[0],
+                    pixel[1],
+                    pixel[2],
+                    (alpha * 255.0) as u8
+                ])
+            });
+
+            Ok(DynamicImage::ImageRgba8(result))
+        }
+        DynamicImage::ImageRgba8(rgba_img) => {
+            let (width, height) = rgba_img.dimensions();
+            let mut result = rgba_img.clone();
+
+            for y in 0..height {
+                for x in 0..width {
+                    let pixel = rgba_img.get_pixel(x, y);
+                    let r = pixel[0] as f32 / 255.0;
+                    let g = pixel[1] as f32 / 255.0;
+                    let b = pixel[2] as f32 / 255.0;
+
+                    let key_r = key_color.0 as f32 / 255.0;
+                    let key_g = key_color.1 as f32 / 255.0;
+                    let key_b = key_color.2 as f32 / 255.0;
+
+                    // Calculate color distance in RGB space
+                    let distance = ((r - key_r).powi(2) + (g - key_g).powi(2) + (b - key_b).powi(2)).sqrt();
+
+                    // Calculate alpha based on distance and tolerance
+                    let mut alpha = if distance <= tolerance {
+                        0.0 // Fully transparent
+                    } else if distance <= tolerance + feather {
+                        // Feather zone - smooth transition
+                        1.0 - ((distance - tolerance) / feather)
+                    } else {
+                        1.0 // Fully opaque
+                    };
+
+                    // Combine with existing alpha
+                    alpha *= pixel[3] as f32 / 255.0;
+                    alpha = alpha.max(0.0).min(1.0);
+
+                    result.put_pixel(x, y, image::Rgba([
+                        pixel[0],
+                        pixel[1],
+                        pixel[2],
+                        (alpha * 255.0) as u8
+                    ]));
+                }
+            }
+
+            Ok(DynamicImage::ImageRgba8(result))
+        }
+        _ => {
+            // Convert to RGBA and apply chroma key
+            let rgba_img = image.to_rgba8();
+            let rgba_dynamic = DynamicImage::ImageRgba8(rgba_img);
+            chroma_key(&rgba_dynamic, key_color, tolerance, feather)
+        }
+    }
+}
+
 /// Helper function to convert RGB to HSV
 fn rgb_to_hsv(r: u8, g: u8, b: u8) -> (f32, f32, f32) {
     let r = r as f32 / 255.0;

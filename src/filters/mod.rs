@@ -72,7 +72,7 @@ pub use artistic::{
 // Re-export color effects
 pub use color_effects::{
     duotone, color_splash,
-    chromatic_aberration
+    chromatic_aberration, chroma_key
 };
 
 // Re-export kernel library

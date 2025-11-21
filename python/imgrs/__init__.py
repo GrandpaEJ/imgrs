@@ -19,6 +19,7 @@ from .mixins.color_mixin import ColorMixin
 from .operations import (
     blur,
     brightness,
+    chroma_key,
     contrast,
     convert,
     crop,
@@ -60,6 +61,7 @@ __all__ = [
     "paste",
     # Filters
     "blur",
+    "chroma_key",
     "sharpen",
     "edge_detect",
     "emboss",

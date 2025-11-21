@@ -407,6 +407,14 @@ impl PyImage {
         }).map(|filtered| PyImage { lazy_image: LazyImage::Loaded(filtered), format }).map_err(|e| e.into())
     }
 
+    pub fn chroma_key_impl(&mut self, key_color: (u8, u8, u8), tolerance: f32, feather: f32) -> PyResult<Self> {
+        let format = self.format;
+        let image = self.get_image()?;
+        Python::with_gil(|py| {
+            py.allow_threads(|| filters::chroma_key(image, key_color, tolerance, feather))
+        }).map(|filtered| PyImage { lazy_image: LazyImage::Loaded(filtered), format }).map_err(|e| e.into())
+    }
+
     // Auto-Enhancement Features
     pub fn histogram_equalization_impl(&mut self) -> PyResult<Self> {
         let format = self.format;

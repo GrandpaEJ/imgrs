@@ -687,7 +687,7 @@ def contrast(image: Image, factor: float) -> Image:
 
     Args:
         image: Image instance to adjust. Must be a valid imgrs.Image object.
-               Works with all color modes (RGB, RGBA, L, LA, etc.).
+                Works with all color modes (RGB, RGBA, L, LA, etc.).
 
         factor: Contrast adjustment factor.
                 - factor = 1.0: No change (returns copy)
@@ -724,3 +724,61 @@ def contrast(image: Image, factor: float) -> Image:
         >>> enhanced = imgrs.contrast(img, 1.2)
     """
     return image.contrast(factor)
+
+
+def chroma_key(image: Image, key_color: Tuple[int, int, int], tolerance: float = 0.3, feather: float = 0.1) -> Image:
+    """
+    Apply chroma key effect (green screen removal) to make specific colors transparent.
+
+    Args:
+        image: Image instance to process. Must be a valid imgrs.Image object.
+                Works with RGB and RGBA images. RGB images are converted to RGBA.
+
+        key_color: RGB color to make transparent as (red, green, blue).
+                   - Each component: 0-255
+                   - Common green screen: (0, 255, 0) or (0, 177, 64)
+                   - Common blue screen: (0, 0, 255)
+
+        tolerance: Color matching tolerance (0.0-1.0).
+                  - 0.0: Exact color match only
+                  - 0.3: Moderate tolerance (recommended for green screens)
+                  - 1.0: Match all colors (entire image becomes transparent)
+                  - Higher values remove more background but may affect foreground
+
+        feather: Soft edge width for smooth transitions (0.0-1.0).
+                - 0.0: Hard edges (pixels are either fully opaque or transparent)
+                - 0.1: Moderate feathering (recommended)
+                - 0.3: Very soft edges
+                - Higher values create smoother blends but may soften details
+
+    Returns:
+        Image: New RGBA Image instance with chroma key applied (original unchanged)
+
+    Raises:
+        TypeError: If image is not Image instance or parameters are wrong type
+        MemoryError: If image is too large to process
+
+    Note:
+        - Returns a new Image instance (immutable operation)
+        - Always outputs RGBA format to support transparency
+        - For best results, use well-lit, evenly colored backgrounds
+        - Adjust tolerance and feather based on lighting conditions
+        - Consider using color correction before chroma keying
+
+    Example:
+        >>> img = imgrs.open("person_on_green_screen.jpg")
+        >>>
+        >>> # Basic green screen removal
+        >>> keyed = imgrs.chroma_key(img, (0, 255, 0))
+        >>>
+        >>> # Fine-tune with custom tolerance and feathering
+        >>> keyed = imgrs.chroma_key(img, (0, 177, 64), tolerance=0.25, feather=0.15)
+        >>>
+        >>> # Blue screen removal
+        >>> keyed = imgrs.chroma_key(img, (0, 0, 255), tolerance=0.4, feather=0.2)
+        >>>
+        >>> # Composite with new background
+        >>> background = imgrs.open("beach.jpg")
+        >>> final = imgrs.paste(background, keyed, (100, 50))
+    """
+    return image.chroma_key(key_color, tolerance, feather)

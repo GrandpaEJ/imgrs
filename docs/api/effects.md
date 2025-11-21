@@ -174,6 +174,48 @@ positioned = background.overlay_with(watermark, "multiply", 0.8, position=(50, 1
 corner = background.overlay_with(watermark, "screen", 0.3, position=(10, 10))
 ```
 
+### `img.chroma_key(key_color, tolerance, feather)`
+
+Apply chroma key effect (green screen removal) to make specific colors transparent.
+
+**Parameters:**
+- `key_color` (Tuple[int, int, int]): RGB color to make transparent
+  - Common green screen: `(0, 255, 0)` or `(0, 177, 64)`
+  - Common blue screen: `(0, 0, 255)`
+- `tolerance` (float): Color matching tolerance (0.0-1.0)
+  - 0.0: Exact color match only
+  - 0.3: Moderate tolerance (recommended)
+  - 1.0: Match all colors
+- `feather` (float): Soft edge width (0.0-1.0)
+  - 0.0: Hard edges
+  - 0.1: Moderate feathering (recommended)
+  - 0.3: Very soft edges
+
+**Returns:** `Image` (RGBA format with transparency)
+
+**Example:**
+```python
+# Green screen removal
+green_screen = Image.open("subject_on_green.jpg")
+transparent = green_screen.chroma_key((0, 255, 0), tolerance=0.2, feather=0.1)
+
+# Composite with new background
+background = Image.open("beach.jpg")
+final = background.overlay_with(transparent, "normal", 1.0)
+
+# Blue screen
+blue_screen = Image.open("subject_on_blue.jpg")
+transparent = blue_screen.chroma_key((0, 0, 255), tolerance=0.25, feather=0.15)
+```
+
+**Tips:**
+- Use evenly lit backgrounds
+- Avoid shadows and wrinkles
+- Adjust tolerance based on lighting
+- Use feather > 0 for natural edges
+
+---
+
 ### Blend Mode Reference
 
 | Mode | Description | Use Case |

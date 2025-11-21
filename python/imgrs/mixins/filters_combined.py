@@ -43,7 +43,7 @@ class FilterMixin(
     - NoiseFiltersMixin: add_gaussian_noise, add_salt_pepper_noise, denoise
     - MorphologicalFiltersMixin: dilate, erode, opening, closing, gradient
     - ArtisticFiltersMixin: vignette, halftone, pencil_sketch, watercolor, glitch
-    - ColorFiltersMixin: duotone, color_splash, chromatic_aberration
+    - ColorFiltersMixin: duotone, color_splash, chromatic_aberration, chroma_key
     - CSSFiltersMixin: sepia, grayscale_filter, invert, hue_rotate, saturate
     - AutoEnhanceFiltersMixin: histogram_equalization, auto_contrast, auto_enhance, exposure_adjust, etc.
     """

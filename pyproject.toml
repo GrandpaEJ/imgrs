@@ -59,6 +59,7 @@ Changelog = "https://github.com/grandpaej/imgrs/blob/main/CHANGELOG.md"
 python-source = "python"
 module-name = "imgrs._core"
 features = ["pyo3/extension-module"]
+manifest-path = "Cargo.toml"
 
 [tool.pytest.ini_options]
 testpaths = ["python/imgrs/tests"]
