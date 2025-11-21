@@ -1,5 +1,5 @@
 """
-Emoji operations mixin - add emojis to images
+Emoji and text operations mixin - add emojis and text to images
 """
 
 from typing import TYPE_CHECKING, List, Tuple
@@ -9,7 +9,7 @@ if TYPE_CHECKING:
 
 
 class EmojiMixin:
-    """Mixin for emoji operations"""
+    """Mixin for emoji and text operations"""
 
     def add_emoji(
         self, emoji_name: str, x: int, y: int, size: int = 64, opacity: float = 1.0
@@ -98,3 +98,29 @@ class EmojiMixin:
             ])
         """
         return self.__class__(self._rust_image.add_emojis(emojis))
+
+
+    def add_textbox(
+        self, x: int, y: int, width: int, height: int, fill_color: Tuple[int, int, int] = (255, 255, 255), border_color: Tuple[int, int, int] = (0, 0, 0), border_width: float = 1.0
+    ) -> "Image":
+        """
+        Add a text box (rectangle) to the image.
+
+        Args:
+            x: X position for textbox
+            y: Y position for textbox
+            width: Width of textbox
+            height: Height of textbox
+            fill_color: RGB fill color (default: white)
+            border_color: RGB border color (default: black)
+            border_width: Border width (default: 1.0)
+
+        Returns:
+            New Image instance with textbox added
+
+        Example:
+            img.add_textbox(50, 50, 200, 100, fill_color=(255, 255, 255), border_color=(0, 0, 0))
+        """
+        return self.__class__(
+            self._rust_image.add_textbox(x, y, width, height, fill_color, border_color, border_width)
+        )
