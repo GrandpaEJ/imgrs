@@ -9,6 +9,7 @@ used in video production and photography.
 
 import imgrs
 
+
 def create_green_screen_demo():
     """Create a demo showing chroma key functionality"""
 
@@ -16,11 +17,11 @@ def create_green_screen_demo():
     print("=" * 40)
 
     # Create a green background (representing a green screen)
-    green_screen = imgrs.new('RGB', (400, 300), (0, 255, 0))  # Pure green
+    green_screen = imgrs.new("RGB", (400, 300), (0, 255, 0))  # Pure green
     print("✓ Created green screen background")
 
     # Create a subject (red circle) to place on the green screen
-    subject = imgrs.new('RGB', (150, 150), (255, 0, 0))  # Red background
+    subject = imgrs.new("RGB", (150, 150), (255, 0, 0))  # Red background
     # Draw a blue circle on the red background
     subject = subject.draw_circle(75, 75, 60, (0, 0, 255, 255))  # Blue circle
     print("✓ Created subject (blue circle on red background)")
@@ -36,10 +37,12 @@ def create_green_screen_demo():
     print("✓ Applied chroma key and saved transparent result")
 
     # Demonstrate compositing with new background
-    beach_bg = imgrs.new('RGB', (400, 300), (135, 206, 235))  # Sky blue
+    beach_bg = imgrs.new("RGB", (400, 300), (135, 206, 235))  # Sky blue
     # Add some "sand" at the bottom
-    beach_bg = imgrs.new('RGB', (400, 100), (238, 203, 173))  # Sandy color
-    beach_bg = imgrs.paste(beach_bg, imgrs.new('RGB', (400, 200), (135, 206, 235)), (0, 0))
+    beach_bg = imgrs.new("RGB", (400, 100), (238, 203, 173))  # Sandy color
+    beach_bg = imgrs.paste(
+        beach_bg, imgrs.new("RGB", (400, 200), (135, 206, 235)), (0, 0)
+    )
 
     # Composite the keyed subject onto the beach background
     final_composite = imgrs.paste(beach_bg, keyed_scene, (0, 0))
@@ -56,6 +59,7 @@ def create_green_screen_demo():
     print("   - Tolerance: 0.2 - Moderate color matching")
     print("   - Feather: 0.1 - Soft edges for natural blending")
 
+
 def demo_different_key_colors():
     """Demonstrate chroma key with different background colors"""
 
@@ -63,11 +67,11 @@ def demo_different_key_colors():
     print("-" * 30)
 
     # Create base image with colored borders
-    base = imgrs.new('RGB', (300, 200), (128, 128, 128))  # Gray background
-    base = base.draw_rectangle(0, 0, 300, 50, (255, 0, 0, 255))    # Red border
-    base = base.draw_rectangle(0, 150, 300, 200, (0, 255, 0, 255)) # Green border
-    base = base.draw_rectangle(0, 0, 50, 200, (0, 0, 255, 255))    # Blue border
-    base = base.draw_rectangle(250, 0, 300, 200, (255, 255, 0, 255)) # Yellow border
+    base = imgrs.new("RGB", (300, 200), (128, 128, 128))  # Gray background
+    base = base.draw_rectangle(0, 0, 300, 50, (255, 0, 0, 255))  # Red border
+    base = base.draw_rectangle(0, 150, 300, 200, (0, 255, 0, 255))  # Green border
+    base = base.draw_rectangle(0, 0, 50, 200, (0, 0, 255, 255))  # Blue border
+    base = base.draw_rectangle(250, 0, 300, 200, (255, 255, 0, 255))  # Yellow border
 
     # Add a white circle in the center
     base = base.draw_circle(150, 100, 40, (255, 255, 255, 255))
@@ -80,7 +84,7 @@ def demo_different_key_colors():
         ((255, 0, 0), "red"),
         ((0, 255, 0), "green"),
         ((0, 0, 255), "blue"),
-        ((255, 255, 0), "yellow")
+        ((255, 255, 0), "yellow"),
     ]
 
     for color, name in key_colors:
@@ -94,6 +98,7 @@ def demo_different_key_colors():
     print("   - examples/output/chroma_key_green.png")
     print("   - examples/output/chroma_key_blue.png")
     print("   - examples/output/chroma_key_yellow.png")
+
 
 if __name__ == "__main__":
     create_green_screen_demo()

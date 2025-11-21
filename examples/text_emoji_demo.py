@@ -24,7 +24,7 @@ texts = [
     "Hello 😊 World 🌍",
     "I ❤️ Python 🐍",
     "Coffee ☕ & Code 💻",
-    "Music 🎵 & Art 🎨"
+    "Music 🎵 & Art 🎨",
 ]
 
 y = 40
@@ -51,9 +51,12 @@ styled_texts = [
 
 for text, pos, color in styled_texts:
     img2 = img2.add_text_styled(
-        text, pos, size=36, color=color,
+        text,
+        pos,
+        size=36,
+        color=color,
         outline=(255, 255, 255, 255, 2.0),
-        shadow=(2, 2, 0, 0, 0, 150)
+        shadow=(2, 2, 0, 0, 0, 150),
     )
 
 img2.save("output/text_emoji_demo/02_styled_emoji_text.png")
@@ -113,8 +116,12 @@ multiline_poem = """🌟 In a world of code and dreams 🌟
 ✨ We code from morning till night ✨"""
 
 img4 = img4.add_text_multiline(
-    multiline_poem, (50, 50), size=24, color=(50, 50, 100, 255),
-    line_spacing=1.4, align="center"
+    multiline_poem,
+    (50, 50),
+    size=24,
+    color=(50, 50, 100, 255),
+    line_spacing=1.4,
+    align="center",
 )
 
 img4.save("output/text_emoji_demo/04_multiline_emoji_poem.png")
@@ -128,10 +135,10 @@ img5 = imgrs.Image.new("RGBA", (800, 400), (255, 255, 255, 255))
 
 # Create some background boxes first
 backgrounds = [
-    ((50, 50, 300, 80), (255, 200, 200, 255)),   # Light red
+    ((50, 50, 300, 80), (255, 200, 200, 255)),  # Light red
     ((400, 50, 300, 80), (200, 255, 200, 255)),  # Light green
     ((50, 150, 300, 80), (200, 200, 255, 255)),  # Light blue
-    ((400, 150, 300, 80), (255, 255, 200, 255)), # Light yellow
+    ((400, 150, 300, 80), (255, 255, 200, 255)),  # Light yellow
 ]
 
 for (x, y, w, h), color in backgrounds:
@@ -160,20 +167,26 @@ img6 = imgrs.Image.new("RGBA", (800, 600), (255, 255, 255, 255))
 # Large title with emojis
 title = "🎨 Creative 🎭 Expression 🎪"
 img6 = img6.add_text_styled(
-    title, (400, 50), size=48, color=(100, 50, 150, 255),
-    align="center", outline=(0, 0, 0, 255, 2.0)
+    title,
+    (400, 50),
+    size=48,
+    color=(100, 50, 150, 255),
+    align="center",
+    outline=(0, 0, 0, 255, 2.0),
 )
 
 # Medium subtitles
 subtitles = [
     "🎨 Digital Art & Design",
     "🎭 Theater & Performance",
-    "🎪 Entertainment & Fun"
+    "🎪 Entertainment & Fun",
 ]
 
 y = 150
 for subtitle in subtitles:
-    img6 = img6.add_text_styled(subtitle, (400, y), size=32, color=(50, 100, 200, 255), align="center")
+    img6 = img6.add_text_styled(
+        subtitle, (400, y), size=32, color=(50, 100, 200, 255), align="center"
+    )
     y += 60
 
 # Small descriptions with different styles
@@ -188,8 +201,12 @@ descriptions = [
 
 for desc, (x, y), color in descriptions:
     img6 = img6.add_text_styled(
-        desc, (x, y), size=20, color=color,
-        background=(240, 240, 240, 200), align="center"
+        desc,
+        (x, y),
+        size=20,
+        color=color,
+        background=(240, 240, 240, 200),
+        align="center",
     )
 
 img6.save("output/text_emoji_demo/06_mixed_styles.png")
@@ -206,7 +223,7 @@ test_texts = [
     "Hello 😊",
     "🌍 World 🌍",
     "Python 🐍 & Rust 🦀",
-    "🎉 Celebration Time! 🎊"
+    "🎉 Celebration Time! 🎊",
 ]
 
 y = 50
@@ -218,14 +235,18 @@ for i, text in enumerate(test_texts):
     box_x, box_y = 100, y - 10
     img7 = img7.draw_rectangle(box_x, box_y, width, height + 20, (240, 240, 240, 255))
     # Draw border by drawing a slightly smaller rectangle on top
-    img7 = img7.draw_rectangle(box_x + 1, box_y + 1, width - 2, height + 18, (255, 255, 255, 255))
+    img7 = img7.draw_rectangle(
+        box_x + 1, box_y + 1, width - 2, height + 18, (255, 255, 255, 255)
+    )
 
     # Add the text
     img7 = img7.add_text(text, (box_x, y + height - 8), size=36, color=(0, 0, 0, 255))
 
     # Add measurement info
     info = f"Size: {width}x{height}px"
-    img7 = img7.add_text(info, (box_x + width + 20, y + 20), size=16, color=(100, 100, 100, 255))
+    img7 = img7.add_text(
+        info, (box_x + width + 20, y + 20), size=16, color=(100, 100, 100, 255)
+    )
 
     y += 80
 

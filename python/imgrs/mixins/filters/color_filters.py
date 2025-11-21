@@ -30,4 +30,6 @@ class ColorFiltersMixin:
         feather: float = 0.1,
     ) -> "Image":
         """Apply chroma key effect (green screen removal)."""
-        return self.__class__(self._rust_image.chroma_key(key_color, tolerance, feather))
+        return self.__class__(
+            self._rust_image.chroma_key(key_color, tolerance, feather)
+        )

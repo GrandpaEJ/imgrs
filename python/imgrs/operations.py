@@ -726,7 +726,12 @@ def contrast(image: Image, factor: float) -> Image:
     return image.contrast(factor)
 
 
-def chroma_key(image: Image, key_color: Tuple[int, int, int], tolerance: float = 0.3, feather: float = 0.1) -> Image:
+def chroma_key(
+    image: Image,
+    key_color: Tuple[int, int, int],
+    tolerance: float = 0.3,
+    feather: float = 0.1,
+) -> Image:
     """
     Apply chroma key effect (green screen removal) to make specific colors transparent.
 

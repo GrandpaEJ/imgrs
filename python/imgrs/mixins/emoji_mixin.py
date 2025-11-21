@@ -99,9 +99,15 @@ class EmojiMixin:
         """
         return self.__class__(self._rust_image.add_emojis(emojis))
 
-
     def add_textbox(
-        self, x: int, y: int, width: int, height: int, fill_color: Tuple[int, int, int] = (255, 255, 255), border_color: Tuple[int, int, int] = (0, 0, 0), border_width: float = 1.0
+        self,
+        x: int,
+        y: int,
+        width: int,
+        height: int,
+        fill_color: Tuple[int, int, int] = (255, 255, 255),
+        border_color: Tuple[int, int, int] = (0, 0, 0),
+        border_width: float = 1.0,
     ) -> "Image":
         """
         Add a text box (rectangle) to the image.
@@ -122,5 +128,7 @@ class EmojiMixin:
             img.add_textbox(50, 50, 200, 100, fill_color=(255, 255, 255), border_color=(0, 0, 0))
         """
         return self.__class__(
-            self._rust_image.add_textbox(x, y, width, height, fill_color, border_color, border_width)
+            self._rust_image.add_textbox(
+                x, y, width, height, fill_color, border_color, border_width
+            )
         )
