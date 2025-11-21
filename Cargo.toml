@@ -1,4 +1,4 @@
-[package]
+ [package]
 name = "imgrs-core"
 version = "0.2.10"
 edition = "2021"
@@ -23,6 +23,9 @@ rand_distr = "0.4"
 imageproc = "0.25"
 ab_glyph = "0.2"
 kamadak-exif = "0.5"
+cairo-rs = "0.18"
+pango = "0.18"
+pangocairo = "0.18"
 
 [features]
 default = []
