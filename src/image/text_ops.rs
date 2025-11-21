@@ -6,7 +6,7 @@ use crate::text::{draw_text, draw_text_styled, draw_text_centered, draw_text_mul
 use crate::text::styles::FontWeight;
 use crate::text::{get_text_size, get_multiline_text_size};
 use pyo3::prelude::*;
-use pyo3::PyObject;
+use pyo3::{PyObject, Python};
 
 impl PyImage {
     /// Basic rich text drawing
@@ -519,10 +519,29 @@ impl PyImage {
     }
 
     /// Get text box
-    pub fn get_text_box_impl(_text: &str, _x: i32, _y: i32, _size: f32, _font_path: Option<&str>) -> Result<PyObject, ImgrsError> {
-        // TODO: Implement proper PyObject return
-        // For now, return an error
-        Err(ImgrsError::InvalidOperation("Not implemented".to_string()))
+    pub fn get_text_box_impl(text: &str, x: i32, y: i32, size: f32, font_path: Option<&str>) -> Result<PyObject, ImgrsError> {
+        use crate::text::get_text_box;
+        use pyo3::types::PyDict;
+
+        let font_path = font_path.map(|s| std::path::Path::new(s));
+        let text_box = get_text_box(text, x, y, size, font_path)?;
+
+        Python::with_gil(|py| {
+            let dict = pyo3::types::PyDict::new_bound(py);
+            dict.set_item("x", text_box.x)?;
+            dict.set_item("y", text_box.y)?;
+            dict.set_item("width", text_box.width)?;
+            dict.set_item("height", text_box.height)?;
+            dict.set_item("ascent", text_box.ascent)?;
+            dict.set_item("descent", text_box.descent)?;
+            dict.set_item("baseline_y", text_box.baseline_y)?;
+            dict.set_item("bottom_y", text_box.bottom_y)?;
+            dict.set_item("right_x", text_box.right_x)?;
+            dict.set_item("advance_width", text_box.width as i32)?; // Using width as advance for now
+            dict.set_item("left_bearing", 0)?; // Not implemented
+            dict.set_item("right_bearing", 0)?; // Not implemented
+            Ok(dict.to_object(py))
+        })
     }
 
     /// Get enhanced text size
@@ -539,9 +558,31 @@ impl PyImage {
     }
 
     /// Get enhanced text box
-    pub fn get_enhanced_text_box_impl(_text: &str, _x: i32, _y: i32, _size: f32, _font_family: &str, _font_weight: &str, _font_style: &str, _font_path: Option<&str>, _letter_spacing: f32) -> Result<PyObject, ImgrsError> {
-        // TODO: Implement proper PyObject return
-        Err(ImgrsError::InvalidOperation("Not implemented".to_string()))
+    pub fn get_enhanced_text_box_impl(text: &str, x: i32, y: i32, size: f32, font_family: &str, font_weight: &str, font_style: &str, font_path: Option<&str>, _letter_spacing: f32) -> Result<PyObject, ImgrsError> {
+        // For now, use the basic get_text_box since enhanced font resolution is not fully implemented
+        // TODO: Implement proper enhanced font resolution
+        let resolved_font = resolve_font_path(font_path, font_family, font_weight, font_style)?;
+        use crate::text::get_text_box;
+        use pyo3::types::PyDict;
+
+        let text_box = get_text_box(text, x, y, size, resolved_font.as_deref())?;
+
+        Python::with_gil(|py| {
+            let dict = pyo3::types::PyDict::new_bound(py);
+            dict.set_item("x", text_box.x)?;
+            dict.set_item("y", text_box.y)?;
+            dict.set_item("width", text_box.width)?;
+            dict.set_item("height", text_box.height)?;
+            dict.set_item("ascent", text_box.ascent)?;
+            dict.set_item("descent", text_box.descent)?;
+            dict.set_item("baseline_y", text_box.baseline_y)?;
+            dict.set_item("bottom_y", text_box.bottom_y)?;
+            dict.set_item("right_x", text_box.right_x)?;
+            dict.set_item("advance_width", text_box.width as i32)?; // Using width as advance for now
+            dict.set_item("left_bearing", 0)?; // Not implemented
+            dict.set_item("right_bearing", 0)?; // Not implemented
+            Ok(dict.to_object(py))
+        })
     }
 }
 
