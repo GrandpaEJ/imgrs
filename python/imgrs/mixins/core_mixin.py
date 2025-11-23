@@ -820,21 +820,21 @@ class CoreMixin:
     ) -> "Image":
         """Internal method to create shapes using Rust backend."""
         from .._core import (
+            create_arrow_py,
             create_circle_py,
-            create_rectangle_py,
-            create_triangle_py,
-            create_ellipse_py,
-            create_star_py,
-            create_square_py,
+            create_cross_py,
             create_diamond_py,
+            create_ellipse_py,
+            create_heart_py,
             create_hexagon_py,
+            create_octagon_py,
             create_parallelogram_py,
             create_pentagon_py,
-            create_octagon_py,
-            create_heart_py,
-            create_arrow_py,
-            create_cross_py,
             create_quadrilateral_py,
+            create_rectangle_py,
+            create_square_py,
+            create_star_py,
+            create_triangle_py,
         )
 
         # Map shape types to function calls

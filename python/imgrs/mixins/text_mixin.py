@@ -12,9 +12,9 @@ Enhanced features:
 - Multi-font text rendering
 """
 
-from typing import TYPE_CHECKING, Union, Optional, Tuple, List, Dict, Any
 import os
 from pathlib import Path
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple, Union
 
 if TYPE_CHECKING:
     from .image import Image
