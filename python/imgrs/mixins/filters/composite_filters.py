@@ -9,7 +9,7 @@ if TYPE_CHECKING:
 class CompositeFiltersMixin:
     """
     Mixin for CSS composite and blending operations.
-    
+
     Provides 28 different composite modes for advanced image blending:
     - 8 Source/Destination operations
     - 20 Photoshop-style blending modes
@@ -18,16 +18,16 @@ class CompositeFiltersMixin:
     def composite(self, mode: str, opacity: float = 1.0) -> "Image":
         """
         Apply a CSS composite/blending mode to the image.
-        
+
         Args:
             mode: Composite mode name (see list below)
             opacity: Opacity of the effect (0.0 to 1.0)
-        
+
         Returns:
             New image with composite mode applied
-        
+
         ## Source/Destination Group (Alpha Compositing):
-        
+
         - **source-over**: ডিফল্ট। নতুন ছবি (source) আগের ছবির (destination) উপরে আঁকা হয়।
         - **source-in**: শুধুমাত্র destination এর opaque অংশে source দেখা যায়।
         - **source-out**: শুধুমাত্র destination এর transparent অংশে source দেখা যায়।
@@ -36,9 +36,9 @@ class CompositeFiltersMixin:
         - **destination-in**: destination শুধু source এর opaque অংশে দেখা যায়।
         - **destination-out**: destination শুধু source এর transparent অংশে দেখা যায়।
         - **destination-atop**: source কে destination এর shape অনুযায়ী কাটে। (উদাহরণ: avatar mask)
-        
+
         ## Blending/Photoshop-like Group:
-        
+
         - **normal**: সাধারণ blending (ডিফল্ট)
         - **multiply**: গুণ করে কালো রঙ বৃদ্ধি করে।
         - **screen**: উজ্জ্বলতা বাড়ায়।
@@ -58,20 +58,20 @@ class CompositeFiltersMixin:
         - **saturation**: source এর saturation destination এ প্রয়োগ করে।
         - **color**: source এর hue+saturation destination এ প্রয়োগ করে।
         - **luminosity**: source এর brightness destination এ প্রয়োগ করে।
-        
+
         Example:
             ```python
             from imgrs import Image
-            
+
             # Load image
             img = Image.open("photo.jpg")
-            
+
             # Apply destination-atop composite mode
             result = img.composite("destination-atop")
-            
+
             # Apply multiply blend mode with 50% opacity
             result = img.composite("multiply", opacity=0.5)
-            
+
             # Apply hue blend mode
             result = img.composite("hue")
             ```
