@@ -41,7 +41,7 @@ def test_alpha_fix():
         # Create a temporary test image
         test_img = Image.new("RGBA", (100, 100), (0, 255, 0, 255))
         test_img.save("test_alpha_img.png")
-        
+
         png_img = Image.open("test_alpha_img.png")
         original_alpha = png_img.get_alpha()
         print(f"PNG original alpha: {original_alpha:.3f}")

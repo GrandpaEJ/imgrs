@@ -2,6 +2,7 @@ use crate::errors::ImgrsError;
 use image::{DynamicImage, ImageBuffer, Luma, Rgb, Rgba};
 
 /// Gaussian blur kernel for different radii
+#[allow(dead_code)]
 pub fn gaussian_kernel(radius: f32) -> Vec<Vec<f32>> {
     let size = (radius * 2.0).ceil() as usize * 2 + 1;
     let center = size / 2;

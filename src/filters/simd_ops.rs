@@ -1,5 +1,5 @@
 use crate::errors::ImgrsError;
-use image::{DynamicImage, ImageBuffer, Luma, Rgb, Rgba};
+use image::{DynamicImage, ImageBuffer, Rgb, Rgba};
 
 /// SIMD-optimized RGB to grayscale conversion
 #[inline]
