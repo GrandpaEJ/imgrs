@@ -24,9 +24,9 @@ pub fn hue_rotate(image: &DynamicImage, degrees: f32) -> Result<DynamicImage, Im
                     let g = pixel[1] as f32;
                     let b_val = pixel[2] as f32;
 
-                    let new_r = (a * r + b * g + c * b_val).max(0.0).min(255.0) as u8;
-                    let new_g = (c * r + a * g + b * b_val).max(0.0).min(255.0) as u8;
-                    let new_b = (b * r + c * g + a * b_val).max(0.0).min(255.0) as u8;
+                    let new_r = (a * r + b * g + c * b_val).clamp(0.0, 255.0) as u8;
+                    let new_g = (c * r + a * g + b * b_val).clamp(0.0, 255.0) as u8;
+                    let new_b = (b * r + c * g + a * b_val).clamp(0.0, 255.0) as u8;
 
                     result.put_pixel(x, y, Rgb([new_r, new_g, new_b]));
                 }
@@ -46,9 +46,9 @@ pub fn hue_rotate(image: &DynamicImage, degrees: f32) -> Result<DynamicImage, Im
                     let b_val = pixel[2] as f32;
                     let alpha = pixel[3];
 
-                    let new_r = (a * r + b * g + c * b_val).max(0.0).min(255.0) as u8;
-                    let new_g = (c * r + a * g + b * b_val).max(0.0).min(255.0) as u8;
-                    let new_b = (b * r + c * g + a * b_val).max(0.0).min(255.0) as u8;
+                    let new_r = (a * r + b * g + c * b_val).clamp(0.0, 255.0) as u8;
+                    let new_g = (c * r + a * g + b * b_val).clamp(0.0, 255.0) as u8;
+                    let new_b = (b * r + c * g + a * b_val).clamp(0.0, 255.0) as u8;
 
                     result.put_pixel(x, y, Rgba([new_r, new_g, new_b, alpha]));
                 }

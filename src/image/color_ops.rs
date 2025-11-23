@@ -9,7 +9,7 @@ impl crate::image::core::PyImage {
     // Alpha channel operations
     pub fn set_alpha_impl(&mut self, alpha: f32) -> Result<Self, ImgrsError> {
         let image = self.get_image()?; // mut
-        let target_alpha = (alpha.max(0.0).min(1.0) * 255.0) as u8;
+        let target_alpha = (alpha.clamp(0.0, 1.0) * 255.0) as u8;
 
         // Convert to RGBA if not already
         let rgba_image = image.to_rgba8();
@@ -162,8 +162,8 @@ impl crate::image::core::PyImage {
         };
 
         let mut mask = ImageBuffer::new(width, height);
-        let start_opacity = start_opacity.max(0.0).min(1.0);
-        let end_opacity = end_opacity.max(0.0).min(1.0);
+        let start_opacity = start_opacity.clamp(0.0, 1.0);
+        let end_opacity = end_opacity.clamp(0.0, 1.0);
 
         match direction {
             "horizontal" => {
@@ -425,9 +425,9 @@ impl crate::image::core::PyImage {
             for x in 0..rgba_image.width() {
                 let pixel = rgba_image.get_pixel(x, y);
 
-                let shifted_r = (pixel[0] as i16 + shift).max(0).min(255) as u8;
-                let shifted_g = (pixel[1] as i16 + shift).max(0).min(255) as u8;
-                let shifted_b = (pixel[2] as i16 + shift).max(0).min(255) as u8;
+                let shifted_r = (pixel[0] as i16 + shift).clamp(0, 255) as u8;
+                let shifted_g = (pixel[1] as i16 + shift).clamp(0, 255) as u8;
+                let shifted_b = (pixel[2] as i16 + shift).clamp(0, 255) as u8;
 
                 result.put_pixel(x, y, Rgba([shifted_r, shifted_g, shifted_b, pixel[3]]));
             }
@@ -485,7 +485,7 @@ impl crate::image::core::PyImage {
         let rgba_image = image.to_rgba8();
         let ref_rgba = reference_image.to_rgba8();
 
-        let strength = strength.max(0.0).min(1.0);
+        let strength = strength.clamp(0.0, 1.0);
         let (width, height) = rgba_image.dimensions();
         let (ref_width, ref_height) = ref_rgba.dimensions();
         let width = width.min(ref_width);

@@ -3,7 +3,7 @@ use image::{DynamicImage, ImageBuffer, Rgb, Rgba};
 
 /// Apply grayscale filter (CSS-like grayscale effect)
 pub fn grayscale(image: &DynamicImage, amount: f32) -> Result<DynamicImage, ImgrsError> {
-    let amount = amount.max(0.0).min(1.0);
+    let amount = amount.clamp(0.0, 1.0);
 
     match image {
         DynamicImage::ImageRgb8(rgb_img) => {

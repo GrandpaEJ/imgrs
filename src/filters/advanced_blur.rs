@@ -74,8 +74,8 @@ pub fn median_blur(image: &DynamicImage, radius: u32) -> Result<DynamicImage, Im
 
                     for dy in -(radius as i32)..=(radius as i32) {
                         for dx in -(radius as i32)..=(radius as i32) {
-                            let nx = (x as i32 + dx).max(0).min(width as i32 - 1) as u32;
-                            let ny = (y as i32 + dy).max(0).min(height as i32 - 1) as u32;
+                            let nx = (x as i32 + dx).clamp(0, width as i32 - 1) as u32;
+                            let ny = (y as i32 + dy).clamp(0, height as i32 - 1) as u32;
                             let pixel = rgb_img.get_pixel(nx, ny);
                             r_vals.push(pixel[0]);
                             g_vals.push(pixel[1]);
@@ -107,8 +107,8 @@ pub fn median_blur(image: &DynamicImage, radius: u32) -> Result<DynamicImage, Im
 
                     for dy in -(radius as i32)..=(radius as i32) {
                         for dx in -(radius as i32)..=(radius as i32) {
-                            let nx = (x as i32 + dx).max(0).min(width as i32 - 1) as u32;
-                            let ny = (y as i32 + dy).max(0).min(height as i32 - 1) as u32;
+                            let nx = (x as i32 + dx).clamp(0, width as i32 - 1) as u32;
+                            let ny = (y as i32 + dy).clamp(0, height as i32 - 1) as u32;
                             let pixel = rgba_img.get_pixel(nx, ny);
                             r_vals.push(pixel[0]);
                             g_vals.push(pixel[1]);
@@ -167,8 +167,8 @@ pub fn bilateral_blur(
 
                     for dy in -(radius as i32)..=(radius as i32) {
                         for dx in -(radius as i32)..=(radius as i32) {
-                            let nx = (x as i32 + dx).max(0).min(width as i32 - 1) as u32;
-                            let ny = (y as i32 + dy).max(0).min(height as i32 - 1) as u32;
+                            let nx = (x as i32 + dx).clamp(0, width as i32 - 1) as u32;
+                            let ny = (y as i32 + dy).clamp(0, height as i32 - 1) as u32;
                             let pixel = rgb_img.get_pixel(nx, ny);
 
                             // Spatial distance
@@ -193,9 +193,9 @@ pub fn bilateral_blur(
                         }
                     }
 
-                    let r = (r_sum / weight_sum).round().max(0.0).min(255.0) as u8;
-                    let g = (g_sum / weight_sum).round().max(0.0).min(255.0) as u8;
-                    let b = (b_sum / weight_sum).round().max(0.0).min(255.0) as u8;
+                    let r = (r_sum / weight_sum).round().clamp(0.0, 255.0) as u8;
+                    let g = (g_sum / weight_sum).round().clamp(0.0, 255.0) as u8;
+                    let b = (b_sum / weight_sum).round().clamp(0.0, 255.0) as u8;
 
                     result.put_pixel(x, y, Rgb([r, g, b]));
                 }
@@ -288,9 +288,9 @@ pub fn zoom_blur(image: &DynamicImage, strength: f32) -> Result<DynamicImage, Im
                         let offset_y = (y as f32 - center_y) * (1.0 - scale);
 
                         let sample_x =
-                            (x as f32 + offset_x).max(0.0).min(width as f32 - 1.0) as u32;
+                            (x as f32 + offset_x).clamp(0.0, width as f32 - 1.0) as u32;
                         let sample_y =
-                            (y as f32 + offset_y).max(0.0).min(height as f32 - 1.0) as u32;
+                            (y as f32 + offset_y).clamp(0.0, height as f32 - 1.0) as u32;
 
                         let pixel = rgb_img.get_pixel(sample_x, sample_y);
                         r_sum += pixel[0] as f32;

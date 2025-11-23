@@ -1,4 +1,5 @@
 /// Text styling types and options
+use crate::text::fonts::FontFamily;
 
 /// Text alignment options
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -134,7 +135,7 @@ impl TextStyle {
 
     /// Set opacity
     pub fn with_opacity(mut self, opacity: f32) -> Self {
-        self.opacity = opacity.max(0.0).min(1.0);
+        self.opacity = opacity.clamp(0.0, 1.0);
         self
     }
 

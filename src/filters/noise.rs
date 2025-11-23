@@ -23,9 +23,9 @@ pub fn add_gaussian_noise(
                     let pixel = rgb_img.get_pixel(x, y);
                     let noise = normal.sample(&mut rng);
 
-                    let r = (pixel[0] as f32 + noise).max(0.0).min(255.0) as u8;
-                    let g = (pixel[1] as f32 + noise).max(0.0).min(255.0) as u8;
-                    let b = (pixel[2] as f32 + noise).max(0.0).min(255.0) as u8;
+                    let r = (pixel[0] as f32 + noise).clamp(0.0, 255.0) as u8;
+                    let g = (pixel[1] as f32 + noise).clamp(0.0, 255.0) as u8;
+                    let b = (pixel[2] as f32 + noise).clamp(0.0, 255.0) as u8;
 
                     result.put_pixel(x, y, Rgb([r, g, b]));
                 }
@@ -43,9 +43,9 @@ pub fn add_gaussian_noise(
                     let pixel = rgba_img.get_pixel(x, y);
                     let noise = normal.sample(&mut rng);
 
-                    let r = (pixel[0] as f32 + noise).max(0.0).min(255.0) as u8;
-                    let g = (pixel[1] as f32 + noise).max(0.0).min(255.0) as u8;
-                    let b = (pixel[2] as f32 + noise).max(0.0).min(255.0) as u8;
+                    let r = (pixel[0] as f32 + noise).clamp(0.0, 255.0) as u8;
+                    let g = (pixel[1] as f32 + noise).clamp(0.0, 255.0) as u8;
+                    let b = (pixel[2] as f32 + noise).clamp(0.0, 255.0) as u8;
 
                     result.put_pixel(x, y, Rgba([r, g, b, pixel[3]]));
                 }
@@ -132,9 +132,9 @@ pub fn add_uniform_noise(
                     let pixel = rgb_img.get_pixel(x, y);
                     let noise = rng.gen_range(min..max);
 
-                    let r = (pixel[0] as f32 + noise).max(0.0).min(255.0) as u8;
-                    let g = (pixel[1] as f32 + noise).max(0.0).min(255.0) as u8;
-                    let b = (pixel[2] as f32 + noise).max(0.0).min(255.0) as u8;
+                    let r = (pixel[0] as f32 + noise).clamp(0.0, 255.0) as u8;
+                    let g = (pixel[1] as f32 + noise).clamp(0.0, 255.0) as u8;
+                    let b = (pixel[2] as f32 + noise).clamp(0.0, 255.0) as u8;
 
                     result.put_pixel(x, y, Rgb([r, g, b]));
                 }
@@ -192,13 +192,13 @@ pub fn nl_means_denoise(
                                 for dx in
                                     -(template_window_size as i32)..=(template_window_size as i32)
                                 {
-                                    let px1 = ((x as i32 + dx).max(0).min(width as i32 - 1)) as u32;
+                                    let px1 = ((x as i32 + dx).clamp(0, width as i32 - 1)) as u32;
                                     let py1 =
-                                        ((y as i32 + dy).max(0).min(height as i32 - 1)) as u32;
+                                        ((y as i32 + dy).clamp(0, height as i32 - 1)) as u32;
                                     let px2 =
-                                        ((sx as i32 + dx).max(0).min(width as i32 - 1)) as u32;
+                                        ((sx as i32 + dx).clamp(0, width as i32 - 1)) as u32;
                                     let py2 =
-                                        ((sy as i32 + dy).max(0).min(height as i32 - 1)) as u32;
+                                        ((sy as i32 + dy).clamp(0, height as i32 - 1)) as u32;
 
                                     let p1 = rgb_img.get_pixel(px1, py1);
                                     let p2 = rgb_img.get_pixel(px2, py2);
@@ -220,9 +220,9 @@ pub fn nl_means_denoise(
                         }
                     }
 
-                    let r = (r_sum / weight_sum).round().max(0.0).min(255.0) as u8;
-                    let g = (g_sum / weight_sum).round().max(0.0).min(255.0) as u8;
-                    let b = (b_sum / weight_sum).round().max(0.0).min(255.0) as u8;
+                    let r = (r_sum / weight_sum).round().clamp(0.0, 255.0) as u8;
+                    let g = (g_sum / weight_sum).round().clamp(0.0, 255.0) as u8;
+                    let b = (b_sum / weight_sum).round().clamp(0.0, 255.0) as u8;
 
                     result.put_pixel(x, y, Rgb([r, g, b]));
                 }

@@ -20,8 +20,8 @@ pub fn composite(
     let base_rgba = base.to_rgba8();
     let overlay_rgba = overlay.to_rgba8();
     let mut result = ImageBuffer::new(width, height);
-
-    let opacity = opacity.max(0.0).min(1.0);
+    
+    let opacity = opacity.clamp(0.0, 1.0);
 
     for y in 0..height {
         for x in 0..width {

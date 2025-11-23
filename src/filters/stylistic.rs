@@ -21,8 +21,8 @@ pub fn oil_painting(
 
                     for dy in -(radius as i32)..=(radius as i32) {
                         for dx in -(radius as i32)..=(radius as i32) {
-                            let nx = (x as i32 + dx).max(0).min(width as i32 - 1) as u32;
-                            let ny = (y as i32 + dy).max(0).min(height as i32 - 1) as u32;
+                            let nx = (x as i32 + dx).clamp(0, width as i32 - 1) as u32;
+                            let ny = (y as i32 + dy).clamp(0, height as i32 - 1) as u32;
                             let pixel = rgb_img.get_pixel(nx, ny);
 
                             let intensity_val =

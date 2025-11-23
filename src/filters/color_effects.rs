@@ -122,12 +122,12 @@ pub fn channel_shift(
 
             for y in 0..height {
                 for x in 0..width {
-                    let r_x = (x as i32 + r_offset.0).max(0).min(width as i32 - 1) as u32;
-                    let r_y = (y as i32 + r_offset.1).max(0).min(height as i32 - 1) as u32;
-                    let g_x = (x as i32 + g_offset.0).max(0).min(width as i32 - 1) as u32;
-                    let g_y = (y as i32 + g_offset.1).max(0).min(height as i32 - 1) as u32;
-                    let b_x = (x as i32 + b_offset.0).max(0).min(width as i32 - 1) as u32;
-                    let b_y = (y as i32 + b_offset.1).max(0).min(height as i32 - 1) as u32;
+                    let r_x = (x as i32 + r_offset.0).clamp(0, width as i32 - 1) as u32;
+                    let r_y = (y as i32 + r_offset.1).clamp(0, height as i32 - 1) as u32;
+                    let g_x = (x as i32 + g_offset.0).clamp(0, width as i32 - 1) as u32;
+                    let g_y = (y as i32 + g_offset.1).clamp(0, height as i32 - 1) as u32;
+                    let b_x = (x as i32 + b_offset.0).clamp(0, width as i32 - 1) as u32;
+                    let b_y = (y as i32 + b_offset.1).clamp(0, height as i32 - 1) as u32;
 
                     let r = rgb_img.get_pixel(r_x, r_y)[0];
                     let g = rgb_img.get_pixel(g_x, g_y)[1];
@@ -252,7 +252,7 @@ pub fn chroma_key(
                 };
 
                 // Clamp alpha to valid range
-                alpha = alpha.max(0.0).min(1.0);
+                alpha = alpha.clamp(0.0, 1.0);
 
                 image::Rgba([pixel[0], pixel[1], pixel[2], (alpha * 255.0) as u8])
             });
@@ -290,7 +290,7 @@ pub fn chroma_key(
 
                     // Combine with existing alpha
                     alpha *= pixel[3] as f32 / 255.0;
-                    alpha = alpha.max(0.0).min(1.0);
+                    alpha = alpha.clamp(0.0, 1.0);
 
                     result.put_pixel(
                         x,

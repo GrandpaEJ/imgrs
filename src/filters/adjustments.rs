@@ -21,9 +21,9 @@ pub fn brightness(image: &DynamicImage, adjustment: i16) -> Result<DynamicImage,
             for y in 0..height {
                 for x in 0..width {
                     let pixel = rgb_img.get_pixel(x, y);
-                    let r = (pixel[0] as i16 + adjustment).max(0).min(255) as u8;
-                    let g = (pixel[1] as i16 + adjustment).max(0).min(255) as u8;
-                    let b = (pixel[2] as i16 + adjustment).max(0).min(255) as u8;
+                    let r = (pixel[0] as i16 + adjustment).clamp(0, 255) as u8;
+                    let g = (pixel[1] as i16 + adjustment).clamp(0, 255) as u8;
+                    let b = (pixel[2] as i16 + adjustment).clamp(0, 255) as u8;
                     result.put_pixel(x, y, Rgb([r, g, b]));
                 }
             }
@@ -37,9 +37,9 @@ pub fn brightness(image: &DynamicImage, adjustment: i16) -> Result<DynamicImage,
             for y in 0..height {
                 for x in 0..width {
                     let pixel = rgba_img.get_pixel(x, y);
-                    let r = (pixel[0] as i16 + adjustment).max(0).min(255) as u8;
-                    let g = (pixel[1] as i16 + adjustment).max(0).min(255) as u8;
-                    let b = (pixel[2] as i16 + adjustment).max(0).min(255) as u8;
+                    let r = (pixel[0] as i16 + adjustment).clamp(0, 255) as u8;
+                    let g = (pixel[1] as i16 + adjustment).clamp(0, 255) as u8;
+                    let b = (pixel[2] as i16 + adjustment).clamp(0, 255) as u8;
                     let a = pixel[3]; // Keep alpha unchanged
                     result.put_pixel(x, y, Rgba([r, g, b, a]));
                 }
@@ -54,7 +54,7 @@ pub fn brightness(image: &DynamicImage, adjustment: i16) -> Result<DynamicImage,
             for y in 0..height {
                 for x in 0..width {
                     let pixel = gray_img.get_pixel(x, y);
-                    let value = (pixel[0] as i16 + adjustment).max(0).min(255) as u8;
+                    let value = (pixel[0] as i16 + adjustment).clamp(0, 255) as u8;
                     result.put_pixel(x, y, Luma([value]));
                 }
             }

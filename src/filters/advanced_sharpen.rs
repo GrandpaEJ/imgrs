@@ -30,7 +30,7 @@ pub fn unsharp_mask(
                         // Only sharpen if difference exceeds threshold
                         if diff.abs() > threshold as i16 {
                             let sharpened = orig_pixel[i] as f32 + diff as f32 * amount;
-                            output[i] = sharpened.max(0.0).min(255.0) as u8;
+                            output[i] = sharpened.clamp(0.0, 255.0) as u8;
                         } else {
                             output[i] = orig_pixel[i];
                         }
@@ -57,7 +57,7 @@ pub fn unsharp_mask(
 
                         if diff.abs() > threshold as i16 {
                             let sharpened = orig_pixel[i] as f32 + diff as f32 * amount;
-                            output[i] = sharpened.max(0.0).min(255.0) as u8;
+                            output[i] = sharpened.clamp(0.0, 255.0) as u8;
                         } else {
                             output[i] = orig_pixel[i];
                         }

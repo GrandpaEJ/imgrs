@@ -28,9 +28,9 @@ pub fn vignette(
                     };
 
                     let pixel = rgb_img.get_pixel(x, y);
-                    let r = (pixel[0] as f32 * vignette_factor).max(0.0).min(255.0) as u8;
-                    let g = (pixel[1] as f32 * vignette_factor).max(0.0).min(255.0) as u8;
-                    let b = (pixel[2] as f32 * vignette_factor).max(0.0).min(255.0) as u8;
+                    let r = (pixel[0] as f32 * vignette_factor).clamp(0.0, 255.0) as u8;
+                    let g = (pixel[1] as f32 * vignette_factor).clamp(0.0, 255.0) as u8;
+                    let b = (pixel[2] as f32 * vignette_factor).clamp(0.0, 255.0) as u8;
 
                     result.put_pixel(x, y, Rgb([r, g, b]));
                 }
@@ -58,9 +58,9 @@ pub fn vignette(
                     };
 
                     let pixel = rgba_img.get_pixel(x, y);
-                    let r = (pixel[0] as f32 * vignette_factor).max(0.0).min(255.0) as u8;
-                    let g = (pixel[1] as f32 * vignette_factor).max(0.0).min(255.0) as u8;
-                    let b = (pixel[2] as f32 * vignette_factor).max(0.0).min(255.0) as u8;
+                    let r = (pixel[0] as f32 * vignette_factor).clamp(0.0, 255.0) as u8;
+                    let g = (pixel[1] as f32 * vignette_factor).clamp(0.0, 255.0) as u8;
+                    let b = (pixel[2] as f32 * vignette_factor).clamp(0.0, 255.0) as u8;
 
                     result.put_pixel(x, y, Rgba([r, g, b, pixel[3]]));
                 }
@@ -265,7 +265,7 @@ pub fn glitch(image: &DynamicImage, intensity: f32) -> Result<DynamicImage, Imgr
                 for dy in 0..strip_height {
                     let source_y = (y + dy).min(height - 1);
                     for x in 0..width {
-                        let source_x = ((x as i32 + offset).max(0).min(width as i32 - 1)) as u32;
+                        let source_x = ((x as i32 + offset).clamp(0, width as i32 - 1)) as u32;
                         let pixel = rgb_img.get_pixel(source_x, source_y);
                         result.put_pixel(x, source_y, *pixel);
                     }

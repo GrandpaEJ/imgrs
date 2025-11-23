@@ -56,8 +56,8 @@ pub fn apply_convolution(
                             let img_y = y as i32 + ky as i32 - kernel_center as i32;
 
                             // Handle edge cases by clamping coordinates
-                            let img_x = img_x.max(0).min(width as i32 - 1) as u32;
-                            let img_y = img_y.max(0).min(height as i32 - 1) as u32;
+                            let img_x = img_x.clamp(0, width as i32 - 1) as u32;
+                            let img_y = img_y.clamp(0, height as i32 - 1) as u32;
 
                             let pixel = rgb_img.get_pixel(img_x, img_y);
                             let kernel_val = kernel[ky][kx];
@@ -68,9 +68,9 @@ pub fn apply_convolution(
                         }
                     }
 
-                    let r = r_sum.max(0.0).min(255.0) as u8;
-                    let g = g_sum.max(0.0).min(255.0) as u8;
-                    let b = b_sum.max(0.0).min(255.0) as u8;
+                    let r = r_sum.clamp(0.0, 255.0) as u8;
+                    let g = g_sum.clamp(0.0, 255.0) as u8;
+                    let b = b_sum.clamp(0.0, 255.0) as u8;
 
                     result.put_pixel(x, y, Rgb([r, g, b]));
                 }
@@ -94,8 +94,8 @@ pub fn apply_convolution(
                             let img_x = x as i32 + kx as i32 - kernel_center as i32;
                             let img_y = y as i32 + ky as i32 - kernel_center as i32;
 
-                            let img_x = img_x.max(0).min(width as i32 - 1) as u32;
-                            let img_y = img_y.max(0).min(height as i32 - 1) as u32;
+                            let img_x = img_x.clamp(0, width as i32 - 1) as u32;
+                            let img_y = img_y.clamp(0, height as i32 - 1) as u32;
 
                             let pixel = rgba_img.get_pixel(img_x, img_y);
                             let kernel_val = kernel[ky][kx];
@@ -107,10 +107,10 @@ pub fn apply_convolution(
                         }
                     }
 
-                    let r = r_sum.max(0.0).min(255.0) as u8;
-                    let g = g_sum.max(0.0).min(255.0) as u8;
-                    let b = b_sum.max(0.0).min(255.0) as u8;
-                    let a = a_sum.max(0.0).min(255.0) as u8;
+                    let r = r_sum.clamp(0.0, 255.0) as u8;
+                    let g = g_sum.clamp(0.0, 255.0) as u8;
+                    let b = b_sum.clamp(0.0, 255.0) as u8;
+                    let a = a_sum.clamp(0.0, 255.0) as u8;
 
                     result.put_pixel(x, y, Rgba([r, g, b, a]));
                 }
@@ -131,8 +131,8 @@ pub fn apply_convolution(
                             let img_x = x as i32 + kx as i32 - kernel_center as i32;
                             let img_y = y as i32 + ky as i32 - kernel_center as i32;
 
-                            let img_x = img_x.max(0).min(width as i32 - 1) as u32;
-                            let img_y = img_y.max(0).min(height as i32 - 1) as u32;
+                            let img_x = img_x.clamp(0, width as i32 - 1) as u32;
+                            let img_y = img_y.clamp(0, height as i32 - 1) as u32;
 
                             let pixel = gray_img.get_pixel(img_x, img_y);
                             let kernel_val = kernel[ky][kx];
@@ -141,7 +141,7 @@ pub fn apply_convolution(
                         }
                     }
 
-                    let value = sum.max(0.0).min(255.0) as u8;
+                    let value = sum.clamp(0.0, 255.0) as u8;
                     result.put_pixel(x, y, Luma([value]));
                 }
             }

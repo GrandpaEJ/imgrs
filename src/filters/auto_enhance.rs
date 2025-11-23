@@ -33,7 +33,7 @@ pub fn histogram_equalization(image: &DynamicImage) -> Result<DynamicImage, Imgr
                     let equalized = ((cdf[i] - cdf_min) as f32 / (total_pixels - cdf_min as f32)
                         * 255.0)
                         .round();
-                    lut[i] = equalized.max(0.0).min(255.0) as u8;
+                    lut[i] = equalized.clamp(0.0, 255.0) as u8;
                 }
             }
 
@@ -137,7 +137,7 @@ fn create_equalization_lut(histogram: &[u32], total_pixels: u32) -> Vec<u8> {
     for i in 0..256 {
         if cdf[i] > 0 {
             let equalized = ((cdf[i] - cdf_min) as f32 / (total - cdf_min as f32) * 255.0).round();
-            lut[i] = equalized.max(0.0).min(255.0) as u8;
+            lut[i] = equalized.clamp(0.0, 255.0) as u8;
         }
     }
 
@@ -354,9 +354,9 @@ pub fn auto_brightness(image: &DynamicImage) -> Result<DynamicImage, ImgrsError>
             // Apply brightness adjustment
             let mut result = ImageBuffer::new(width, height);
             for (x, y, pixel) in rgb_img.enumerate_pixels() {
-                let r = (pixel[0] as f32 + adjustment).max(0.0).min(255.0) as u8;
-                let g = (pixel[1] as f32 + adjustment).max(0.0).min(255.0) as u8;
-                let b = (pixel[2] as f32 + adjustment).max(0.0).min(255.0) as u8;
+                let r = (pixel[0] as f32 + adjustment).clamp(0.0, 255.0) as u8;
+                let g = (pixel[1] as f32 + adjustment).clamp(0.0, 255.0) as u8;
+                let b = (pixel[2] as f32 + adjustment).clamp(0.0, 255.0) as u8;
                 result.put_pixel(x, y, Rgb([r, g, b]));
             }
 
@@ -384,7 +384,7 @@ pub fn exposure_adjust(image: &DynamicImage, exposure: f32) -> Result<DynamicIma
     for i in 0..256 {
         let normalized = i as f32 / 255.0;
         let adjusted = normalized.powf(gamma);
-        lut[i] = (adjusted * 255.0).round().max(0.0).min(255.0) as u8;
+        lut[i] = (adjusted * 255.0).round().clamp(0.0, 255.0) as u8;
     }
 
     match image {
@@ -524,7 +524,7 @@ pub fn auto_optimize(image: &DynamicImage) -> Result<DynamicImage, ImgrsError> {
 /// Smart enhance - combination of techniques for natural-looking results
 pub fn smart_enhance(image: &DynamicImage, strength: f32) -> Result<DynamicImage, ImgrsError> {
     // strength: 0.0 to 1.0
-    let strength = strength.max(0.0).min(1.0);
+    let strength = strength.clamp(0.0, 1.0);
 
     // Apply auto-contrast
     let contrasted = auto_contrast(image)?;

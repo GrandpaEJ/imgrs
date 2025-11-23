@@ -14,8 +14,8 @@ pub fn dilate(image: &DynamicImage, radius: u32) -> Result<DynamicImage, ImgrsEr
             for dy in -(radius as i32)..=(radius as i32) {
                 for dx in -(radius as i32)..=(radius as i32) {
                     if dx * dx + dy * dy <= (radius * radius) as i32 {
-                        let nx = (x as i32 + dx).max(0).min(width as i32 - 1) as u32;
-                        let ny = (y as i32 + dy).max(0).min(height as i32 - 1) as u32;
+                        let nx = (x as i32 + dx).clamp(0, width as i32 - 1) as u32;
+                        let ny = (y as i32 + dy).clamp(0, height as i32 - 1) as u32;
                         let val = gray_img.get_pixel(nx, ny)[0];
                         max_val = max_val.max(val);
                     }
@@ -42,8 +42,8 @@ pub fn erode(image: &DynamicImage, radius: u32) -> Result<DynamicImage, ImgrsErr
             for dy in -(radius as i32)..=(radius as i32) {
                 for dx in -(radius as i32)..=(radius as i32) {
                     if dx * dx + dy * dy <= (radius * radius) as i32 {
-                        let nx = (x as i32 + dx).max(0).min(width as i32 - 1) as u32;
-                        let ny = (y as i32 + dy).max(0).min(height as i32 - 1) as u32;
+                        let nx = (x as i32 + dx).clamp(0, width as i32 - 1) as u32;
+                        let ny = (y as i32 + dy).clamp(0, height as i32 - 1) as u32;
                         let val = gray_img.get_pixel(nx, ny)[0];
                         min_val = min_val.min(val);
                     }
@@ -87,7 +87,7 @@ pub fn morphological_gradient(
             for x in 0..width {
                 let dil_val = dil_img.get_pixel(x, y)[0] as i16;
                 let ero_val = ero_img.get_pixel(x, y)[0] as i16;
-                let diff = (dil_val - ero_val).max(0).min(255) as u8;
+                let diff = (dil_val - ero_val).clamp(0, 255) as u8;
                 result.put_pixel(x, y, Luma([diff]));
             }
         }
@@ -114,7 +114,7 @@ pub fn top_hat(image: &DynamicImage, radius: u32) -> Result<DynamicImage, ImgrsE
             for x in 0..width {
                 let orig_val = gray_img.get_pixel(x, y)[0] as i16;
                 let open_val = open_img.get_pixel(x, y)[0] as i16;
-                let diff = (orig_val - open_val).max(0).min(255) as u8;
+                let diff = (orig_val - open_val).clamp(0, 255) as u8;
                 result.put_pixel(x, y, Luma([diff]));
             }
         }
@@ -141,7 +141,7 @@ pub fn black_hat(image: &DynamicImage, radius: u32) -> Result<DynamicImage, Imgr
             for x in 0..width {
                 let close_val = close_img.get_pixel(x, y)[0] as i16;
                 let orig_val = gray_img.get_pixel(x, y)[0] as i16;
-                let diff = (close_val - orig_val).max(0).min(255) as u8;
+                let diff = (close_val - orig_val).clamp(0, 255) as u8;
                 result.put_pixel(x, y, Luma([diff]));
             }
         }

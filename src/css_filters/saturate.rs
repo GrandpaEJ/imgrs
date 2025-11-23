@@ -21,9 +21,9 @@ pub fn saturate(image: &DynamicImage, amount: f32) -> Result<DynamicImage, Imgrs
                     let luminance = r * 0.2126 + g * 0.7152 + b * 0.0722;
 
                     // Apply saturation
-                    let new_r = (luminance + (r - luminance) * amount).max(0.0).min(255.0) as u8;
-                    let new_g = (luminance + (g - luminance) * amount).max(0.0).min(255.0) as u8;
-                    let new_b = (luminance + (b - luminance) * amount).max(0.0).min(255.0) as u8;
+                    let new_r = (luminance + (r - luminance) * amount).clamp(0.0, 255.0) as u8;
+                    let new_g = (luminance + (g - luminance) * amount).clamp(0.0, 255.0) as u8;
+                    let new_b = (luminance + (b - luminance) * amount).clamp(0.0, 255.0) as u8;
 
                     result.put_pixel(x, y, Rgb([new_r, new_g, new_b]));
                 }
@@ -45,9 +45,9 @@ pub fn saturate(image: &DynamicImage, amount: f32) -> Result<DynamicImage, Imgrs
 
                     let luminance = r * 0.2126 + g * 0.7152 + b * 0.0722;
 
-                    let new_r = (luminance + (r - luminance) * amount).max(0.0).min(255.0) as u8;
-                    let new_g = (luminance + (g - luminance) * amount).max(0.0).min(255.0) as u8;
-                    let new_b = (luminance + (b - luminance) * amount).max(0.0).min(255.0) as u8;
+                    let new_r = (luminance + (r - luminance) * amount).clamp(0.0, 255.0) as u8;
+                    let new_g = (luminance + (g - luminance) * amount).clamp(0.0, 255.0) as u8;
+                    let new_b = (luminance + (b - luminance) * amount).clamp(0.0, 255.0) as u8;
 
                     result.put_pixel(x, y, Rgba([new_r, new_g, new_b, a]));
                 }

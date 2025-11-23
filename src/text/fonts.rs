@@ -3,9 +3,16 @@ use crate::errors::ImgrsError;
 use ab_glyph::FontVec;
 use std::fs;
 use std::path::Path;
+use std::path::PathBuf;
+
+/// Font family types
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub enum FontFamily {
+    #[allow(dead_code)]
+    Sans,
+}
 
 #[allow(dead_code)]
-
 /// Embedded default fonts
 const DEFAULT_FONT: &[u8] = include_bytes!("../../fonts/DejaVuSans.ttf");
 #[allow(dead_code)]
