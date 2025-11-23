@@ -1,10 +1,12 @@
 /// Enhanced text rendering operations for PyImage with comprehensive font support
-
 use crate::errors::ImgrsError;
-use crate::image::core::{PyImage, LazyImage};
-use crate::text::{draw_text, draw_text_styled, draw_text_centered, draw_text_multiline, TextStyle, TextAlign, wrap_text};
+use crate::image::core::{LazyImage, PyImage};
 use crate::text::styles::FontWeight;
-use crate::text::{get_text_size, get_multiline_text_size};
+use crate::text::{
+    draw_text, draw_text_centered, draw_text_multiline, draw_text_styled, wrap_text, TextAlign,
+    TextStyle,
+};
+use crate::text::{get_multiline_text_size, get_text_size};
 use pyo3::prelude::*;
 use pyo3::{PyObject, Python};
 
@@ -25,19 +27,29 @@ impl PyImage {
                 let img = image::open(path)?;
                 return Self::draw_rich_text_impl(
                     &PyImage::new_from_image(img, self.format),
-                    text, x, y, size, color, font_path
+                    text,
+                    x,
+                    y,
+                    size,
+                    color,
+                    font_path,
                 );
             }
             LazyImage::Bytes { data } => {
                 let img = image::load_from_memory(data)?;
                 return Self::draw_rich_text_impl(
                     &PyImage::new_from_image(img, self.format),
-                    text, x, y, size, color, font_path
+                    text,
+                    x,
+                    y,
+                    size,
+                    color,
+                    font_path,
                 );
             }
         };
 
-        let font_path = font_path.map(|s| std::path::Path::new(s));
+        let font_path = font_path.map(std::path::Path::new);
         let result = draw_text(image, text, x, y, size, color, font_path)?;
         Ok(PyImage::new_from_image(result, self.format))
     }
@@ -67,18 +79,42 @@ impl PyImage {
                 let img = image::open(path)?;
                 return Self::draw_rich_text_styled_impl(
                     &PyImage::new_from_image(img, self.format),
-                    text, x, y, size, color, font_path, align, background,
-                    outline, shadow, opacity, line_spacing, letter_spacing,
-                    max_width, rotation
+                    text,
+                    x,
+                    y,
+                    size,
+                    color,
+                    font_path,
+                    align,
+                    background,
+                    outline,
+                    shadow,
+                    opacity,
+                    line_spacing,
+                    letter_spacing,
+                    max_width,
+                    rotation,
                 );
             }
             LazyImage::Bytes { data } => {
                 let img = image::load_from_memory(data)?;
                 return Self::draw_rich_text_styled_impl(
                     &PyImage::new_from_image(img, self.format),
-                    text, x, y, size, color, font_path, align, background,
-                    outline, shadow, opacity, line_spacing, letter_spacing,
-                    max_width, rotation
+                    text,
+                    x,
+                    y,
+                    size,
+                    color,
+                    font_path,
+                    align,
+                    background,
+                    outline,
+                    shadow,
+                    opacity,
+                    line_spacing,
+                    letter_spacing,
+                    max_width,
+                    rotation,
                 );
             }
         };
@@ -87,11 +123,13 @@ impl PyImage {
             color,
             size,
             weight: FontWeight::Normal,
-            align: align.map(|a| match a {
-                "center" => TextAlign::Center,
-                "right" => TextAlign::Right,
-                _ => TextAlign::Left,
-            }).unwrap_or(TextAlign::Left),
+            align: align
+                .map(|a| match a {
+                    "center" => TextAlign::Center,
+                    "right" => TextAlign::Right,
+                    _ => TextAlign::Left,
+                })
+                .unwrap_or(TextAlign::Left),
             background,
             outline,
             shadow,
@@ -103,7 +141,7 @@ impl PyImage {
             rotation: rotation.unwrap_or(0.0),
         };
 
-        let font_path = font_path.map(|s| std::path::Path::new(s));
+        let font_path = font_path.map(std::path::Path::new);
         let result = draw_text_styled(image, text, x, y, &style, font_path)?;
         Ok(PyImage::new_from_image(result, self.format))
     }
@@ -123,14 +161,22 @@ impl PyImage {
                 let img = image::open(path)?;
                 return Self::draw_rich_text_centered_impl(
                     &PyImage::new_from_image(img, self.format),
-                    text, y, size, color, font_path
+                    text,
+                    y,
+                    size,
+                    color,
+                    font_path,
                 );
             }
             LazyImage::Bytes { data } => {
                 let img = image::load_from_memory(data)?;
                 return Self::draw_rich_text_centered_impl(
                     &PyImage::new_from_image(img, self.format),
-                    text, y, size, color, font_path
+                    text,
+                    y,
+                    size,
+                    color,
+                    font_path,
                 );
             }
         };
@@ -151,7 +197,7 @@ impl PyImage {
             rotation: 0.0,
         };
 
-        let font_path = font_path.map(|s| std::path::Path::new(s));
+        let font_path = font_path.map(std::path::Path::new);
         let result = draw_text_centered(image, text, y, &style, font_path)?;
         Ok(PyImage::new_from_image(result, self.format))
     }
@@ -174,14 +220,28 @@ impl PyImage {
                 let img = image::open(path)?;
                 return Self::draw_rich_text_multiline_impl(
                     &PyImage::new_from_image(img, self.format),
-                    text, x, y, size, color, font_path, line_spacing, align
+                    text,
+                    x,
+                    y,
+                    size,
+                    color,
+                    font_path,
+                    line_spacing,
+                    align,
                 );
             }
             LazyImage::Bytes { data } => {
                 let img = image::load_from_memory(data)?;
                 return Self::draw_rich_text_multiline_impl(
                     &PyImage::new_from_image(img, self.format),
-                    text, x, y, size, color, font_path, line_spacing, align
+                    text,
+                    x,
+                    y,
+                    size,
+                    color,
+                    font_path,
+                    line_spacing,
+                    align,
                 );
             }
         };
@@ -190,11 +250,13 @@ impl PyImage {
             color,
             size,
             weight: FontWeight::Normal,
-            align: align.map(|a| match a {
-                "center" => TextAlign::Center,
-                "right" => TextAlign::Right,
-                _ => TextAlign::Left,
-            }).unwrap_or(TextAlign::Left),
+            align: align
+                .map(|a| match a {
+                    "center" => TextAlign::Center,
+                    "right" => TextAlign::Right,
+                    _ => TextAlign::Left,
+                })
+                .unwrap_or(TextAlign::Left),
             background: None,
             outline: None,
             shadow: None,
@@ -206,7 +268,7 @@ impl PyImage {
             rotation: 0.0,
         };
 
-        let font_path = font_path.map(|s| std::path::Path::new(s));
+        let font_path = font_path.map(std::path::Path::new);
         let result = draw_text_multiline(image, text, x, y, &style, font_path)?;
         Ok(PyImage::new_from_image(result, self.format))
     }
@@ -241,28 +303,64 @@ impl PyImage {
                 let img = image::open(path)?;
                 return Self::draw_advanced_text_impl(
                     &PyImage::new_from_image(img, self.format),
-                    text, x, y, size, color, font_family, font_weight, font_style,
-                    font_path, letter_spacing, opacity, align, background,
-                    outline, shadow, glow, max_width, line_spacing, text_justify, rotation
+                    text,
+                    x,
+                    y,
+                    size,
+                    color,
+                    font_family,
+                    font_weight,
+                    font_style,
+                    font_path,
+                    letter_spacing,
+                    opacity,
+                    align,
+                    background,
+                    outline,
+                    shadow,
+                    glow,
+                    max_width,
+                    line_spacing,
+                    text_justify,
+                    rotation,
                 );
             }
             LazyImage::Bytes { data } => {
                 let img = image::load_from_memory(data)?;
                 return Self::draw_advanced_text_impl(
                     &PyImage::new_from_image(img, self.format),
-                    text, x, y, size, color, font_family, font_weight, font_style,
-                    font_path, letter_spacing, opacity, align, background,
-                    outline, shadow, glow, max_width, line_spacing, text_justify, rotation
+                    text,
+                    x,
+                    y,
+                    size,
+                    color,
+                    font_family,
+                    font_weight,
+                    font_style,
+                    font_path,
+                    letter_spacing,
+                    opacity,
+                    align,
+                    background,
+                    outline,
+                    shadow,
+                    glow,
+                    max_width,
+                    line_spacing,
+                    text_justify,
+                    rotation,
                 );
             }
         };
 
         let resolved_font = resolve_font_path(font_path, font_family, font_weight, font_style)?;
-        let align_enum = align.map(|a| match a {
-            "center" => TextAlign::Center,
-            "right" => TextAlign::Right,
-            _ => TextAlign::Left,
-        }).unwrap_or(TextAlign::Left);
+        let align_enum = align
+            .map(|a| match a {
+                "center" => TextAlign::Center,
+                "right" => TextAlign::Right,
+                _ => TextAlign::Left,
+            })
+            .unwrap_or(TextAlign::Left);
 
         let style = TextStyle {
             color,
@@ -320,28 +418,54 @@ impl PyImage {
                 let img = image::open(path)?;
                 return Self::draw_multiline_text_impl(
                     &PyImage::new_from_image(img, self.format),
-                    text, x, y, size, color, font_family, font_weight, font_style,
-                    font_path, line_spacing, letter_spacing, align, text_justify,
-                    max_width, opacity
+                    text,
+                    x,
+                    y,
+                    size,
+                    color,
+                    font_family,
+                    font_weight,
+                    font_style,
+                    font_path,
+                    line_spacing,
+                    letter_spacing,
+                    align,
+                    text_justify,
+                    max_width,
+                    opacity,
                 );
             }
             LazyImage::Bytes { data } => {
                 let img = image::load_from_memory(data)?;
                 return Self::draw_multiline_text_impl(
                     &PyImage::new_from_image(img, self.format),
-                    text, x, y, size, color, font_family, font_weight, font_style,
-                    font_path, line_spacing, letter_spacing, align, text_justify,
-                    max_width, opacity
+                    text,
+                    x,
+                    y,
+                    size,
+                    color,
+                    font_family,
+                    font_weight,
+                    font_style,
+                    font_path,
+                    line_spacing,
+                    letter_spacing,
+                    align,
+                    text_justify,
+                    max_width,
+                    opacity,
                 );
             }
         };
 
         let resolved_font = resolve_font_path(font_path, font_family, font_weight, font_style)?;
-        let align_enum = align.map(|a| match a {
-            "center" => TextAlign::Center,
-            "right" => TextAlign::Right,
-            _ => TextAlign::Left,
-        }).unwrap_or(TextAlign::Left);
+        let align_enum = align
+            .map(|a| match a {
+                "center" => TextAlign::Center,
+                "right" => TextAlign::Right,
+                _ => TextAlign::Left,
+            })
+            .unwrap_or(TextAlign::Left);
 
         let style = TextStyle {
             color,
@@ -352,7 +476,7 @@ impl PyImage {
             outline: None,
             shadow: None,
             glow: None,
-            opacity: opacity,
+            opacity,
             line_spacing,
             letter_spacing,
             max_width,
@@ -383,16 +507,32 @@ impl PyImage {
                 let img = image::open(path)?;
                 return Self::draw_centered_text_impl(
                     &PyImage::new_from_image(img, self.format),
-                    text, y, size, color, font_family, font_weight, font_style,
-                    font_path, opacity, letter_spacing
+                    text,
+                    y,
+                    size,
+                    color,
+                    font_family,
+                    font_weight,
+                    font_style,
+                    font_path,
+                    opacity,
+                    letter_spacing,
                 );
             }
             LazyImage::Bytes { data } => {
                 let img = image::load_from_memory(data)?;
                 return Self::draw_centered_text_impl(
                     &PyImage::new_from_image(img, self.format),
-                    text, y, size, color, font_family, font_weight, font_style,
-                    font_path, opacity, letter_spacing
+                    text,
+                    y,
+                    size,
+                    color,
+                    font_family,
+                    font_weight,
+                    font_style,
+                    font_path,
+                    opacity,
+                    letter_spacing,
                 );
             }
         };
@@ -452,78 +592,115 @@ impl PyImage {
                 let img = image::open(path)?;
                 return Self::draw_enhanced_text_impl(
                     &PyImage::new_from_image(img, self.format),
-                    text, x, y, size, color, font_family, font_weight, font_style,
-                    font_path, letter_spacing, opacity
+                    text,
+                    x,
+                    y,
+                    size,
+                    color,
+                    font_family,
+                    font_weight,
+                    font_style,
+                    font_path,
+                    letter_spacing,
+                    opacity,
                 );
             }
             LazyImage::Bytes { data } => {
                 let img = image::load_from_memory(data)?;
                 return Self::draw_enhanced_text_impl(
                     &PyImage::new_from_image(img, self.format),
-                    text, x, y, size, color, font_family, font_weight, font_style,
-                    font_path, letter_spacing, opacity
+                    text,
+                    x,
+                    y,
+                    size,
+                    color,
+                    font_family,
+                    font_weight,
+                    font_style,
+                    font_path,
+                    letter_spacing,
+                    opacity,
                 );
             }
         };
-        
+
         // Enhanced font resolution with family fallback
         let resolved_font = resolve_font_path(font_path, font_family, font_weight, font_style)?;
         let result = draw_text(image, text, x, y, size, color, resolved_font.as_deref())?;
         Ok(PyImage::new_from_image(result, self.format))
     }
-    
+
     /// List available fonts
     pub fn list_available_fonts_impl() -> PyResult<Vec<String>> {
         let mut fonts = Vec::new();
-        
+
         // Check fonts directory
         if let Ok(entries) = std::fs::read_dir("fonts") {
             for entry in entries.flatten() {
                 if let Some(path) = entry.path().to_str() {
-                    if path.ends_with(".ttf") || path.ends_with(".otf") || path.ends_with(".ttc") || path.ends_with(".woff2") {
+                    if path.ends_with(".ttf")
+                        || path.ends_with(".otf")
+                        || path.ends_with(".ttc")
+                        || path.ends_with(".woff2")
+                    {
                         fonts.push(path.to_string());
                     }
                 }
             }
         }
-        
+
         // Add system fonts if they exist
         let system_font_paths = [
             "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
             "/System/Library/Fonts/Arial.ttf",
             "/Windows/Fonts/arial.ttf",
         ];
-        
+
         for font_path in system_font_paths {
             if std::path::Path::new(font_path).exists() {
                 fonts.push(font_path.to_string());
             }
         }
-        
+
         fonts.sort();
         fonts.dedup();
         Ok(fonts)
     }
 
     /// Get text size
-    pub fn get_text_size_impl(text: &str, size: f32, font_path: Option<&str>) -> Result<(u32, u32), ImgrsError> {
-        let font_path = font_path.map(|s| std::path::Path::new(s));
+    pub fn get_text_size_impl(
+        text: &str,
+        size: f32,
+        font_path: Option<&str>,
+    ) -> Result<(u32, u32), ImgrsError> {
+        let font_path = font_path.map(std::path::Path::new);
         let (width, height, _, _) = get_text_size(text, size, font_path)?;
         Ok((width, height))
     }
 
     /// Get multiline text size
-    pub fn get_multiline_text_size_impl(text: &str, size: f32, line_spacing: f32, font_path: Option<&str>) -> Result<(u32, u32, usize), ImgrsError> {
-        let font_path = font_path.map(|s| std::path::Path::new(s));
+    pub fn get_multiline_text_size_impl(
+        text: &str,
+        size: f32,
+        line_spacing: f32,
+        font_path: Option<&str>,
+    ) -> Result<(u32, u32, usize), ImgrsError> {
+        let font_path = font_path.map(std::path::Path::new);
         get_multiline_text_size(text, size, line_spacing, font_path)
     }
 
     /// Get text box
-    pub fn get_text_box_impl(text: &str, x: i32, y: i32, size: f32, font_path: Option<&str>) -> Result<PyObject, ImgrsError> {
+    pub fn get_text_box_impl(
+        text: &str,
+        x: i32,
+        y: i32,
+        size: f32,
+        font_path: Option<&str>,
+    ) -> Result<PyObject, ImgrsError> {
         use crate::text::get_text_box;
-        use pyo3::types::PyDict;
+        
 
-        let font_path = font_path.map(|s| std::path::Path::new(s));
+        let font_path = font_path.map(std::path::Path::new);
         let text_box = get_text_box(text, x, y, size, font_path)?;
 
         Python::with_gil(|py| {
@@ -545,25 +722,53 @@ impl PyImage {
     }
 
     /// Get enhanced text size
-    pub fn get_enhanced_text_size_impl(text: &str, size: f32, font_family: &str, font_weight: &str, font_style: &str, font_path: Option<&str>, _letter_spacing: f32) -> Result<(u32, u32), ImgrsError> {
+    pub fn get_enhanced_text_size_impl(
+        text: &str,
+        size: f32,
+        font_family: &str,
+        font_weight: &str,
+        font_style: &str,
+        font_path: Option<&str>,
+        _letter_spacing: f32,
+    ) -> Result<(u32, u32), ImgrsError> {
         let resolved_font = resolve_font_path(font_path, font_family, font_weight, font_style)?;
         let (width, height, _, _) = get_text_size(text, size, resolved_font.as_deref())?;
         Ok((width, height))
     }
 
     /// Get enhanced multiline text size
-    pub fn get_enhanced_multiline_text_size_impl(text: &str, size: f32, line_spacing: f32, font_family: &str, font_weight: &str, font_style: &str, font_path: Option<&str>, _letter_spacing: f32, _max_width: Option<u32>) -> Result<(u32, u32, usize), ImgrsError> {
+    pub fn get_enhanced_multiline_text_size_impl(
+        text: &str,
+        size: f32,
+        line_spacing: f32,
+        font_family: &str,
+        font_weight: &str,
+        font_style: &str,
+        font_path: Option<&str>,
+        _letter_spacing: f32,
+        _max_width: Option<u32>,
+    ) -> Result<(u32, u32, usize), ImgrsError> {
         let resolved_font = resolve_font_path(font_path, font_family, font_weight, font_style)?;
         get_multiline_text_size(text, size, line_spacing, resolved_font.as_deref())
     }
 
     /// Get enhanced text box
-    pub fn get_enhanced_text_box_impl(text: &str, x: i32, y: i32, size: f32, font_family: &str, font_weight: &str, font_style: &str, font_path: Option<&str>, _letter_spacing: f32) -> Result<PyObject, ImgrsError> {
+    pub fn get_enhanced_text_box_impl(
+        text: &str,
+        x: i32,
+        y: i32,
+        size: f32,
+        font_family: &str,
+        font_weight: &str,
+        font_style: &str,
+        font_path: Option<&str>,
+        _letter_spacing: f32,
+    ) -> Result<PyObject, ImgrsError> {
         // For now, use the basic get_text_box since enhanced font resolution is not fully implemented
         // TODO: Implement proper enhanced font resolution
         let resolved_font = resolve_font_path(font_path, font_family, font_weight, font_style)?;
         use crate::text::get_text_box;
-        use pyo3::types::PyDict;
+        
 
         let text_box = get_text_box(text, x, y, size, resolved_font.as_deref())?;
 

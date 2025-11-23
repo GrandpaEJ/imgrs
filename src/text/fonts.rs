@@ -1,19 +1,18 @@
-/// Font loading and management
-
-use ab_glyph::FontVec;
 use crate::errors::ImgrsError;
-use std::path::Path;
+/// Font loading and management
+use ab_glyph::FontVec;
 use std::fs;
+use std::path::Path;
 
 #[allow(dead_code)]
 
 /// Embedded default fonts
 const DEFAULT_FONT: &[u8] = include_bytes!("../../fonts/DejaVuSans.ttf");
-    #[allow(dead_code)]
+#[allow(dead_code)]
 const BOLD_FONT: &[u8] = include_bytes!("../../fonts/DejaVuSans.ttf"); // TODO: Add DejaVuSans-Bold.ttf
 
 /// Font manager for loading and caching fonts
-    #[allow(dead_code)]
+#[allow(dead_code)]
 pub struct FontManager {
     default_font: Option<FontVec>,
     custom_fonts: Vec<FontVec>,
@@ -27,7 +26,7 @@ impl FontManager {
             custom_fonts: Vec::new(),
         }
     }
-    
+
     /// Get or load default font
     #[allow(dead_code)]
     pub fn get_default(&mut self) -> Result<&FontVec, ImgrsError> {
@@ -36,7 +35,7 @@ impl FontManager {
         }
         Ok(self.default_font.as_ref().unwrap())
     }
-    
+
     /// Load custom font from path
     #[allow(dead_code)]
     pub fn load_custom(&mut self, path: &Path) -> Result<usize, ImgrsError> {
@@ -44,7 +43,7 @@ impl FontManager {
         self.custom_fonts.push(font);
         Ok(self.custom_fonts.len() - 1)
     }
-    
+
     /// Get custom font by index
     #[allow(dead_code)]
     pub fn get_custom(&self, index: usize) -> Option<&FontVec> {
@@ -62,7 +61,7 @@ fn load_embedded_font() -> Result<FontVec, ImgrsError> {
 pub fn load_font_from_path(path: impl AsRef<Path>) -> Result<FontVec, ImgrsError> {
     let font_data = fs::read(path.as_ref())
         .map_err(|e| ImgrsError::InvalidOperation(format!("Failed to read font file: {}", e)))?;
-    
+
     FontVec::try_from_vec(font_data)
         .map_err(|e| ImgrsError::InvalidOperation(format!("Invalid font file: {:?}", e)))
 }
@@ -86,4 +85,3 @@ pub fn load_font(path: Option<&Path>) -> Result<FontVec, ImgrsError> {
         None => get_default_font(),
     }
 }
-

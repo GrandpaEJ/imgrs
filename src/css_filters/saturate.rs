@@ -1,10 +1,10 @@
-use image::{DynamicImage, ImageBuffer, Rgb, Rgba};
 use crate::errors::ImgrsError;
+use image::{DynamicImage, ImageBuffer, Rgb, Rgba};
 
 /// Apply saturate filter (CSS-like saturate effect)
 pub fn saturate(image: &DynamicImage, amount: f32) -> Result<DynamicImage, ImgrsError> {
     let amount = amount.max(0.0); // No upper limit for saturation
-    
+
     match image {
         DynamicImage::ImageRgb8(rgb_img) => {
             let (width, height) = rgb_img.dimensions();
@@ -62,4 +62,3 @@ pub fn saturate(image: &DynamicImage, amount: f32) -> Result<DynamicImage, Imgrs
         }
     }
 }
-

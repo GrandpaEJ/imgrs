@@ -1,22 +1,21 @@
+use super::types::ImageMetadata;
+use crate::errors::ImgrsError;
 /// EXIF/Metadata reading implementation
-
 use std::fs::File;
 use std::io::{BufReader, Cursor};
 use std::path::Path;
-use crate::errors::ImgrsError;
-use super::types::ImageMetadata;
 
 /// Read EXIF from file path
 pub fn read_exif_from_path(path: impl AsRef<Path>) -> Result<ImageMetadata, ImgrsError> {
     let file = File::open(path.as_ref())
         .map_err(|e| ImgrsError::InvalidOperation(format!("Failed to open file: {}", e)))?;
-    
+
     let mut bufreader = BufReader::new(file);
     read_exif(&mut bufreader)
 }
 
 /// Read EXIF from bytes
-    #[allow(dead_code)]
+#[allow(dead_code)]
 pub fn read_exif_from_bytes(data: &[u8]) -> Result<ImageMetadata, ImgrsError> {
     let mut cursor = Cursor::new(data);
     read_exif(&mut cursor)
@@ -27,9 +26,9 @@ pub fn read_exif<R: std::io::BufRead + std::io::Seek>(
     reader: &mut R,
 ) -> Result<ImageMetadata, ImgrsError> {
     use exif::Reader;
-    
+
     let exifreader = Reader::new();
-    
+
     match exifreader.read_from_container(reader) {
         Ok(exif) => {
             let metadata = extract_metadata(&exif);
@@ -45,52 +44,52 @@ pub fn read_exif<R: std::io::BufRead + std::io::Seek>(
 /// Extract metadata (public function)
 pub fn extract_metadata(exif: &exif::Exif) -> ImageMetadata {
     let mut metadata = ImageMetadata::default();
-    
+
     // Extract basic EXIF data
     let mut exif_data = super::types::ExifData::default();
-    
-    use exif::{Tag, In};
-    
+
+    use exif::{In, Tag};
+
     // Camera make and model
     if let Some(field) = exif.get_field(Tag::Make, In::PRIMARY) {
         exif_data.make = Some(field.display_value().to_string());
     }
-    
+
     if let Some(field) = exif.get_field(Tag::Model, In::PRIMARY) {
         exif_data.model = Some(field.display_value().to_string());
     }
-    
+
     // Date/Time
     if let Some(field) = exif.get_field(Tag::DateTime, In::PRIMARY) {
         exif_data.date_time = Some(field.display_value().to_string());
     }
-    
+
     if let Some(field) = exif.get_field(Tag::DateTimeOriginal, In::PRIMARY) {
         exif_data.date_time_original = Some(field.display_value().to_string());
     }
-    
+
     // Artist and Copyright
     if let Some(field) = exif.get_field(Tag::Artist, In::PRIMARY) {
         exif_data.artist = Some(field.display_value().to_string());
     }
-    
+
     if let Some(field) = exif.get_field(Tag::Copyright, In::PRIMARY) {
         exif_data.copyright = Some(field.display_value().to_string());
     }
-    
+
     metadata.exif = Some(exif_data);
     metadata.gps = extract_gps_info(exif);
     metadata.camera = extract_camera_info(exif);
-    
+
     metadata
 }
 
 /// Extract GPS information from EXIF
 fn extract_gps_info(exif: &exif::Exif) -> Option<super::types::GpsInfo> {
-    use exif::{Tag, In};
+    use exif::{In, Tag};
     let mut gps = super::types::GpsInfo::default();
     let mut has_gps = false;
-    
+
     // GPS Latitude
     if let Some(field) = exif.get_field(Tag::GPSLatitude, In::PRIMARY) {
         if let Some(lat) = parse_gps_coordinate(&field.value) {
@@ -98,7 +97,7 @@ fn extract_gps_info(exif: &exif::Exif) -> Option<super::types::GpsInfo> {
             has_gps = true;
         }
     }
-    
+
     // GPS Longitude
     if let Some(field) = exif.get_field(Tag::GPSLongitude, In::PRIMARY) {
         if let Some(lon) = parse_gps_coordinate(&field.value) {
@@ -106,7 +105,7 @@ fn extract_gps_info(exif: &exif::Exif) -> Option<super::types::GpsInfo> {
             has_gps = true;
         }
     }
-    
+
     if has_gps {
         Some(gps)
     } else {
@@ -116,10 +115,10 @@ fn extract_gps_info(exif: &exif::Exif) -> Option<super::types::GpsInfo> {
 
 /// Extract camera information from EXIF
 fn extract_camera_info(exif: &exif::Exif) -> Option<super::types::CameraInfo> {
-    use exif::{Tag, In};
+    use exif::{In, Tag};
     let mut camera = super::types::CameraInfo::default();
     let mut has_camera_info = false;
-    
+
     // ISO Speed
     if let Some(field) = exif.get_field(Tag::PhotographicSensitivity, In::PRIMARY) {
         if let exif::Value::Short(ref v) = field.value {
@@ -129,13 +128,13 @@ fn extract_camera_info(exif: &exif::Exif) -> Option<super::types::CameraInfo> {
             }
         }
     }
-    
+
     // Exposure Time
     if let Some(field) = exif.get_field(Tag::ExposureTime, In::PRIMARY) {
         camera.exposure_time = Some(field.display_value().to_string());
         has_camera_info = true;
     }
-    
+
     // F-Number
     if let Some(field) = exif.get_field(Tag::FNumber, In::PRIMARY) {
         if let exif::Value::Rational(ref v) = field.value {
@@ -145,7 +144,7 @@ fn extract_camera_info(exif: &exif::Exif) -> Option<super::types::CameraInfo> {
             }
         }
     }
-    
+
     // Focal Length
     if let Some(field) = exif.get_field(Tag::FocalLength, In::PRIMARY) {
         if let exif::Value::Rational(ref v) = field.value {
@@ -155,7 +154,7 @@ fn extract_camera_info(exif: &exif::Exif) -> Option<super::types::CameraInfo> {
             }
         }
     }
-    
+
     if has_camera_info {
         Some(camera)
     } else {
@@ -177,10 +176,13 @@ fn parse_gps_coordinate(value: &exif::Value) -> Option<f64> {
 }
 
 /// Get specific EXIF field value
-    #[allow(dead_code)]
-pub fn get_exif_field(path: impl AsRef<Path>, tag_name: &str) -> Result<Option<String>, ImgrsError> {
+#[allow(dead_code)]
+pub fn get_exif_field(
+    path: impl AsRef<Path>,
+    tag_name: &str,
+) -> Result<Option<String>, ImgrsError> {
     let metadata = read_exif_from_path(path)?;
-    
+
     if let Some(exif) = metadata.exif {
         // Check common fields
         match tag_name.to_lowercase().as_str() {

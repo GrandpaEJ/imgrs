@@ -1,31 +1,36 @@
+use super::core::{LazyImage, PyImage};
+use crate::errors::ImgrsError;
+use image::{DynamicImage, ImageFormat};
+use numpy::{PyArray2, PyArray3, PyArrayMethods, PyUntypedArrayMethods};
 use pyo3::prelude::*;
 use pyo3::types::PyBytes;
-use image::{DynamicImage, ImageFormat};
 use std::io::Cursor;
 use std::path::PathBuf;
-use numpy::{PyArray2, PyArray3, PyArrayMethods, PyUntypedArrayMethods};
-use crate::errors::ImgrsError;
-use super::core::{PyImage, LazyImage};
 
 impl PyImage {
     pub fn new_default() -> Self {
         // Create a default 1x1 RGB image for compatibility
         let image = DynamicImage::new_rgb8(1, 1);
-        PyImage { 
-            lazy_image: LazyImage::Loaded(image), 
-            format: None 
+        PyImage {
+            lazy_image: LazyImage::Loaded(image),
+            format: None,
         }
     }
 
-    pub fn new_with_mode(mode: &str, size: (u32, u32), color: Option<(u8, u8, u8, u8)>) -> PyResult<Self> {
+    pub fn new_with_mode(
+        mode: &str,
+        size: (u32, u32),
+        color: Option<(u8, u8, u8, u8)>,
+    ) -> PyResult<Self> {
         let (width, height) = size;
-        
+
         if width == 0 || height == 0 {
             return Err(ImgrsError::InvalidOperation(
-                "Image dimensions must be greater than 0".to_string()
-            ).into());
+                "Image dimensions must be greater than 0".to_string(),
+            )
+            .into());
         }
-        
+
         let image = match mode {
             "RGB" => {
                 let (r, g, b, _) = color.unwrap_or((0, 0, 0, 255));
@@ -52,9 +57,11 @@ impl PyImage {
                 DynamicImage::ImageLuma8(img)
             }
             _ => {
-                return Err(ImgrsError::UnsupportedFormat(
-                    format!("Unsupported mode: {}. Use 'RGB', 'RGBA', or 'L'", mode)
-                ).into());
+                return Err(ImgrsError::UnsupportedFormat(format!(
+                    "Unsupported mode: {}. Use 'RGB', 'RGBA', or 'L'",
+                    mode
+                ))
+                .into());
             }
         };
 
@@ -69,22 +76,19 @@ impl PyImage {
             // Eager loading - load image immediately like Pillow
             let path_buf = PathBuf::from(&path);
             let format = ImageFormat::from_path(&path).ok();
-            
+
             let image = Python::with_gil(|py| {
-                py.allow_threads(|| {
-                    image::open(&path_buf)
-                        .map_err(ImgrsError::ImageError)
-                })
+                py.allow_threads(|| image::open(&path_buf).map_err(ImgrsError::ImageError))
             })?;
-            
+
             Ok(PyImage {
                 lazy_image: LazyImage::Loaded(image),
-                format
+                format,
             })
         } else if let Ok(bytes) = path_or_bytes.downcast::<PyBytes>() {
             // Eager loading from bytes
             let data = bytes.as_bytes();
-            
+
             let (image, format) = Python::with_gil(|py| {
                 py.allow_threads(|| {
                     let cursor = Cursor::new(data);
@@ -96,15 +100,16 @@ impl PyImage {
                     Ok::<_, ImgrsError>((img, fmt))
                 })
             })?;
-            
+
             Ok(PyImage {
                 lazy_image: LazyImage::Loaded(image),
-                format
+                format,
             })
         } else {
-            Err(ImgrsError::InvalidOperation(
-                "Expected file path (str) or bytes".to_string()
-            ).into())
+            Err(
+                ImgrsError::InvalidOperation("Expected file path (str) or bytes".to_string())
+                    .into(),
+            )
         }
     }
 
@@ -118,10 +123,9 @@ impl PyImage {
 
             let data: Vec<u8> = readonly.as_slice()?.to_vec();
 
-            let image = image::GrayImage::from_raw(width, height, data)
-                .ok_or_else(|| ImgrsError::InvalidOperation(
-                    "Failed to create image from array data".to_string()
-                ))?;
+            let image = image::GrayImage::from_raw(width, height, data).ok_or_else(|| {
+                ImgrsError::InvalidOperation("Failed to create image from array data".to_string())
+            })?;
 
             return Ok(PyImage {
                 lazy_image: LazyImage::Loaded(DynamicImage::ImageLuma8(image)),
@@ -144,15 +148,17 @@ impl PyImage {
                     // RGB image
                     let mut rgb_data = Vec::with_capacity((width * height * 3) as usize);
                     for i in 0..(width * height) as usize {
-                        rgb_data.push(data[i * 3]);     // R
+                        rgb_data.push(data[i * 3]); // R
                         rgb_data.push(data[i * 3 + 1]); // G
                         rgb_data.push(data[i * 3 + 2]); // B
                     }
 
-                    let image = image::RgbImage::from_raw(width, height, rgb_data)
-                        .ok_or_else(|| ImgrsError::InvalidOperation(
-                            "Failed to create RGB image from array data".to_string()
-                        ))?;
+                    let image =
+                        image::RgbImage::from_raw(width, height, rgb_data).ok_or_else(|| {
+                            ImgrsError::InvalidOperation(
+                                "Failed to create RGB image from array data".to_string(),
+                            )
+                        })?;
 
                     Ok(PyImage {
                         lazy_image: LazyImage::Loaded(DynamicImage::ImageRgb8(image)),
@@ -163,98 +169,124 @@ impl PyImage {
                     // RGBA image
                     let mut rgba_data = Vec::with_capacity((width * height * 4) as usize);
                     for i in 0..(width * height) as usize {
-                        rgba_data.push(data[i * 4]);     // R
+                        rgba_data.push(data[i * 4]); // R
                         rgba_data.push(data[i * 4 + 1]); // G
                         rgba_data.push(data[i * 4 + 2]); // B
                         rgba_data.push(data[i * 4 + 3]); // A
                     }
 
-                    let image = image::RgbaImage::from_raw(width, height, rgba_data)
-                        .ok_or_else(|| ImgrsError::InvalidOperation(
-                            "Failed to create RGBA image from array data".to_string()
-                        ))?;
+                    let image =
+                        image::RgbaImage::from_raw(width, height, rgba_data).ok_or_else(|| {
+                            ImgrsError::InvalidOperation(
+                                "Failed to create RGBA image from array data".to_string(),
+                            )
+                        })?;
 
                     Ok(PyImage {
                         lazy_image: LazyImage::Loaded(DynamicImage::ImageRgba8(image)),
                         format: None,
                     })
                 }
-                _ => Err(ImgrsError::InvalidOperation(
-                    format!("Unsupported number of channels: {}. Expected 3 (RGB) or 4 (RGBA)", channels)
-                ).into())
+                _ => Err(ImgrsError::InvalidOperation(format!(
+                    "Unsupported number of channels: {}. Expected 3 (RGB) or 4 (RGBA)",
+                    channels
+                ))
+                .into()),
             }
         } else {
             Err(ImgrsError::InvalidOperation(
-                "Expected numpy array with shape (H, W) for grayscale or (H, W, C) for RGB/RGBA".to_string()
-            ).into())
+                "Expected numpy array with shape (H, W) for grayscale or (H, W, C) for RGB/RGBA"
+                    .to_string(),
+            )
+            .into())
         }
     }
 
     /// Create image from raw bytes (no NumPy needed!)
     /// Mobile-friendly alternative to fromarray()
-    pub fn frombytes_impl(
-        mode: &str,
-        size: (u32, u32),
-        data: &[u8],
-    ) -> PyResult<Self> {
+    pub fn frombytes_impl(mode: &str, size: (u32, u32), data: &[u8]) -> PyResult<Self> {
         let (width, height) = size;
-        
+
         if width == 0 || height == 0 {
             return Err(ImgrsError::InvalidOperation(
-                "Image dimensions must be greater than 0".to_string()
-            ).into());
+                "Image dimensions must be greater than 0".to_string(),
+            )
+            .into());
         }
 
         let image = match mode {
             "RGB" => {
                 let expected_len = (width * height * 3) as usize;
                 if data.len() != expected_len {
-                    return Err(ImgrsError::InvalidOperation(
-                        format!("Expected {} bytes for {}x{} RGB, got {}", expected_len, width, height, data.len())
-                    ).into());
+                    return Err(ImgrsError::InvalidOperation(format!(
+                        "Expected {} bytes for {}x{} RGB, got {}",
+                        expected_len,
+                        width,
+                        height,
+                        data.len()
+                    ))
+                    .into());
                 }
-                
+
                 let rgb_image = image::RgbImage::from_raw(width, height, data.to_vec())
-                    .ok_or_else(|| ImgrsError::InvalidOperation(
-                        "Failed to create RGB image from bytes".to_string()
-                    ))?;
-                
+                    .ok_or_else(|| {
+                        ImgrsError::InvalidOperation(
+                            "Failed to create RGB image from bytes".to_string(),
+                        )
+                    })?;
+
                 DynamicImage::ImageRgb8(rgb_image)
             }
             "RGBA" => {
                 let expected_len = (width * height * 4) as usize;
                 if data.len() != expected_len {
-                    return Err(ImgrsError::InvalidOperation(
-                        format!("Expected {} bytes for {}x{} RGBA, got {}", expected_len, width, height, data.len())
-                    ).into());
+                    return Err(ImgrsError::InvalidOperation(format!(
+                        "Expected {} bytes for {}x{} RGBA, got {}",
+                        expected_len,
+                        width,
+                        height,
+                        data.len()
+                    ))
+                    .into());
                 }
-                
+
                 let rgba_image = image::RgbaImage::from_raw(width, height, data.to_vec())
-                    .ok_or_else(|| ImgrsError::InvalidOperation(
-                        "Failed to create RGBA image from bytes".to_string()
-                    ))?;
-                
+                    .ok_or_else(|| {
+                        ImgrsError::InvalidOperation(
+                            "Failed to create RGBA image from bytes".to_string(),
+                        )
+                    })?;
+
                 DynamicImage::ImageRgba8(rgba_image)
             }
             "L" => {
                 let expected_len = (width * height) as usize;
                 if data.len() != expected_len {
-                    return Err(ImgrsError::InvalidOperation(
-                        format!("Expected {} bytes for {}x{} grayscale, got {}", expected_len, width, height, data.len())
-                    ).into());
+                    return Err(ImgrsError::InvalidOperation(format!(
+                        "Expected {} bytes for {}x{} grayscale, got {}",
+                        expected_len,
+                        width,
+                        height,
+                        data.len()
+                    ))
+                    .into());
                 }
-                
+
                 let gray_image = image::GrayImage::from_raw(width, height, data.to_vec())
-                    .ok_or_else(|| ImgrsError::InvalidOperation(
-                        "Failed to create grayscale image from bytes".to_string()
-                    ))?;
-                
+                    .ok_or_else(|| {
+                        ImgrsError::InvalidOperation(
+                            "Failed to create grayscale image from bytes".to_string(),
+                        )
+                    })?;
+
                 DynamicImage::ImageLuma8(gray_image)
             }
             _ => {
-                return Err(ImgrsError::UnsupportedFormat(
-                    format!("Unsupported mode: {}. Use 'RGB', 'RGBA', or 'L'", mode)
-                ).into());
+                return Err(ImgrsError::UnsupportedFormat(format!(
+                    "Unsupported mode: {}. Use 'RGB', 'RGBA', or 'L'",
+                    mode
+                ))
+                .into());
             }
         };
 
@@ -265,172 +297,179 @@ impl PyImage {
     }
 
     // Shape generation methods (create new images)
-    pub fn create_rectangle_impl(width: u32, height: u32, color: (u8, u8, u8, u8)) -> PyResult<Self> {
+    pub fn create_rectangle_impl(
+        width: u32,
+        height: u32,
+        color: (u8, u8, u8, u8),
+    ) -> PyResult<Self> {
         Python::with_gil(|py| {
-            py.allow_threads(|| {
-                crate::drawing::create_rectangle(width, height, color)
-            })
-        }).map(|result| PyImage {
+            py.allow_threads(|| crate::drawing::create_rectangle(width, height, color))
+        })
+        .map(|result| PyImage {
             lazy_image: LazyImage::Loaded(result),
             format: None,
-        }).map_err(|e| e.into())
+        })
+        .map_err(|e| e.into())
     }
 
     pub fn create_circle_impl(size: u32, color: (u8, u8, u8, u8)) -> PyResult<Self> {
-        Python::with_gil(|py| {
-            py.allow_threads(|| {
-                crate::drawing::create_circle(size, color)
+        Python::with_gil(|py| py.allow_threads(|| crate::drawing::create_circle(size, color)))
+            .map(|result| PyImage {
+                lazy_image: LazyImage::Loaded(result),
+                format: None,
             })
-        }).map(|result| PyImage {
-            lazy_image: LazyImage::Loaded(result),
-            format: None,
-        }).map_err(|e| e.into())
+            .map_err(|e| e.into())
     }
 
-    pub fn create_triangle_impl(width: u32, height: u32, color: (u8, u8, u8, u8)) -> PyResult<Self> {
+    pub fn create_triangle_impl(
+        width: u32,
+        height: u32,
+        color: (u8, u8, u8, u8),
+    ) -> PyResult<Self> {
         Python::with_gil(|py| {
-            py.allow_threads(|| {
-                crate::drawing::create_triangle(width, height, color)
-            })
-        }).map(|result| PyImage {
+            py.allow_threads(|| crate::drawing::create_triangle(width, height, color))
+        })
+        .map(|result| PyImage {
             lazy_image: LazyImage::Loaded(result),
             format: None,
-        }).map_err(|e| e.into())
+        })
+        .map_err(|e| e.into())
     }
 
     pub fn create_ellipse_impl(width: u32, height: u32, color: (u8, u8, u8, u8)) -> PyResult<Self> {
         Python::with_gil(|py| {
-            py.allow_threads(|| {
-                crate::drawing::create_ellipse(width, height, color)
-            })
-        }).map(|result| PyImage {
+            py.allow_threads(|| crate::drawing::create_ellipse(width, height, color))
+        })
+        .map(|result| PyImage {
             lazy_image: LazyImage::Loaded(result),
             format: None,
-        }).map_err(|e| e.into())
+        })
+        .map_err(|e| e.into())
     }
 
     pub fn create_star_impl(size: u32, color: (u8, u8, u8, u8)) -> PyResult<Self> {
-        Python::with_gil(|py| {
-            py.allow_threads(|| {
-                crate::drawing::create_star(size, color)
+        Python::with_gil(|py| py.allow_threads(|| crate::drawing::create_star(size, color)))
+            .map(|result| PyImage {
+                lazy_image: LazyImage::Loaded(result),
+                format: None,
             })
-        }).map(|result| PyImage {
-            lazy_image: LazyImage::Loaded(result),
-            format: None,
-        }).map_err(|e| e.into())
+            .map_err(|e| e.into())
     }
 
     pub fn create_square_impl(size: u32, color: (u8, u8, u8, u8)) -> PyResult<Self> {
-        Python::with_gil(|py| {
-            py.allow_threads(|| {
-                crate::drawing::create_square(size, color)
+        Python::with_gil(|py| py.allow_threads(|| crate::drawing::create_square(size, color)))
+            .map(|result| PyImage {
+                lazy_image: LazyImage::Loaded(result),
+                format: None,
             })
-        }).map(|result| PyImage {
-            lazy_image: LazyImage::Loaded(result),
-            format: None,
-        }).map_err(|e| e.into())
+            .map_err(|e| e.into())
     }
 
     pub fn create_diamond_impl(size: u32, color: (u8, u8, u8, u8)) -> PyResult<Self> {
-        Python::with_gil(|py| {
-            py.allow_threads(|| {
-                crate::drawing::create_diamond(size, color)
+        Python::with_gil(|py| py.allow_threads(|| crate::drawing::create_diamond(size, color)))
+            .map(|result| PyImage {
+                lazy_image: LazyImage::Loaded(result),
+                format: None,
             })
-        }).map(|result| PyImage {
-            lazy_image: LazyImage::Loaded(result),
-            format: None,
-        }).map_err(|e| e.into())
+            .map_err(|e| e.into())
     }
 
     pub fn create_hexagon_impl(size: u32, color: (u8, u8, u8, u8)) -> PyResult<Self> {
-        Python::with_gil(|py| {
-            py.allow_threads(|| {
-                crate::drawing::create_hexagon(size, color)
+        Python::with_gil(|py| py.allow_threads(|| crate::drawing::create_hexagon(size, color)))
+            .map(|result| PyImage {
+                lazy_image: LazyImage::Loaded(result),
+                format: None,
             })
-        }).map(|result| PyImage {
-            lazy_image: LazyImage::Loaded(result),
-            format: None,
-        }).map_err(|e| e.into())
+            .map_err(|e| e.into())
     }
 
-    pub fn create_parallelogram_impl(width: u32, height: u32, skew: f32, color: (u8, u8, u8, u8)) -> PyResult<Self> {
+    pub fn create_parallelogram_impl(
+        width: u32,
+        height: u32,
+        skew: f32,
+        color: (u8, u8, u8, u8),
+    ) -> PyResult<Self> {
         Python::with_gil(|py| {
-            py.allow_threads(|| {
-                crate::drawing::create_parallelogram(width, height, skew, color)
-            })
-        }).map(|result| PyImage {
+            py.allow_threads(|| crate::drawing::create_parallelogram(width, height, skew, color))
+        })
+        .map(|result| PyImage {
             lazy_image: LazyImage::Loaded(result),
             format: None,
-        }).map_err(|e| e.into())
+        })
+        .map_err(|e| e.into())
     }
 
     pub fn create_pentagon_impl(size: u32, color: (u8, u8, u8, u8)) -> PyResult<Self> {
-        Python::with_gil(|py| {
-            py.allow_threads(|| {
-                crate::drawing::create_pentagon(size, color)
+        Python::with_gil(|py| py.allow_threads(|| crate::drawing::create_pentagon(size, color)))
+            .map(|result| PyImage {
+                lazy_image: LazyImage::Loaded(result),
+                format: None,
             })
-        }).map(|result| PyImage {
-            lazy_image: LazyImage::Loaded(result),
-            format: None,
-        }).map_err(|e| e.into())
+            .map_err(|e| e.into())
     }
 
     pub fn create_octagon_impl(size: u32, color: (u8, u8, u8, u8)) -> PyResult<Self> {
-        Python::with_gil(|py| {
-            py.allow_threads(|| {
-                crate::drawing::create_octagon(size, color)
+        Python::with_gil(|py| py.allow_threads(|| crate::drawing::create_octagon(size, color)))
+            .map(|result| PyImage {
+                lazy_image: LazyImage::Loaded(result),
+                format: None,
             })
-        }).map(|result| PyImage {
-            lazy_image: LazyImage::Loaded(result),
-            format: None,
-        }).map_err(|e| e.into())
+            .map_err(|e| e.into())
     }
 
     pub fn create_heart_impl(size: u32, color: (u8, u8, u8, u8)) -> PyResult<Self> {
-        Python::with_gil(|py| {
-            py.allow_threads(|| {
-                crate::drawing::create_heart(size, color)
+        Python::with_gil(|py| py.allow_threads(|| crate::drawing::create_heart(size, color)))
+            .map(|result| PyImage {
+                lazy_image: LazyImage::Loaded(result),
+                format: None,
             })
-        }).map(|result| PyImage {
-            lazy_image: LazyImage::Loaded(result),
-            format: None,
-        }).map_err(|e| e.into())
+            .map_err(|e| e.into())
     }
 
     pub fn create_arrow_impl(width: u32, height: u32, color: (u8, u8, u8, u8)) -> PyResult<Self> {
         Python::with_gil(|py| {
-            py.allow_threads(|| {
-                crate::drawing::create_arrow(width, height, color)
-            })
-        }).map(|result| PyImage {
+            py.allow_threads(|| crate::drawing::create_arrow(width, height, color))
+        })
+        .map(|result| PyImage {
             lazy_image: LazyImage::Loaded(result),
             format: None,
-        }).map_err(|e| e.into())
+        })
+        .map_err(|e| e.into())
     }
 
     pub fn create_cross_impl(size: u32, color: (u8, u8, u8, u8)) -> PyResult<Self> {
-        Python::with_gil(|py| {
-            py.allow_threads(|| {
-                crate::drawing::create_cross(size, color)
+        Python::with_gil(|py| py.allow_threads(|| crate::drawing::create_cross(size, color)))
+            .map(|result| PyImage {
+                lazy_image: LazyImage::Loaded(result),
+                format: None,
             })
-        }).map(|result| PyImage {
-            lazy_image: LazyImage::Loaded(result),
-            format: None,
-        }).map_err(|e| e.into())
+            .map_err(|e| e.into())
     }
 
-    pub fn create_quadrilateral(p1: (i32, i32), p2: (i32, i32), p3: (i32, i32), p4: (i32, i32), color: (u8, u8, u8, u8)) -> PyResult<Self> {
+    pub fn create_quadrilateral(
+        p1: (i32, i32),
+        p2: (i32, i32),
+        p3: (i32, i32),
+        p4: (i32, i32),
+        color: (u8, u8, u8, u8),
+    ) -> PyResult<Self> {
         Python::with_gil(|py| {
-            py.allow_threads(|| {
-                crate::drawing::create_quadrilateral(p1, p2, p3, p4, color)
-            })
-        }).map(|result| PyImage {
+            py.allow_threads(|| crate::drawing::create_quadrilateral(p1, p2, p3, p4, color))
+        })
+        .map(|result| PyImage {
             lazy_image: LazyImage::Loaded(result),
             format: None,
-        }).map_err(|e| e.into())
+        })
+        .map_err(|e| e.into())
     }
 
-    pub fn create_quadrilateral_impl(p1: (i32, i32), p2: (i32, i32), p3: (i32, i32), p4: (i32, i32), color: (u8, u8, u8, u8)) -> PyResult<Self> {
+    pub fn create_quadrilateral_impl(
+        p1: (i32, i32),
+        p2: (i32, i32),
+        p3: (i32, i32),
+        p4: (i32, i32),
+        color: (u8, u8, u8, u8),
+    ) -> PyResult<Self> {
         Self::create_quadrilateral(p1, p2, p3, p4, color)
     }
 }

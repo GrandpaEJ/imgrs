@@ -1,6 +1,6 @@
-use image::DynamicImage;
-use crate::errors::ImgrsError;
 use super::kernel::apply_convolution;
+use crate::errors::ImgrsError;
+use image::DynamicImage;
 
 /// Apply sharpening filter to an image
 pub fn sharpen(image: &DynamicImage, strength: f32) -> Result<DynamicImage, ImgrsError> {
@@ -12,4 +12,3 @@ pub fn sharpen(image: &DynamicImage, strength: f32) -> Result<DynamicImage, Imgr
 
     apply_convolution(image, &kernel)
 }
-

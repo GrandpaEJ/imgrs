@@ -3,23 +3,22 @@ mod core;
 pub use core::PyImage;
 
 // Feature modules - implementation
+mod advanced_color_ops;
+mod color_analysis;
+mod color_ops;
 mod constructors;
-mod io;
-mod properties;
-mod transform;
-mod manipulation;
-mod filters;
-mod pixel_ops;
 mod drawing;
 mod effects;
 mod emoji;
-mod metadata_ops;
-mod text_ops;
 mod fast_resize;
-mod color_ops;
-mod advanced_color_ops;
-mod color_analysis;
+mod filters;
+mod io;
+mod manipulation;
+mod metadata_ops;
+mod pixel_ops;
+mod properties;
+mod text_ops;
+mod transform;
 
 // Python bindings
 mod pymethods;
-

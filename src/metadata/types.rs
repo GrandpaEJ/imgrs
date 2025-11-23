@@ -1,5 +1,4 @@
 /// Metadata type definitions
-
 use std::collections::HashMap;
 
 /// Complete image metadata structure
@@ -82,27 +81,27 @@ impl ImageMetadata {
     pub fn new() -> Self {
         Default::default()
     }
-    
+
     /// Check if metadata contains EXIF data
     pub fn has_exif(&self) -> bool {
         self.exif.is_some()
     }
-    
+
     /// Check if metadata contains GPS data
     pub fn has_gps(&self) -> bool {
         self.gps.is_some()
     }
-    
+
     /// Check if metadata contains camera info
     #[allow(dead_code)]
     pub fn has_camera_info(&self) -> bool {
         self.camera.is_some()
     }
-    
+
     /// Get a summary string of the metadata
     pub fn summary(&self) -> String {
         let mut parts = Vec::new();
-        
+
         if let Some(ref exif) = self.exif {
             if let Some(ref make) = exif.make {
                 if let Some(ref model) = exif.model {
@@ -110,28 +109,32 @@ impl ImageMetadata {
                 }
             }
         }
-        
+
         if let Some(ref camera) = self.camera {
             if let Some(iso) = camera.iso {
                 parts.push(format!("ISO {}", iso));
             }
             if let Some(ref exp) = camera.exposure_time {
-                parts.push(format!("{}", exp));
+                parts.push(exp.to_string());
             }
             if let Some(f) = camera.f_number {
                 parts.push(format!("f/{:.1}", f));
             }
         }
-        
+
         if self.has_gps() {
             parts.push("GPS".to_string());
         }
-        
+
         if parts.is_empty() {
             format!("{}x{}", self.basic.width, self.basic.height)
         } else {
-            format!("{}x{} | {}", self.basic.width, self.basic.height, parts.join(" | "))
+            format!(
+                "{}x{} | {}",
+                self.basic.width,
+                self.basic.height,
+                parts.join(" | ")
+            )
         }
     }
 }
-

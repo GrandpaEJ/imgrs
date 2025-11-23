@@ -1,18 +1,14 @@
-use pyo3::prelude::*;
-use image::{DynamicImage, Rgba, Rgb, GenericImageView};
+use super::core::{color_type_to_mode_string, LazyImage, PyImage};
 use crate::errors::ImgrsError;
 use crate::filters::simd_ops::fast_rgb_to_gray;
-use super::core::{PyImage, LazyImage, color_type_to_mode_string};
+use image::{DynamicImage, GenericImageView, Rgb, Rgba};
+use pyo3::prelude::*;
 
 /// Helper function to get alpha value from mask image
 fn get_mask_alpha(mask: &DynamicImage, x: u32, y: u32) -> f32 {
     match mask {
-        DynamicImage::ImageLuma8(gray) => {
-            gray.get_pixel(x, y).0[0] as f32 / 255.0
-        }
-        DynamicImage::ImageLumaA8(la) => {
-            la.get_pixel(x, y).0[1] as f32 / 255.0
-        }
+        DynamicImage::ImageLuma8(gray) => gray.get_pixel(x, y).0[0] as f32 / 255.0,
+        DynamicImage::ImageLumaA8(la) => la.get_pixel(x, y).0[1] as f32 / 255.0,
         DynamicImage::ImageRgb8(_) => {
             // For RGB masks, use luminance calculation
             let pixel = mask.get_pixel(x, y);
@@ -21,9 +17,7 @@ fn get_mask_alpha(mask: &DynamicImage, x: u32, y: u32) -> f32 {
             let b = pixel.0[2] as f32;
             (0.299 * r + 0.587 * g + 0.114 * b) / 255.0
         }
-        DynamicImage::ImageRgba8(rgba) => {
-            rgba.get_pixel(x, y).0[3] as f32 / 255.0
-        }
+        DynamicImage::ImageRgba8(rgba) => rgba.get_pixel(x, y).0[3] as f32 / 255.0,
         _ => {
             // For other formats, convert to grayscale and use that
             let gray = mask.to_luma8();
@@ -62,7 +56,7 @@ impl PyImage {
                             DynamicImage::ImageRgb8(_) | DynamicImage::ImageRgba8(_) => {
                                 fast_rgb_to_gray(image)
                             }
-                            _ => Ok(DynamicImage::ImageLuma8(image.to_luma8()))
+                            _ => Ok(DynamicImage::ImageLuma8(image.to_luma8())),
                         }
                     }
                     "LA" => {
@@ -77,9 +71,10 @@ impl PyImage {
                         // Convert to RGBA
                         Ok(DynamicImage::ImageRgba8(image.to_rgba8()))
                     }
-                    _ => Err(ImgrsError::InvalidOperation(
-                        format!("Unsupported conversion mode: {}", mode)
-                    )),
+                    _ => Err(ImgrsError::InvalidOperation(format!(
+                        "Unsupported conversion mode: {}",
+                        mode
+                    ))),
                 }
             })
         })?;
@@ -108,13 +103,18 @@ impl PyImage {
                                 channel_data.push(pixel.0[channel_idx]);
                             }
 
-                            let channel_img = image::GrayImage::from_raw(width, height, channel_data)
-                                .ok_or_else(|| ImgrsError::InvalidOperation(
-                                    "Failed to create channel image".to_string()
-                                ))?;
+                            let channel_img =
+                                image::GrayImage::from_raw(width, height, channel_data)
+                                    .ok_or_else(|| {
+                                        ImgrsError::InvalidOperation(
+                                            "Failed to create channel image".to_string(),
+                                        )
+                                    })?;
 
                             channels.push(PyImage {
-                                lazy_image: LazyImage::Loaded(DynamicImage::ImageLuma8(channel_img)),
+                                lazy_image: LazyImage::Loaded(DynamicImage::ImageLuma8(
+                                    channel_img,
+                                )),
                                 format,
                             });
                         }
@@ -132,13 +132,18 @@ impl PyImage {
                                 channel_data.push(pixel.0[channel_idx]);
                             }
 
-                            let channel_img = image::GrayImage::from_raw(width, height, channel_data)
-                                .ok_or_else(|| ImgrsError::InvalidOperation(
-                                    "Failed to create channel image".to_string()
-                                ))?;
+                            let channel_img =
+                                image::GrayImage::from_raw(width, height, channel_data)
+                                    .ok_or_else(|| {
+                                        ImgrsError::InvalidOperation(
+                                            "Failed to create channel image".to_string(),
+                                        )
+                                    })?;
 
                             channels.push(PyImage {
-                                lazy_image: LazyImage::Loaded(DynamicImage::ImageLuma8(channel_img)),
+                                lazy_image: LazyImage::Loaded(DynamicImage::ImageLuma8(
+                                    channel_img,
+                                )),
                                 format,
                             });
                         }
@@ -163,13 +168,18 @@ impl PyImage {
                                 channel_data.push(pixel.0[channel_idx]);
                             }
 
-                            let channel_img = image::GrayImage::from_raw(width, height, channel_data)
-                                .ok_or_else(|| ImgrsError::InvalidOperation(
-                                    "Failed to create channel image".to_string()
-                                ))?;
+                            let channel_img =
+                                image::GrayImage::from_raw(width, height, channel_data)
+                                    .ok_or_else(|| {
+                                        ImgrsError::InvalidOperation(
+                                            "Failed to create channel image".to_string(),
+                                        )
+                                    })?;
 
                             channels.push(PyImage {
-                                lazy_image: LazyImage::Loaded(DynamicImage::ImageLuma8(channel_img)),
+                                lazy_image: LazyImage::Loaded(DynamicImage::ImageLuma8(
+                                    channel_img,
+                                )),
                                 format,
                             });
                         }
@@ -177,7 +187,7 @@ impl PyImage {
                         Ok(channels)
                     }
                     _ => Err(ImgrsError::InvalidOperation(
-                        "Unsupported image format for channel splitting".to_string()
+                        "Unsupported image format for channel splitting".to_string(),
                     )),
                 }
             })
@@ -185,7 +195,12 @@ impl PyImage {
         result.map_err(|e| e.into())
     }
 
-    pub fn paste_impl(&mut self, other: &mut Self, position: Option<(i32, i32)>, mask: Option<Self>) -> PyResult<Self> {
+    pub fn paste_impl(
+        &mut self,
+        other: &mut Self,
+        position: Option<(i32, i32)>,
+        mask: Option<Self>,
+    ) -> PyResult<Self> {
         let format = self.format;
         let base_image = self.get_image()?;
         let paste_image = other.get_image()?;
@@ -196,16 +211,17 @@ impl PyImage {
         let (mask_image, _mask_position) = if let Some(mut mask_img) = mask {
             let mask_rust_img = mask_img.get_image()?;
             let (mask_width, mask_height) = mask_rust_img.dimensions();
-            
+
             // Validate mask size matches paste image size (Pillow behavior)
             let (paste_width, paste_height) = paste_image.dimensions();
             if mask_width != paste_width || mask_height != paste_height {
-                return Err(ImgrsError::InvalidOperation(
-                    format!("Mask size {}x{} does not match paste image size {}x{}",
-                           mask_width, mask_height, paste_width, paste_height)
-                ).into());
+                return Err(ImgrsError::InvalidOperation(format!(
+                    "Mask size {}x{} does not match paste image size {}x{}",
+                    mask_width, mask_height, paste_width, paste_height
+                ))
+                .into());
             }
-            
+
             (Some(mask_rust_img.clone()), (0, 0))
         } else {
             (None, (0, 0))
@@ -227,24 +243,36 @@ impl PyImage {
                                 let target_y = paste_y + y as i32;
 
                                 // Check bounds
-                                if target_x >= 0 && target_y >= 0
+                                if target_x >= 0
+                                    && target_y >= 0
                                     && (target_x as u32) < base_width
-                                    && (target_y as u32) < base_height {
-
+                                    && (target_y as u32) < base_height
+                                {
                                     let pixel = paste.get_pixel(x, y);
 
                                     // Enhanced mask handling - support both L and RGBA masks
                                     if let Some(ref mask) = mask_image {
                                         let mask_alpha = get_mask_alpha(mask, x, y);
-                                        
+
                                         if mask_alpha > 0.0 {
-                                            let base_pixel = base.get_pixel(target_x as u32, target_y as u32);
+                                            let base_pixel =
+                                                base.get_pixel(target_x as u32, target_y as u32);
                                             let blended = Rgb([
-                                                ((1.0 - mask_alpha) * base_pixel.0[0] as f32 + mask_alpha * pixel.0[0] as f32) as u8,
-                                                ((1.0 - mask_alpha) * base_pixel.0[1] as f32 + mask_alpha * pixel.0[1] as f32) as u8,
-                                                ((1.0 - mask_alpha) * base_pixel.0[2] as f32 + mask_alpha * pixel.0[2] as f32) as u8,
+                                                ((1.0 - mask_alpha) * base_pixel.0[0] as f32
+                                                    + mask_alpha * pixel.0[0] as f32)
+                                                    as u8,
+                                                ((1.0 - mask_alpha) * base_pixel.0[1] as f32
+                                                    + mask_alpha * pixel.0[1] as f32)
+                                                    as u8,
+                                                ((1.0 - mask_alpha) * base_pixel.0[2] as f32
+                                                    + mask_alpha * pixel.0[2] as f32)
+                                                    as u8,
                                             ]);
-                                            base.put_pixel(target_x as u32, target_y as u32, blended);
+                                            base.put_pixel(
+                                                target_x as u32,
+                                                target_y as u32,
+                                                blended,
+                                            );
                                         }
                                     } else {
                                         base.put_pixel(target_x as u32, target_y as u32, *pixel);
@@ -263,10 +291,11 @@ impl PyImage {
                                 let target_y = paste_y + y as i32;
 
                                 // Check bounds
-                                if target_x >= 0 && target_y >= 0
+                                if target_x >= 0
+                                    && target_y >= 0
                                     && (target_x as u32) < base_width
-                                    && (target_y as u32) < base_height {
-
+                                    && (target_y as u32) < base_height
+                                {
                                     let pixel = paste.get_pixel(x, y);
                                     let mut final_alpha = pixel.0[3] as f32 / 255.0;
 
@@ -277,11 +306,18 @@ impl PyImage {
                                     }
 
                                     if final_alpha > 0.0 {
-                                        let base_pixel = base.get_pixel(target_x as u32, target_y as u32);
+                                        let base_pixel =
+                                            base.get_pixel(target_x as u32, target_y as u32);
                                         let blended = Rgba([
-                                            ((1.0 - final_alpha) * base_pixel.0[0] as f32 + final_alpha * pixel.0[0] as f32) as u8,
-                                            ((1.0 - final_alpha) * base_pixel.0[1] as f32 + final_alpha * pixel.0[1] as f32) as u8,
-                                            ((1.0 - final_alpha) * base_pixel.0[2] as f32 + final_alpha * pixel.0[2] as f32) as u8,
+                                            ((1.0 - final_alpha) * base_pixel.0[0] as f32
+                                                + final_alpha * pixel.0[0] as f32)
+                                                as u8,
+                                            ((1.0 - final_alpha) * base_pixel.0[1] as f32
+                                                + final_alpha * pixel.0[1] as f32)
+                                                as u8,
+                                            ((1.0 - final_alpha) * base_pixel.0[2] as f32
+                                                + final_alpha * pixel.0[2] as f32)
+                                                as u8,
                                             base_pixel.0[3], // Keep base alpha for now
                                         ]);
                                         base.put_pixel(target_x as u32, target_y as u32, blended);
@@ -305,10 +341,11 @@ impl PyImage {
                                 let target_y = paste_y + y as i32;
 
                                 // Check bounds
-                                if target_x >= 0 && target_y >= 0
+                                if target_x >= 0
+                                    && target_y >= 0
                                     && (target_x as u32) < base_width
-                                    && (target_y as u32) < base_height {
-
+                                    && (target_y as u32) < base_height
+                                {
                                     let pixel = paste_rgba.get_pixel(x, y);
                                     let mut final_alpha = pixel.0[3] as f32 / 255.0;
 
@@ -319,14 +356,25 @@ impl PyImage {
                                     }
 
                                     if final_alpha > 0.0 {
-                                        let base_pixel = result_rgba.get_pixel(target_x as u32, target_y as u32);
+                                        let base_pixel =
+                                            result_rgba.get_pixel(target_x as u32, target_y as u32);
                                         let blended = Rgba([
-                                            ((1.0 - final_alpha) * base_pixel.0[0] as f32 + final_alpha * pixel.0[0] as f32) as u8,
-                                            ((1.0 - final_alpha) * base_pixel.0[1] as f32 + final_alpha * pixel.0[1] as f32) as u8,
-                                            ((1.0 - final_alpha) * base_pixel.0[2] as f32 + final_alpha * pixel.0[2] as f32) as u8,
+                                            ((1.0 - final_alpha) * base_pixel.0[0] as f32
+                                                + final_alpha * pixel.0[0] as f32)
+                                                as u8,
+                                            ((1.0 - final_alpha) * base_pixel.0[1] as f32
+                                                + final_alpha * pixel.0[1] as f32)
+                                                as u8,
+                                            ((1.0 - final_alpha) * base_pixel.0[2] as f32
+                                                + final_alpha * pixel.0[2] as f32)
+                                                as u8,
                                             base_pixel.0[3], // Keep base alpha
                                         ]);
-                                        result_rgba.put_pixel(target_x as u32, target_y as u32, blended);
+                                        result_rgba.put_pixel(
+                                            target_x as u32,
+                                            target_y as u32,
+                                            blended,
+                                        );
                                     }
                                 }
                             }
@@ -344,4 +392,3 @@ impl PyImage {
         })
     }
 }
-

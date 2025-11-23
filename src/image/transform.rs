@@ -1,18 +1,18 @@
-use pyo3::prelude::*;
-use image::DynamicImage;
+use super::core::{LazyImage, PyImage};
+use super::fast_resize::fast_resize;
 use crate::errors::ImgrsError;
 use crate::operations;
-use super::core::{PyImage, LazyImage};
-use super::fast_resize::fast_resize;
+use image::DynamicImage;
+use pyo3::prelude::*;
 
 impl PyImage {
     pub fn resize_impl(&mut self, size: (u32, u32), resample: Option<String>) -> PyResult<Self> {
         let (width, height) = size;
         let format = self.format;
-        
+
         // Load image to check dimensions
         let image = self.get_image()?;
-        
+
         // Early return if size is the same
         if image.width() == width && image.height() == height {
             return Ok(PyImage {
@@ -20,20 +20,20 @@ impl PyImage {
                 format,
             });
         }
-        
+
         let filter_str = resample.as_deref().unwrap_or("BILINEAR");
-        
+
         Ok(Python::with_gil(|py| {
             py.allow_threads(|| {
                 // Use fast SIMD resize for RGB/RGBA images
                 let resized = match image {
                     DynamicImage::ImageRgb8(_) | DynamicImage::ImageRgba8(_) => {
-                        fast_resize(image, width, height, filter_str)
-                            .unwrap_or_else(|_| {
-                                // Fallback to standard resize if fast resize fails
-                                let filter = operations::parse_resample_filter(Some(filter_str)).unwrap();
-                                image.resize(width, height, filter)
-                            })
+                        fast_resize(image, width, height, filter_str).unwrap_or_else(|_| {
+                            // Fallback to standard resize if fast resize fails
+                            let filter =
+                                operations::parse_resample_filter(Some(filter_str)).unwrap();
+                            image.resize(width, height, filter)
+                        })
                     }
                     _ => {
                         // Use standard resize for other formats
@@ -41,7 +41,7 @@ impl PyImage {
                         image.resize(width, height, filter)
                     }
                 };
-                
+
                 PyImage {
                     lazy_image: LazyImage::Loaded(resized),
                     format,
@@ -53,23 +53,30 @@ impl PyImage {
     pub fn crop_impl(&mut self, box_coords: (u32, u32, u32, u32)) -> PyResult<Self> {
         let (x, y, width, height) = box_coords;
         let format = self.format;
-        
+
         let image = self.get_image()?;
-        
+
         // Validate crop bounds
         if x + width > image.width() || y + height > image.height() {
-            return Err(ImgrsError::InvalidOperation(
-                format!("Crop coordinates ({}+{}, {}+{}) exceed image bounds ({}x{})", 
-                       x, width, y, height, image.width(), image.height())
-            ).into());
+            return Err(ImgrsError::InvalidOperation(format!(
+                "Crop coordinates ({}+{}, {}+{}) exceed image bounds ({}x{})",
+                x,
+                width,
+                y,
+                height,
+                image.width(),
+                image.height()
+            ))
+            .into());
         }
-        
+
         if width == 0 || height == 0 {
             return Err(ImgrsError::InvalidOperation(
-                "Crop dimensions must be greater than 0".to_string()
-            ).into());
+                "Crop dimensions must be greater than 0".to_string(),
+            )
+            .into());
         }
-        
+
         Ok(Python::with_gil(|py| {
             py.allow_threads(|| {
                 let cropped = image.crop_imm(x, y, width, height);
@@ -84,7 +91,7 @@ impl PyImage {
     pub fn rotate_impl(&mut self, angle: f64, _expand: bool) -> PyResult<Self> {
         let format = self.format;
         let image = self.get_image()?;
-        
+
         Python::with_gil(|py| {
             py.allow_threads(|| {
                 // Fast paths for 90-degree increments
@@ -99,20 +106,17 @@ impl PyImage {
                     image.clone()
                 } else {
                     // Always expand to fit for arbitrary angles
-                    use imageproc::geometric_transformations::{rotate_about_center, Interpolation};
                     use image::Rgba;
+                    use imageproc::geometric_transformations::{
+                        rotate_about_center, Interpolation,
+                    };
 
                     let radians = angle.to_radians();
                     let w = image.width() as f64;
                     let h = image.height() as f64;
                     let cos_a = radians.cos();
                     let sin_a = radians.sin();
-                    let corners = [
-                        (0.0, 0.0),
-                        (w, 0.0),
-                        (w, h),
-                        (0.0, h),
-                    ];
+                    let corners = [(0.0, 0.0), (w, 0.0), (w, h), (0.0, h)];
                     let mut min_x = f64::INFINITY;
                     let mut max_x = f64::NEG_INFINITY;
                     let mut min_y = f64::INFINITY;
@@ -154,7 +158,7 @@ impl PyImage {
     pub fn transpose_impl(&mut self, method: String) -> PyResult<Self> {
         let format = self.format;
         let image = self.get_image()?;
-        
+
         Python::with_gil(|py| {
             py.allow_threads(|| {
                 let transposed = match method.as_str() {
@@ -163,9 +167,13 @@ impl PyImage {
                     "ROTATE_90" => image.rotate90(),
                     "ROTATE_180" => image.rotate180(),
                     "ROTATE_270" => image.rotate270(),
-                    _ => return Err(ImgrsError::InvalidOperation(
-                        format!("Unsupported transpose method: {}", method)
-                    ).into()),
+                    _ => {
+                        return Err(ImgrsError::InvalidOperation(format!(
+                            "Unsupported transpose method: {}",
+                            method
+                        ))
+                        .into())
+                    }
                 };
                 Ok(PyImage {
                     lazy_image: LazyImage::Loaded(transposed),
@@ -175,4 +183,3 @@ impl PyImage {
         })
     }
 }
-

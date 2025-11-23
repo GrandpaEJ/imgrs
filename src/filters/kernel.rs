@@ -1,5 +1,5 @@
-use image::{DynamicImage, ImageBuffer, Rgb, Rgba, Luma};
 use crate::errors::ImgrsError;
+use image::{DynamicImage, ImageBuffer, Luma, Rgb, Rgba};
 
 /// Gaussian blur kernel for different radii
 pub fn gaussian_kernel(radius: f32) -> Vec<Vec<f32>> {
@@ -32,7 +32,10 @@ pub fn gaussian_kernel(radius: f32) -> Vec<Vec<f32>> {
 }
 
 /// Apply a convolution kernel to an image
-pub fn apply_convolution(image: &DynamicImage, kernel: &[Vec<f32>]) -> Result<DynamicImage, ImgrsError> {
+pub fn apply_convolution(
+    image: &DynamicImage,
+    kernel: &[Vec<f32>],
+) -> Result<DynamicImage, ImgrsError> {
     let kernel_size = kernel.len();
     let kernel_center = kernel_size / 2;
 
@@ -153,4 +156,3 @@ pub fn apply_convolution(image: &DynamicImage, kernel: &[Vec<f32>]) -> Result<Dy
         }
     }
 }
-

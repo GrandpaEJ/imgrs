@@ -1,5 +1,5 @@
-use image::{DynamicImage, Rgb, Rgba};
 use crate::errors::ImgrsError;
+use image::{DynamicImage, Rgb, Rgba};
 use std::collections::HashMap;
 
 /// Simple text rendering using a basic bitmap font (8x8 pixels per character)
@@ -14,13 +14,13 @@ pub fn draw_text(
     let mut result = image.clone();
     let char_width = 8 * scale;
     let _char_height = 8 * scale;
-    
+
     // Simple 8x8 bitmap font for basic ASCII characters (A-Z, 0-9)
     let font_data = get_basic_font_data();
-    
+
     for (i, ch) in text.chars().enumerate() {
         let char_x = x + (i as i32 * char_width as i32);
-        
+
         if let Some(char_bitmap) = font_data.get(&ch) {
             for row in 0..8 {
                 for col in 0..8 {
@@ -30,7 +30,7 @@ pub fn draw_text(
                             for sx in 0..scale {
                                 let px = char_x + col * scale as i32 + sx as i32;
                                 let py = y + row as i32 * scale as i32 + sy as i32;
-                                
+
                                 result = draw_pixel(&result, px, py, color)?;
                             }
                         }
@@ -39,7 +39,7 @@ pub fn draw_text(
             }
         }
     }
-    
+
     Ok(result)
 }
 
@@ -51,7 +51,7 @@ fn draw_pixel(
     color: (u8, u8, u8, u8),
 ) -> Result<DynamicImage, ImgrsError> {
     let mut result = image.clone();
-    
+
     match &mut result {
         DynamicImage::ImageRgb8(rgb_img) => {
             let (img_width, img_height) = rgb_img.dimensions();
@@ -64,29 +64,33 @@ fn draw_pixel(
             if x >= 0 && y >= 0 && (x as u32) < img_width && (y as u32) < img_height {
                 let alpha = color.3 as f32 / 255.0;
                 let existing = rgba_img.get_pixel(x as u32, y as u32);
-                
+
                 let blended_r = ((1.0 - alpha) * existing[0] as f32 + alpha * color.0 as f32) as u8;
                 let blended_g = ((1.0 - alpha) * existing[1] as f32 + alpha * color.1 as f32) as u8;
                 let blended_b = ((1.0 - alpha) * existing[2] as f32 + alpha * color.2 as f32) as u8;
                 let blended_a = ((1.0 - alpha) * existing[3] as f32 + alpha * 255.0) as u8;
-                
-                rgba_img.put_pixel(x as u32, y as u32, Rgba([blended_r, blended_g, blended_b, blended_a]));
+
+                rgba_img.put_pixel(
+                    x as u32,
+                    y as u32,
+                    Rgba([blended_r, blended_g, blended_b, blended_a]),
+                );
             }
         }
         _ => {
             return Err(ImgrsError::InvalidOperation(
-                "Unsupported image format for drawing".to_string()
+                "Unsupported image format for drawing".to_string(),
             ));
         }
     }
-    
+
     Ok(result)
 }
 
 /// Get basic font data for simple text rendering
 fn get_basic_font_data() -> HashMap<char, [u8; 8]> {
     let mut font = HashMap::new();
-    
+
     // Basic 8x8 bitmap font data for some characters
     font.insert('A', [0x18, 0x3C, 0x66, 0x7E, 0x66, 0x66, 0x66, 0x00]);
     font.insert('B', [0x7C, 0x66, 0x66, 0x7C, 0x66, 0x66, 0x7C, 0x00]);
@@ -105,7 +109,6 @@ fn get_basic_font_data() -> HashMap<char, [u8; 8]> {
     font.insert('4', [0x06, 0x0E, 0x1E, 0x66, 0x7F, 0x06, 0x06, 0x00]);
     font.insert('5', [0x7E, 0x60, 0x7C, 0x06, 0x06, 0x66, 0x3C, 0x00]);
     font.insert(' ', [0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]);
-    
+
     font
 }
-

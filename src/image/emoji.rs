@@ -1,6 +1,6 @@
-use pyo3::prelude::*;
+use super::core::{LazyImage, PyImage};
 use crate::emoji;
-use super::core::{PyImage, LazyImage};
+use pyo3::prelude::*;
 
 impl PyImage {
     /// Add emoji to image using preset type
@@ -16,12 +16,12 @@ impl PyImage {
         let image = self.get_image()?;
 
         // Parse emoji type from name
-        let emoji_type = emoji::EmojiType::from_name(emoji_name)
-            .ok_or_else(|| {
-                PyErr::new::<pyo3::exceptions::PyValueError, _>(
-                    format!("Unknown emoji type: {}", emoji_name)
-                )
-            })?;
+        let emoji_type = emoji::EmojiType::from_name(emoji_name).ok_or_else(|| {
+            PyErr::new::<pyo3::exceptions::PyValueError, _>(format!(
+                "Unknown emoji type: {}",
+                emoji_name
+            ))
+        })?;
 
         let style = emoji::EmojiStyle {
             size,
@@ -32,14 +32,12 @@ impl PyImage {
             color: None,
         };
 
-        Python::with_gil(|py| {
-            py.allow_threads(|| emoji::add_emoji(image, emoji_type, style))
-        })
-        .map(|result| PyImage {
-            lazy_image: LazyImage::Loaded(result),
-            format,
-        })
-        .map_err(|e| e.into())
+        Python::with_gil(|py| py.allow_threads(|| emoji::add_emoji(image, emoji_type, style)))
+            .map(|result| PyImage {
+                lazy_image: LazyImage::Loaded(result),
+                format,
+            })
+            .map_err(|e| e.into())
     }
 
     /// Add emoji using Unicode text
@@ -63,14 +61,12 @@ impl PyImage {
             color: None,
         };
 
-        Python::with_gil(|py| {
-            py.allow_threads(|| emoji::add_emoji_text(image, emoji, style))
-        })
-        .map(|result| PyImage {
-            lazy_image: LazyImage::Loaded(result),
-            format,
-        })
-        .map_err(|e| e.into())
+        Python::with_gil(|py| py.allow_threads(|| emoji::add_emoji_text(image, emoji, style)))
+            .map(|result| PyImage {
+                lazy_image: LazyImage::Loaded(result),
+                format,
+            })
+            .map_err(|e| e.into())
     }
 
     /// Add emoji quickly with minimal parameters
@@ -97,9 +93,10 @@ impl PyImage {
             .map(|(name, x, y, size, opacity)| {
                 emoji::EmojiType::from_name(&name)
                     .ok_or_else(|| {
-                        PyErr::new::<pyo3::exceptions::PyValueError, _>(
-                            format!("Unknown emoji type: {}", name)
-                        )
+                        PyErr::new::<pyo3::exceptions::PyValueError, _>(format!(
+                            "Unknown emoji type: {}",
+                            name
+                        ))
                     })
                     .map(|emoji_type| {
                         let style = emoji::EmojiStyle {
@@ -117,14 +114,12 @@ impl PyImage {
 
         let emoji_list = emoji_list?;
 
-        Python::with_gil(|py| {
-            py.allow_threads(|| emoji::add_emojis_batch(image, emoji_list))
-        })
-        .map(|result| PyImage {
-            lazy_image: LazyImage::Loaded(result),
-            format,
-        })
-        .map_err(|e| e.into())
+        Python::with_gil(|py| py.allow_threads(|| emoji::add_emojis_batch(image, emoji_list)))
+            .map(|result| PyImage {
+                lazy_image: LazyImage::Loaded(result),
+                format,
+            })
+            .map_err(|e| e.into())
     }
 
     /// Add text to image with emoji support
@@ -139,10 +134,24 @@ impl PyImage {
     ) -> PyResult<Self> {
         let format = self.format;
         let image = self.get_image()?;
-        let color_f64 = (color.0 as f64 / 255.0, color.1 as f64 / 255.0, color.2 as f64 / 255.0);
+        let color_f64 = (
+            color.0 as f64 / 255.0,
+            color.1 as f64 / 255.0,
+            color.2 as f64 / 255.0,
+        );
 
         Python::with_gil(|py| {
-            py.allow_threads(|| emoji::add_text(image, text, x as f64, y as f64, font_family, font_size, color_f64))
+            py.allow_threads(|| {
+                emoji::add_text(
+                    image,
+                    text,
+                    x as f64,
+                    y as f64,
+                    font_family,
+                    font_size,
+                    color_f64,
+                )
+            })
         })
         .map(|result| PyImage {
             lazy_image: LazyImage::Loaded(result),
@@ -164,11 +173,30 @@ impl PyImage {
     ) -> PyResult<Self> {
         let format = self.format;
         let image = self.get_image()?;
-        let fill_color_f64 = (fill_color.0 as f64 / 255.0, fill_color.1 as f64 / 255.0, fill_color.2 as f64 / 255.0);
-        let border_color_f64 = (border_color.0 as f64 / 255.0, border_color.1 as f64 / 255.0, border_color.2 as f64 / 255.0);
+        let fill_color_f64 = (
+            fill_color.0 as f64 / 255.0,
+            fill_color.1 as f64 / 255.0,
+            fill_color.2 as f64 / 255.0,
+        );
+        let border_color_f64 = (
+            border_color.0 as f64 / 255.0,
+            border_color.1 as f64 / 255.0,
+            border_color.2 as f64 / 255.0,
+        );
 
         Python::with_gil(|py| {
-            py.allow_threads(|| emoji::add_textbox(image, x as f64, y as f64, width as f64, height as f64, fill_color_f64, border_color_f64, border_width))
+            py.allow_threads(|| {
+                emoji::add_textbox(
+                    image,
+                    x as f64,
+                    y as f64,
+                    width as f64,
+                    height as f64,
+                    fill_color_f64,
+                    border_color_f64,
+                    border_width,
+                )
+            })
         })
         .map(|result| PyImage {
             lazy_image: LazyImage::Loaded(result),
@@ -177,4 +205,3 @@ impl PyImage {
         .map_err(|e| e.into())
     }
 }
-

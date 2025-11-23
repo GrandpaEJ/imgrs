@@ -1,17 +1,17 @@
-use image::{DynamicImage, ImageBuffer, Rgb, Rgba};
 use crate::errors::ImgrsError;
+use image::{DynamicImage, ImageBuffer, Rgb, Rgba};
 
 /// Apply hue rotation filter (CSS-like hue-rotate effect)
 pub fn hue_rotate(image: &DynamicImage, degrees: f32) -> Result<DynamicImage, ImgrsError> {
     let radians = degrees.to_radians();
     let cos_val = radians.cos();
     let sin_val = radians.sin();
-    
+
     // Hue rotation matrix coefficients
     let a = cos_val + (1.0 - cos_val) / 3.0;
     let b = (1.0 - cos_val) / 3.0 - (3.0_f32).sqrt() * sin_val / 3.0;
     let c = (1.0 - cos_val) / 3.0 + (3.0_f32).sqrt() * sin_val / 3.0;
-    
+
     match image {
         DynamicImage::ImageRgb8(rgb_img) => {
             let (width, height) = rgb_img.dimensions();
@@ -63,4 +63,3 @@ pub fn hue_rotate(image: &DynamicImage, degrees: f32) -> Result<DynamicImage, Im
         }
     }
 }
-

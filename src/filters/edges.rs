@@ -1,6 +1,6 @@
-use image::{DynamicImage, ImageBuffer, Luma};
-use crate::errors::ImgrsError;
 use super::kernel::apply_convolution;
+use crate::errors::ImgrsError;
+use image::{DynamicImage, ImageBuffer, Luma};
 
 /// Apply edge detection filter (Sobel operator)
 pub fn edge_detect(image: &DynamicImage) -> Result<DynamicImage, ImgrsError> {
@@ -42,7 +42,9 @@ pub fn edge_detect(image: &DynamicImage) -> Result<DynamicImage, ImgrsError> {
 
         Ok(DynamicImage::ImageLuma8(result))
     } else {
-        Err(ImgrsError::InvalidOperation("Edge detection failed".to_string()))
+        Err(ImgrsError::InvalidOperation(
+            "Edge detection failed".to_string(),
+        ))
     }
 }
 
@@ -56,4 +58,3 @@ pub fn emboss(image: &DynamicImage) -> Result<DynamicImage, ImgrsError> {
 
     apply_convolution(image, &kernel)
 }
-

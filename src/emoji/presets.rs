@@ -14,7 +14,7 @@ pub enum EmojiType {
     Wink,
     Blush,
     Cool,
-    
+
     // Hearts
     RedHeart,
     BlueHeart,
@@ -30,7 +30,7 @@ pub enum EmojiType {
     BrokenHeart,
     #[allow(dead_code)]
     SparklingHeart,
-    
+
     // Gestures
     ThumbsUp,
     ThumbsDown,
@@ -42,7 +42,7 @@ pub enum EmojiType {
     PointRight,
     PointLeft,
     Fire,
-    
+
     // Nature
     Sun,
     Moon,
@@ -54,7 +54,7 @@ pub enum EmojiType {
     Tree,
     Leaf,
     Sparkles,
-    
+
     // Food
     Pizza,
     Burger,
@@ -66,7 +66,7 @@ pub enum EmojiType {
     Candy,
     Cookie,
     Donut,
-    
+
     // Activities
     Soccer,
     Basketball,
@@ -78,7 +78,7 @@ pub enum EmojiType {
     Music,
     Art,
     GameController,
-    
+
     // Symbols
     Check,
     Cross,
@@ -107,7 +107,7 @@ impl EmojiType {
             EmojiType::Wink => "😉",
             EmojiType::Blush => "😊",
             EmojiType::Cool => "😎",
-            
+
             // Hearts
             EmojiType::RedHeart => "❤️",
             EmojiType::BlueHeart => "💙",
@@ -119,7 +119,7 @@ impl EmojiType {
             EmojiType::WhiteHeart => "🤍",
             EmojiType::BrokenHeart => "💔",
             EmojiType::SparklingHeart => "💖",
-            
+
             // Gestures
             EmojiType::ThumbsUp => "👍",
             EmojiType::ThumbsDown => "👎",
@@ -131,7 +131,7 @@ impl EmojiType {
             EmojiType::PointRight => "👉",
             EmojiType::PointLeft => "👈",
             EmojiType::Fire => "🔥",
-            
+
             // Nature
             EmojiType::Sun => "☀️",
             EmojiType::Moon => "🌙",
@@ -143,7 +143,7 @@ impl EmojiType {
             EmojiType::Tree => "🌲",
             EmojiType::Leaf => "🍃",
             EmojiType::Sparkles => "✨",
-            
+
             // Food
             EmojiType::Pizza => "🍕",
             EmojiType::Burger => "🍔",
@@ -155,7 +155,7 @@ impl EmojiType {
             EmojiType::Candy => "🍬",
             EmojiType::Cookie => "🍪",
             EmojiType::Donut => "🍩",
-            
+
             // Activities
             EmojiType::Soccer => "⚽",
             EmojiType::Basketball => "🏀",
@@ -167,7 +167,7 @@ impl EmojiType {
             EmojiType::Music => "🎵",
             EmojiType::Art => "🎨",
             EmojiType::GameController => "🎮",
-            
+
             // Symbols
             EmojiType::Check => "✅",
             EmojiType::Cross => "❌",
@@ -181,49 +181,91 @@ impl EmojiType {
             EmojiType::ArrowRight => "➡️",
         }
     }
-    
+
     /// Get all available emoji types
     #[allow(dead_code)]
     pub fn all() -> Vec<EmojiType> {
         vec![
             // Smileys
-            EmojiType::Smile, EmojiType::Grin, EmojiType::Joy,
-            EmojiType::Laughing, EmojiType::HeartEyes, EmojiType::StarStruck,
-            EmojiType::ThinkingFace, EmojiType::Wink, EmojiType::Blush,
+            EmojiType::Smile,
+            EmojiType::Grin,
+            EmojiType::Joy,
+            EmojiType::Laughing,
+            EmojiType::HeartEyes,
+            EmojiType::StarStruck,
+            EmojiType::ThinkingFace,
+            EmojiType::Wink,
+            EmojiType::Blush,
             EmojiType::Cool,
             // Hearts
-            EmojiType::RedHeart, EmojiType::BlueHeart, EmojiType::GreenHeart,
-            EmojiType::YellowHeart, EmojiType::PurpleHeart, EmojiType::OrangeHeart,
-            EmojiType::BlackHeart, EmojiType::WhiteHeart, EmojiType::BrokenHeart,
+            EmojiType::RedHeart,
+            EmojiType::BlueHeart,
+            EmojiType::GreenHeart,
+            EmojiType::YellowHeart,
+            EmojiType::PurpleHeart,
+            EmojiType::OrangeHeart,
+            EmojiType::BlackHeart,
+            EmojiType::WhiteHeart,
+            EmojiType::BrokenHeart,
             EmojiType::SparklingHeart,
             // Gestures
-            EmojiType::ThumbsUp, EmojiType::ThumbsDown, EmojiType::OkHand,
-            EmojiType::Victory, EmojiType::RaisedHands, EmojiType::Clap,
-            EmojiType::Wave, EmojiType::PointRight, EmojiType::PointLeft,
+            EmojiType::ThumbsUp,
+            EmojiType::ThumbsDown,
+            EmojiType::OkHand,
+            EmojiType::Victory,
+            EmojiType::RaisedHands,
+            EmojiType::Clap,
+            EmojiType::Wave,
+            EmojiType::PointRight,
+            EmojiType::PointLeft,
             EmojiType::Fire,
             // Nature
-            EmojiType::Sun, EmojiType::Moon, EmojiType::Star,
-            EmojiType::Cloud, EmojiType::Rainbow, EmojiType::Flower,
-            EmojiType::Rose, EmojiType::Tree, EmojiType::Leaf,
+            EmojiType::Sun,
+            EmojiType::Moon,
+            EmojiType::Star,
+            EmojiType::Cloud,
+            EmojiType::Rainbow,
+            EmojiType::Flower,
+            EmojiType::Rose,
+            EmojiType::Tree,
+            EmojiType::Leaf,
             EmojiType::Sparkles,
             // Food
-            EmojiType::Pizza, EmojiType::Burger, EmojiType::Cake,
-            EmojiType::IceCream, EmojiType::Coffee, EmojiType::Beer,
-            EmojiType::Fruit, EmojiType::Candy, EmojiType::Cookie,
+            EmojiType::Pizza,
+            EmojiType::Burger,
+            EmojiType::Cake,
+            EmojiType::IceCream,
+            EmojiType::Coffee,
+            EmojiType::Beer,
+            EmojiType::Fruit,
+            EmojiType::Candy,
+            EmojiType::Cookie,
             EmojiType::Donut,
             // Activities
-            EmojiType::Soccer, EmojiType::Basketball, EmojiType::Party,
-            EmojiType::Gift, EmojiType::Trophy, EmojiType::Medal,
-            EmojiType::Camera, EmojiType::Music, EmojiType::Art,
+            EmojiType::Soccer,
+            EmojiType::Basketball,
+            EmojiType::Party,
+            EmojiType::Gift,
+            EmojiType::Trophy,
+            EmojiType::Medal,
+            EmojiType::Camera,
+            EmojiType::Music,
+            EmojiType::Art,
             EmojiType::GameController,
             // Symbols
-            EmojiType::Check, EmojiType::Cross, EmojiType::Question,
-            EmojiType::Exclamation, EmojiType::Warning, EmojiType::Prohibited,
-            EmojiType::Recycle, EmojiType::Atom, EmojiType::Infinity,
+            EmojiType::Check,
+            EmojiType::Cross,
+            EmojiType::Question,
+            EmojiType::Exclamation,
+            EmojiType::Warning,
+            EmojiType::Prohibited,
+            EmojiType::Recycle,
+            EmojiType::Atom,
+            EmojiType::Infinity,
             EmojiType::ArrowRight,
         ]
     }
-    
+
     /// Get emoji type by name (case-insensitive)
     pub fn from_name(name: &str) -> Option<EmojiType> {
         match name.to_lowercase().as_str() {
@@ -237,14 +279,14 @@ impl EmojiType {
             "wink" => Some(EmojiType::Wink),
             "blush" => Some(EmojiType::Blush),
             "cool" => Some(EmojiType::Cool),
-            
+
             "redheart" | "heart" => Some(EmojiType::RedHeart),
             "blueheart" => Some(EmojiType::BlueHeart),
             "greenheart" => Some(EmojiType::GreenHeart),
             "yellowheart" => Some(EmojiType::YellowHeart),
             "purpleheart" => Some(EmojiType::PurpleHeart),
             "orangeheart" => Some(EmojiType::OrangeHeart),
-            
+
             "thumbsup" | "thumbs_up" | "like" => Some(EmojiType::ThumbsUp),
             "thumbsdown" | "thumbs_down" => Some(EmojiType::ThumbsDown),
             "ok" | "okhand" => Some(EmojiType::OkHand),
@@ -255,7 +297,7 @@ impl EmojiType {
             "pointright" | "point_right" => Some(EmojiType::PointRight),
             "pointleft" | "point_left" => Some(EmojiType::PointLeft),
             "fire" => Some(EmojiType::Fire),
-            
+
             "sun" => Some(EmojiType::Sun),
             "moon" => Some(EmojiType::Moon),
             "star" => Some(EmojiType::Star),
@@ -266,7 +308,7 @@ impl EmojiType {
             "tree" => Some(EmojiType::Tree),
             "leaf" => Some(EmojiType::Leaf),
             "sparkles" => Some(EmojiType::Sparkles),
-            
+
             "pizza" => Some(EmojiType::Pizza),
             "burger" => Some(EmojiType::Burger),
             "cake" => Some(EmojiType::Cake),
@@ -277,7 +319,7 @@ impl EmojiType {
             "candy" => Some(EmojiType::Candy),
             "cookie" => Some(EmojiType::Cookie),
             "donut" => Some(EmojiType::Donut),
-            
+
             "soccer" | "football" => Some(EmojiType::Soccer),
             "basketball" => Some(EmojiType::Basketball),
             "party" => Some(EmojiType::Party),
@@ -288,7 +330,7 @@ impl EmojiType {
             "music" => Some(EmojiType::Music),
             "art" => Some(EmojiType::Art),
             "gamecontroller" | "game_controller" | "game" => Some(EmojiType::GameController),
-            
+
             "check" | "checkmark" => Some(EmojiType::Check),
             "cross" | "x" => Some(EmojiType::Cross),
             "question" => Some(EmojiType::Question),
@@ -299,9 +341,8 @@ impl EmojiType {
             "atom" => Some(EmojiType::Atom),
             "infinity" => Some(EmojiType::Infinity),
             "arrowright" | "arrow_right" | "arrow" => Some(EmojiType::ArrowRight),
-            
+
             _ => None,
         }
     }
 }
-

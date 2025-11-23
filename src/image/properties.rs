@@ -1,5 +1,5 @@
+use super::core::{color_type_to_mode_string, PyImage};
 use pyo3::prelude::*;
-use super::core::{PyImage, color_type_to_mode_string};
 
 impl PyImage {
     pub fn size_impl(&mut self) -> PyResult<(u32, u32)> {
@@ -32,10 +32,12 @@ impl PyImage {
                 let (width, height) = (img.width(), img.height());
                 let mode = color_type_to_mode_string(img.color());
                 let format = self.format_impl().unwrap_or_else(|| "Unknown".to_string());
-                format!("<Image size={}x{} mode={} format={}>", width, height, mode, format)
-            },
+                format!(
+                    "<Image size={}x{} mode={} format={}>",
+                    width, height, mode, format
+                )
+            }
             Err(_) => "<Image [Error loading image]>".to_string(),
         }
     }
 }
-

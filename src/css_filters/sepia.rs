@@ -1,10 +1,10 @@
-use image::{DynamicImage, ImageBuffer, Rgb, Rgba};
 use crate::errors::ImgrsError;
+use image::{DynamicImage, ImageBuffer, Rgb, Rgba};
 
 /// Apply sepia filter (CSS-like sepia effect)
 pub fn sepia(image: &DynamicImage, amount: f32) -> Result<DynamicImage, ImgrsError> {
     let amount = amount.max(0.0).min(1.0); // Clamp between 0 and 1
-    
+
     match image {
         DynamicImage::ImageRgb8(rgb_img) => {
             let (width, height) = rgb_img.dimensions();

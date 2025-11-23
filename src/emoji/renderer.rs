@@ -1,9 +1,8 @@
+use super::presets::EmojiType;
+use crate::errors::ImgrsError;
 /// Text and emoji rendering with emoji support
 /// Uses Cairo/Pango for high-quality text and emoji rendering
-
 use image::DynamicImage;
-use crate::errors::ImgrsError;
-use super::presets::EmojiType;
 
 use cairo;
 use pango;
@@ -43,13 +42,21 @@ pub fn add_text(
     font_size: f64,
     color: (f64, f64, f64),
 ) -> Result<DynamicImage, ImgrsError> {
-    let mut rgba_image = image.to_rgba8();
+    let rgba_image = image.to_rgba8();
     let width = rgba_image.width() as i32;
     let height = rgba_image.height() as i32;
     let mut data = rgba_image.into_raw();
 
-    let surface = unsafe { cairo::ImageSurface::create_for_data_unsafe(data.as_mut_ptr(), cairo::Format::ARgb32, width, height, width * 4) }
-        .map_err(|_| ImgrsError::InvalidOperation("Failed to create Cairo surface".to_string()))?;
+    let surface = unsafe {
+        cairo::ImageSurface::create_for_data_unsafe(
+            data.as_mut_ptr(),
+            cairo::Format::ARgb32,
+            width,
+            height,
+            width * 4,
+        )
+    }
+    .map_err(|_| ImgrsError::InvalidOperation("Failed to create Cairo surface".to_string()))?;
 
     let cr = cairo::Context::new(&surface)
         .map_err(|_| ImgrsError::InvalidOperation("Failed to create Cairo context".to_string()))?;
@@ -81,8 +88,9 @@ pub fn add_text(
         rgba_data.push(a);
     }
 
-    let img = image::RgbaImage::from_raw(width as u32, height as u32, rgba_data)
-        .ok_or(ImgrsError::InvalidOperation("Failed to create image".to_string()))?;
+    let img = image::RgbaImage::from_raw(width as u32, height as u32, rgba_data).ok_or(
+        ImgrsError::InvalidOperation("Failed to create image".to_string()),
+    )?;
 
     Ok(DynamicImage::ImageRgba8(img))
 }
@@ -97,25 +105,35 @@ pub fn add_textbox(
     border_color: (f64, f64, f64),
     border_width: f64,
 ) -> Result<DynamicImage, ImgrsError> {
-    let mut rgba_image = image.to_rgba8();
+    let rgba_image = image.to_rgba8();
     let img_width = rgba_image.width() as i32;
     let img_height = rgba_image.height() as i32;
     let mut data = rgba_image.into_raw();
 
-    let surface = unsafe { cairo::ImageSurface::create_for_data_unsafe(data.as_mut_ptr(), cairo::Format::ARgb32, img_width, img_height, img_width * 4) }
-        .map_err(|_| ImgrsError::InvalidOperation("Failed to create Cairo surface".to_string()))?;
+    let surface = unsafe {
+        cairo::ImageSurface::create_for_data_unsafe(
+            data.as_mut_ptr(),
+            cairo::Format::ARgb32,
+            img_width,
+            img_height,
+            img_width * 4,
+        )
+    }
+    .map_err(|_| ImgrsError::InvalidOperation("Failed to create Cairo surface".to_string()))?;
 
     let cr = cairo::Context::new(&surface)
         .map_err(|_| ImgrsError::InvalidOperation("Failed to create Cairo context".to_string()))?;
 
     cr.set_source_rgb(fill_color.0, fill_color.1, fill_color.2);
     cr.rectangle(x, y, width, height);
-    cr.fill().map_err(|_| ImgrsError::InvalidOperation("Failed to fill".to_string()))?;
+    cr.fill()
+        .map_err(|_| ImgrsError::InvalidOperation("Failed to fill".to_string()))?;
 
     cr.set_source_rgb(border_color.0, border_color.1, border_color.2);
     cr.set_line_width(border_width);
     cr.rectangle(x, y, width, height);
-    cr.stroke().map_err(|_| ImgrsError::InvalidOperation("Failed to stroke".to_string()))?;
+    cr.stroke()
+        .map_err(|_| ImgrsError::InvalidOperation("Failed to stroke".to_string()))?;
 
     // Convert back
     let mut rgba_data = Vec::with_capacity(data.len());
@@ -130,8 +148,9 @@ pub fn add_textbox(
         rgba_data.push(a);
     }
 
-    let img = image::RgbaImage::from_raw(img_width as u32, img_height as u32, rgba_data)
-        .ok_or(ImgrsError::InvalidOperation("Failed to create image".to_string()))?;
+    let img = image::RgbaImage::from_raw(img_width as u32, img_height as u32, rgba_data).ok_or(
+        ImgrsError::InvalidOperation("Failed to create image".to_string()),
+    )?;
 
     Ok(DynamicImage::ImageRgba8(img))
 }
@@ -143,8 +162,19 @@ pub fn add_emoji(
     style: EmojiStyle,
 ) -> Result<DynamicImage, ImgrsError> {
     let emoji = emoji_type.as_str();
-    let color = style.color.map(|c| (c.0 as f64 / 255.0, c.1 as f64 / 255.0, c.2 as f64 / 255.0)).unwrap_or((0.0, 0.0, 0.0));
-    add_text(image, emoji, style.x as f64, style.y as f64, "Sans", style.size as f64, color)
+    let color = style
+        .color
+        .map(|c| (c.0 as f64 / 255.0, c.1 as f64 / 255.0, c.2 as f64 / 255.0))
+        .unwrap_or((0.0, 0.0, 0.0));
+    add_text(
+        image,
+        emoji,
+        style.x as f64,
+        style.y as f64,
+        "Sans",
+        style.size as f64,
+        color,
+    )
 }
 
 /// Add emoji to image using raw emoji text (Unicode)
@@ -153,8 +183,19 @@ pub fn add_emoji_text(
     emoji: &str,
     style: EmojiStyle,
 ) -> Result<DynamicImage, ImgrsError> {
-    let color = style.color.map(|c| (c.0 as f64 / 255.0, c.1 as f64 / 255.0, c.2 as f64 / 255.0)).unwrap_or((0.0, 0.0, 0.0));
-    add_text(image, emoji, style.x as f64, style.y as f64, "Sans", style.size as f64, color)
+    let color = style
+        .color
+        .map(|c| (c.0 as f64 / 255.0, c.1 as f64 / 255.0, c.2 as f64 / 255.0))
+        .unwrap_or((0.0, 0.0, 0.0));
+    add_text(
+        image,
+        emoji,
+        style.x as f64,
+        style.y as f64,
+        "Sans",
+        style.size as f64,
+        color,
+    )
 }
 
 /// Add multiple emojis to an image

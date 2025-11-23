@@ -10,7 +10,7 @@ pub enum TextAlign {
 
 /// Font weight options
 #[derive(Debug, Clone, Copy, PartialEq)]
-    #[allow(dead_code)]
+#[allow(dead_code)]
 pub enum FontWeight {
     Normal,
     Bold,
@@ -22,22 +22,22 @@ pub enum FontWeight {
 pub struct TextStyle {
     /// Font size in pixels
     pub size: f32,
-    
+
     /// Text color (R, G, B, A)
     pub color: (u8, u8, u8, u8),
-    
+
     /// Background color (optional)
     pub background: Option<(u8, u8, u8, u8)>,
-    
+
     /// Text alignment
     pub align: TextAlign,
-    
+
     /// Font weight
     pub weight: FontWeight,
-    
+
     /// Line spacing multiplier (default: 1.2)
     pub line_spacing: f32,
-    
+
     /// Letter spacing in pixels (default: 0.0)
     #[allow(dead_code)]
     pub letter_spacing: f32,
@@ -150,4 +150,3 @@ impl TextStyle {
         self
     }
 }
-

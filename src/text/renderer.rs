@@ -1,13 +1,11 @@
-
-/// Text rendering implementation with full styling support
-
-use image::{DynamicImage, Rgba, RgbaImage};
-use imageproc::drawing::{draw_text_mut, draw_filled_rect_mut};
-use ab_glyph::{FontVec, PxScale, Font, ScaleFont};
-use imageproc::rect::Rect;
-use crate::errors::ImgrsError;
-use super::styles::{TextStyle, TextAlign};
 use super::fonts::{self};
+use super::styles::{TextAlign, TextStyle};
+use crate::errors::ImgrsError;
+use ab_glyph::{Font, FontVec, PxScale, ScaleFont};
+/// Text rendering implementation with full styling support
+use image::{DynamicImage, Rgba, RgbaImage};
+use imageproc::drawing::{draw_filled_rect_mut, draw_text_mut};
+use imageproc::rect::Rect;
 
 use cairo;
 use pango;
@@ -23,18 +21,31 @@ pub fn draw_text(
     color: (u8, u8, u8, u8),
     _font_path: Option<&std::path::Path>,
 ) -> Result<DynamicImage, ImgrsError> {
-    let mut rgba_image = image.to_rgba8();
+    let rgba_image = image.to_rgba8();
     let width = rgba_image.width() as i32;
     let height = rgba_image.height() as i32;
     let mut data = rgba_image.into_raw();
 
-    let surface = unsafe { cairo::ImageSurface::create_for_data_unsafe(data.as_mut_ptr(), cairo::Format::ARgb32, width, height, width * 4) }
-        .map_err(|_| ImgrsError::InvalidOperation("Failed to create Cairo surface".to_string()))?;
+    let surface = unsafe {
+        cairo::ImageSurface::create_for_data_unsafe(
+            data.as_mut_ptr(),
+            cairo::Format::ARgb32,
+            width,
+            height,
+            width * 4,
+        )
+    }
+    .map_err(|_| ImgrsError::InvalidOperation("Failed to create Cairo surface".to_string()))?;
 
     let cr = cairo::Context::new(&surface)
         .map_err(|_| ImgrsError::InvalidOperation("Failed to create Cairo context".to_string()))?;
 
-    cr.set_source_rgba(color.0 as f64 / 255.0, color.1 as f64 / 255.0, color.2 as f64 / 255.0, color.3 as f64 / 255.0);
+    cr.set_source_rgba(
+        color.0 as f64 / 255.0,
+        color.1 as f64 / 255.0,
+        color.2 as f64 / 255.0,
+        color.3 as f64 / 255.0,
+    );
 
     let layout = pangocairo::create_layout(&cr);
     layout.set_text(text);
@@ -61,8 +72,9 @@ pub fn draw_text(
         rgba_data.push(a);
     }
 
-    let img = image::RgbaImage::from_raw(width as u32, height as u32, rgba_data)
-        .ok_or(ImgrsError::InvalidOperation("Failed to create image".to_string()))?;
+    let img = image::RgbaImage::from_raw(width as u32, height as u32, rgba_data).ok_or(
+        ImgrsError::InvalidOperation("Failed to create image".to_string()),
+    )?;
 
     Ok(DynamicImage::ImageRgba8(img))
 }
@@ -78,13 +90,13 @@ pub fn draw_text_multiline(
 ) -> Result<DynamicImage, ImgrsError> {
     let mut rgba_image = image.to_rgba8();
     let font = fonts::load_font(font_path)?;
-    
+
     let lines: Vec<&str> = text.lines().collect();
     let line_height = (style.size * style.line_spacing) as i32;
-    
+
     for (i, line) in lines.iter().enumerate() {
         let line_y = y + (i as i32 * line_height);
-        
+
         // Calculate x position based on alignment
         let line_x = match style.align {
             TextAlign::Left => x,
@@ -97,10 +109,10 @@ pub fn draw_text_multiline(
                 x - text_width
             }
         };
-        
+
         render_text_with_effects(&mut rgba_image, line, line_x, line_y, style, &font)?;
     }
-    
+
     Ok(DynamicImage::ImageRgba8(rgba_image))
 }
 
@@ -122,12 +134,12 @@ pub fn draw_text_styled(
         };
         return draw_text_multiline(image, &wrapped_text, x, y, style, font_path);
     }
-    
+
     let mut rgba_image = image.to_rgba8();
     let font = fonts::load_font(font_path)?;
-    
+
     render_text_with_effects(&mut rgba_image, text, x, y, style, &font)?;
-    
+
     Ok(DynamicImage::ImageRgba8(rgba_image))
 }
 
@@ -141,44 +153,36 @@ fn render_text_with_effects(
     font: &FontVec,
 ) -> Result<(), ImgrsError> {
     let scale = PxScale::from(style.size);
-    
+
     // Draw background if specified
     if let Some((br, bg, bb, ba)) = style.background {
         let text_width = measure_text_width(text, style.size, font);
         let text_height = style.size as i32;
-        
+
         if x >= 0 && y >= 0 {
             let rect = Rect::at(x, y).of_size(text_width as u32, text_height as u32);
             draw_filled_rect_mut(target, rect, Rgba([br, bg, bb, ba]));
         }
     }
-    
+
     // Draw shadow if specified
     if let Some((sx, sy, sr, sg, sb, sa)) = style.shadow {
         let shadow_color = Rgba([sr, sg, sb, sa]);
         draw_text_mut(target, shadow_color, x + sx, y + sy, scale, font, text);
     }
-    
+
     // Draw glow if specified
     if let Some((gr, gg, gb, ga, blur_radius)) = style.glow {
         let _glow_color = Rgba([gr, gg, gb, ga]);
         let radius = blur_radius.max(1.0) as i32;
         // Draw multiple layers for glow effect
-        for layer in 1..=radius as i32 {
+        for layer in 1..=radius {
             let alpha = (ga as f32 * (1.0 - layer as f32 / radius as f32)).max(0.0) as u8;
             let layer_color = Rgba([gr, gg, gb, alpha]);
             for dy in -layer..=layer {
                 for dx in -layer..=layer {
                     if dx.abs() + dy.abs() == layer {
-                        draw_text_mut(
-                            target,
-                            layer_color,
-                            x + dx,
-                            y + dy,
-                            scale,
-                            font,
-                            text,
-                        );
+                        draw_text_mut(target, layer_color, x + dx, y + dy, scale, font, text);
                     }
                 }
             }
@@ -206,13 +210,13 @@ fn render_text_with_effects(
             }
         }
     }
-    
+
     // Draw main text with opacity
     let final_alpha = (style.color.3 as f32 * style.opacity).min(255.0) as u8;
     let text_color = Rgba([style.color.0, style.color.1, style.color.2, final_alpha]);
-    
+
     draw_text_mut(target, text_color, x, y, scale, font, text);
-    
+
     Ok(())
 }
 
@@ -220,13 +224,13 @@ fn render_text_with_effects(
 fn measure_text_width(text: &str, size: f32, font: &FontVec) -> i32 {
     let scale = PxScale::from(size);
     let scaled_font = font.as_scaled(scale);
-    
+
     let mut width = 0.0;
     for c in text.chars() {
         let glyph = scaled_font.scaled_glyph(c);
         width += scaled_font.h_advance(glyph.id);
     }
-    
+
     width as i32
 }
 
@@ -240,17 +244,17 @@ pub fn get_text_size(
     let font = fonts::load_font(font_path)?;
     let scale = PxScale::from(size);
     let scaled_font = font.as_scaled(scale);
-    
+
     // Measure width
     let mut width = 0.0_f32;
     let mut max_height = 0.0_f32;
     let mut min_y = 0.0_f32;
     let mut max_y = 0.0_f32;
-    
+
     for c in text.chars() {
         let glyph = scaled_font.scaled_glyph(c);
         width += scaled_font.h_advance(glyph.id);
-        
+
         // Get glyph bounds for height calculation
         if let Some(outlined) = scaled_font.outline_glyph(glyph) {
             let bounds = outlined.px_bounds();
@@ -259,11 +263,11 @@ pub fn get_text_size(
             max_height = max_height.max(bounds.height());
         }
     }
-    
+
     let height = (max_y - min_y).max(size);
     let ascent = (-min_y) as i32;
     let descent = max_y as i32;
-    
+
     Ok((width as u32, height as u32, ascent, descent))
 }
 
@@ -278,20 +282,20 @@ pub fn get_multiline_text_size(
     let font = fonts::load_font(font_path)?;
     let lines: Vec<&str> = text.lines().collect();
     let line_count = lines.len();
-    
+
     if line_count == 0 {
         return Ok((0, 0, 0));
     }
-    
+
     let mut max_width = 0;
     for line in &lines {
         let line_width = measure_text_width(line, size, &font);
         max_width = max_width.max(line_width);
     }
-    
+
     let line_height = (size * line_spacing) as u32;
     let total_height = line_height * (line_count as u32);
-    
+
     Ok((max_width as u32, total_height, line_count))
 }
 
@@ -354,16 +358,16 @@ pub fn wrap_text(
     let font = fonts::load_font(font_path)?;
     let mut result = String::new();
     let mut current_line = String::new();
-    
+
     for word in text.split_whitespace() {
         let test_line = if current_line.is_empty() {
             word.to_string()
         } else {
             format!("{} {}", current_line, word)
         };
-        
+
         let width = measure_text_width(&test_line, size, &font);
-        
+
         if width <= max_width as i32 {
             current_line = test_line;
         } else {
@@ -374,16 +378,16 @@ pub fn wrap_text(
             current_line = word.to_string();
         }
     }
-    
+
     if !current_line.is_empty() {
         result.push_str(&current_line);
     }
-    
+
     Ok(result)
 }
 
 /// Quick text rendering with minimal parameters
-    #[allow(dead_code)]
+#[allow(dead_code)]
 pub fn draw_text_quick(
     image: &DynamicImage,
     text: &str,
@@ -406,7 +410,6 @@ pub fn draw_text_centered(
     let font = fonts::load_font(font_path)?;
     let text_width = measure_text_width(text, style.size, &font);
     let x = (image.width() as i32 - text_width) / 2;
-    
+
     draw_text_styled(image, text, x, y, style, font_path)
 }
-

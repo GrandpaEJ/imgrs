@@ -1,6 +1,6 @@
+use super::core::PyImage;
 use pyo3::prelude::*;
 use pyo3::Bound;
-use super::core::PyImage;
 
 #[pymethods]
 impl PyImage {
@@ -32,7 +32,6 @@ impl PyImage {
     fn frombytes(mode: &str, size: (u32, u32), data: &[u8]) -> PyResult<Self> {
         Self::frombytes_impl(mode, size, data)
     }
-
 
     // I/O methods (from io.rs)
     #[pyo3(signature = (path_or_buffer, format=None))]
@@ -106,7 +105,12 @@ impl PyImage {
     }
 
     #[pyo3(signature = (other, position=None, mask=None))]
-    fn paste(&mut self, other: &mut Self, position: Option<(i32, i32)>, mask: Option<Self>) -> PyResult<Self> {
+    fn paste(
+        &mut self,
+        other: &mut Self,
+        position: Option<(i32, i32)>,
+        mask: Option<Self>,
+    ) -> PyResult<Self> {
         self.paste_impl(other, position, mask)
     }
 
@@ -168,7 +172,12 @@ impl PyImage {
         self.median_blur_impl(radius)
     }
 
-    fn bilateral_blur(&mut self, radius: u32, sigma_color: f32, sigma_space: f32) -> PyResult<Self> {
+    fn bilateral_blur(
+        &mut self,
+        radius: u32,
+        sigma_color: f32,
+        sigma_space: f32,
+    ) -> PyResult<Self> {
         self.bilateral_blur_impl(radius, sigma_color, sigma_space)
     }
 
@@ -320,16 +329,35 @@ impl PyImage {
     }
 
     #[pyo3(signature = (key_color, tolerance=0.3, feather=0.1))]
-    fn chroma_key(&mut self, key_color: (u8, u8, u8), tolerance: f32, feather: f32) -> PyResult<Self> {
+    fn chroma_key(
+        &mut self,
+        key_color: (u8, u8, u8),
+        tolerance: f32,
+        feather: f32,
+    ) -> PyResult<Self> {
         self.chroma_key_impl(key_color, tolerance, feather)
     }
 
     // Emoji Effects
-    fn add_emoji(&mut self, emoji_name: &str, x: i32, y: i32, size: u32, opacity: f32) -> PyResult<Self> {
+    fn add_emoji(
+        &mut self,
+        emoji_name: &str,
+        x: i32,
+        y: i32,
+        size: u32,
+        opacity: f32,
+    ) -> PyResult<Self> {
         self.add_emoji_impl(emoji_name, x, y, size, opacity)
     }
 
-    fn add_emoji_text(&mut self, emoji: &str, x: i32, y: i32, size: u32, opacity: f32) -> PyResult<Self> {
+    fn add_emoji_text(
+        &mut self,
+        emoji: &str,
+        x: i32,
+        y: i32,
+        size: u32,
+        opacity: f32,
+    ) -> PyResult<Self> {
         self.add_emoji_text_impl(emoji, x, y, size, opacity)
     }
 
@@ -341,11 +369,28 @@ impl PyImage {
         self.add_emojis_batch_impl(emojis)
     }
 
-    fn add_text(&mut self, text: &str, x: i32, y: i32, font_family: &str, font_size: f64, color: (u8, u8, u8)) -> PyResult<Self> {
+    fn add_text(
+        &mut self,
+        text: &str,
+        x: i32,
+        y: i32,
+        font_family: &str,
+        font_size: f64,
+        color: (u8, u8, u8),
+    ) -> PyResult<Self> {
         self.add_text_impl(text, x, y, font_family, font_size, color)
     }
 
-    fn add_textbox(&mut self, x: i32, y: i32, width: i32, height: i32, fill_color: (u8, u8, u8), border_color: (u8, u8, u8), border_width: f64) -> PyResult<Self> {
+    fn add_textbox(
+        &mut self,
+        x: i32,
+        y: i32,
+        width: i32,
+        height: i32,
+        fill_color: (u8, u8, u8),
+        border_color: (u8, u8, u8),
+        border_width: f64,
+    ) -> PyResult<Self> {
         self.add_textbox_impl(x, y, width, height, fill_color, border_color, border_width)
     }
 
@@ -451,9 +496,21 @@ impl PyImage {
         rotation: Option<f32>,
     ) -> PyResult<Self> {
         Ok(self.draw_rich_text_styled_impl(
-            text, x, y, size, color, font_path, align, background,
-            outline, shadow, opacity, line_spacing, letter_spacing,
-            max_width, rotation
+            text,
+            x,
+            y,
+            size,
+            color,
+            font_path,
+            align,
+            background,
+            outline,
+            shadow,
+            opacity,
+            line_spacing,
+            letter_spacing,
+            max_width,
+            rotation,
         )?)
     }
 
@@ -481,17 +538,22 @@ impl PyImage {
         line_spacing: Option<f32>,
         align: Option<&str>,
     ) -> PyResult<Self> {
-        Ok(self.draw_rich_text_multiline_impl(text, x, y, size, color, font_path, line_spacing, align)?)
+        Ok(self.draw_rich_text_multiline_impl(
+            text,
+            x,
+            y,
+            size,
+            color,
+            font_path,
+            line_spacing,
+            align,
+        )?)
     }
 
     // Text measurement methods (from text_ops.rs)
     #[staticmethod]
     #[pyo3(signature = (text, size=32.0, font_path=None))]
-    fn get_text_size(
-        text: &str,
-        size: f32,
-        font_path: Option<&str>,
-    ) -> PyResult<(u32, u32)> {
+    fn get_text_size(text: &str, size: f32, font_path: Option<&str>) -> PyResult<(u32, u32)> {
         Ok(Self::get_text_size_impl(text, size, font_path)?)
     }
 
@@ -503,7 +565,12 @@ impl PyImage {
         line_spacing: f32,
         font_path: Option<&str>,
     ) -> PyResult<(u32, u32, usize)> {
-        Ok(Self::get_multiline_text_size_impl(text, size, line_spacing, font_path)?)
+        Ok(Self::get_multiline_text_size_impl(
+            text,
+            size,
+            line_spacing,
+            font_path,
+        )?)
     }
 
     #[staticmethod]
@@ -533,7 +600,19 @@ impl PyImage {
         letter_spacing: f32,
         opacity: f32,
     ) -> PyResult<Self> {
-        Ok(self.draw_enhanced_text_impl(text, x, y, size, color, font_family, font_weight, font_style, font_path, letter_spacing, opacity)?)
+        Ok(self.draw_enhanced_text_impl(
+            text,
+            x,
+            y,
+            size,
+            color,
+            font_family,
+            font_weight,
+            font_style,
+            font_path,
+            letter_spacing,
+            opacity,
+        )?)
     }
 
     #[pyo3(signature = (
@@ -580,9 +659,26 @@ impl PyImage {
         rotation: f32,
     ) -> PyResult<Self> {
         Ok(self.draw_advanced_text_impl(
-            text, x, y, size, color, font_family, font_weight, font_style,
-            font_path, letter_spacing, opacity, align, background,
-            outline, shadow, glow, max_width, line_spacing, text_justify, rotation
+            text,
+            x,
+            y,
+            size,
+            color,
+            font_family,
+            font_weight,
+            font_style,
+            font_path,
+            letter_spacing,
+            opacity,
+            align,
+            background,
+            outline,
+            shadow,
+            glow,
+            max_width,
+            line_spacing,
+            text_justify,
+            rotation,
         )?)
     }
 
@@ -606,9 +702,21 @@ impl PyImage {
         opacity: f32,
     ) -> PyResult<Self> {
         Ok(self.draw_multiline_text_impl(
-            text, x, y, size, color, font_family, font_weight, font_style,
-            font_path, line_spacing, letter_spacing, align, text_justify,
-            max_width, opacity
+            text,
+            x,
+            y,
+            size,
+            color,
+            font_family,
+            font_weight,
+            font_style,
+            font_path,
+            line_spacing,
+            letter_spacing,
+            align,
+            text_justify,
+            max_width,
+            opacity,
         )?)
     }
 
@@ -626,7 +734,18 @@ impl PyImage {
         opacity: f32,
         letter_spacing: f32,
     ) -> PyResult<Self> {
-        Ok(self.draw_centered_text_impl(text, y, size, color, font_family, font_weight, font_style, font_path, opacity, letter_spacing)?)
+        Ok(self.draw_centered_text_impl(
+            text,
+            y,
+            size,
+            color,
+            font_family,
+            font_weight,
+            font_style,
+            font_path,
+            opacity,
+            letter_spacing,
+        )?)
     }
 
     fn text_with_fonts(
@@ -651,7 +770,15 @@ impl PyImage {
         font_path: Option<&str>,
         letter_spacing: f32,
     ) -> PyResult<(u32, u32)> {
-        Ok(Self::get_enhanced_text_size_impl(text, size, font_family, font_weight, font_style, font_path, letter_spacing)?)
+        Ok(Self::get_enhanced_text_size_impl(
+            text,
+            size,
+            font_family,
+            font_weight,
+            font_style,
+            font_path,
+            letter_spacing,
+        )?)
     }
 
     #[staticmethod]
@@ -667,7 +794,17 @@ impl PyImage {
         letter_spacing: f32,
         max_width: Option<u32>,
     ) -> PyResult<(u32, u32, usize)> {
-        Ok(Self::get_enhanced_multiline_text_size_impl(text, size, line_spacing, font_family, font_weight, font_style, font_path, letter_spacing, max_width)?)
+        Ok(Self::get_enhanced_multiline_text_size_impl(
+            text,
+            size,
+            line_spacing,
+            font_family,
+            font_weight,
+            font_style,
+            font_path,
+            letter_spacing,
+            max_width,
+        )?)
     }
 
     #[staticmethod]
@@ -683,12 +820,22 @@ impl PyImage {
         font_path: Option<&str>,
         letter_spacing: f32,
     ) -> PyResult<PyObject> {
-        Ok(Self::get_enhanced_text_box_impl(text, x, y, size, font_family, font_weight, font_style, font_path, letter_spacing)?)
+        Ok(Self::get_enhanced_text_box_impl(
+            text,
+            x,
+            y,
+            size,
+            font_family,
+            font_weight,
+            font_style,
+            font_path,
+            letter_spacing,
+        )?)
     }
 
     #[staticmethod]
     fn list_available_fonts() -> PyResult<Vec<String>> {
-        Ok(Self::list_available_fonts_impl()?)
+        Self::list_available_fonts_impl()
     }
 
     // Pixel operation methods (from pixel_ops.rs)
@@ -712,7 +859,12 @@ impl PyImage {
         self.average_color_impl()
     }
 
-    fn replace_color(&mut self, target_color: (u8, u8, u8, u8), replacement_color: (u8, u8, u8, u8), tolerance: u8) -> PyResult<Self> {
+    fn replace_color(
+        &mut self,
+        target_color: (u8, u8, u8, u8),
+        replacement_color: (u8, u8, u8, u8),
+        tolerance: u8,
+    ) -> PyResult<Self> {
         self.replace_color_impl(target_color, replacement_color, tolerance)
     }
 
@@ -725,23 +877,67 @@ impl PyImage {
     }
 
     // Drawing methods (from drawing.rs)
-    fn draw_rectangle(&mut self, x: i32, y: i32, width: u32, height: u32, color: (u8, u8, u8, u8)) -> PyResult<Self> {
+    fn draw_rectangle(
+        &mut self,
+        x: i32,
+        y: i32,
+        width: u32,
+        height: u32,
+        color: (u8, u8, u8, u8),
+    ) -> PyResult<Self> {
         self.draw_rectangle_impl(x, y, width, height, color)
     }
 
-    fn draw_circle(&mut self, center_x: i32, center_y: i32, radius: u32, color: (u8, u8, u8, u8)) -> PyResult<Self> {
+    fn draw_circle(
+        &mut self,
+        center_x: i32,
+        center_y: i32,
+        radius: u32,
+        color: (u8, u8, u8, u8),
+    ) -> PyResult<Self> {
         self.draw_circle_impl(center_x, center_y, radius, color)
     }
 
-    fn draw_line(&mut self, x0: i32, y0: i32, x1: i32, y1: i32, color: (u8, u8, u8, u8)) -> PyResult<Self> {
+    fn draw_line(
+        &mut self,
+        x0: i32,
+        y0: i32,
+        x1: i32,
+        y1: i32,
+        color: (u8, u8, u8, u8),
+    ) -> PyResult<Self> {
         self.draw_line_impl(x0, y0, x1, y1, color)
     }
 
-    fn draw_star(&mut self, center_x: i32, center_y: i32, outer_radius: u32, inner_radius: u32, points: u32, color: (u8, u8, u8, u8)) -> PyResult<Self> {
-        self.draw_star_impl(center_x, center_y, outer_radius, inner_radius, points, color)
+    fn draw_star(
+        &mut self,
+        center_x: i32,
+        center_y: i32,
+        outer_radius: u32,
+        inner_radius: u32,
+        points: u32,
+        color: (u8, u8, u8, u8),
+    ) -> PyResult<Self> {
+        self.draw_star_impl(
+            center_x,
+            center_y,
+            outer_radius,
+            inner_radius,
+            points,
+            color,
+        )
     }
 
-    fn draw_triangle(&mut self, x1: i32, y1: i32, x2: i32, y2: i32, x3: i32, y3: i32, color: (u8, u8, u8, u8)) -> PyResult<Self> {
+    fn draw_triangle(
+        &mut self,
+        x1: i32,
+        y1: i32,
+        x2: i32,
+        y2: i32,
+        x3: i32,
+        y3: i32,
+        color: (u8, u8, u8, u8),
+    ) -> PyResult<Self> {
         self.draw_triangle_impl(x1, y1, x2, y2, x3, y3, color)
     }
 
@@ -749,30 +945,68 @@ impl PyImage {
         self.draw_polygon_impl(points, color)
     }
 
-    fn draw_ellipse(&mut self, center_x: i32, center_y: i32, radius_x: u32, radius_y: u32, color: (u8, u8, u8, u8)) -> PyResult<Self> {
+    fn draw_ellipse(
+        &mut self,
+        center_x: i32,
+        center_y: i32,
+        radius_x: u32,
+        radius_y: u32,
+        color: (u8, u8, u8, u8),
+    ) -> PyResult<Self> {
         self.draw_ellipse_impl(center_x, center_y, radius_x, radius_y, color)
     }
 
     #[pyo3(signature = (center_x, center_y, radius, sides, color, rotation=0.0))]
-    fn draw_regular_polygon(&mut self, center_x: i32, center_y: i32, radius: u32, sides: u32, color: (u8, u8, u8, u8), rotation: f32) -> PyResult<Self> {
+    fn draw_regular_polygon(
+        &mut self,
+        center_x: i32,
+        center_y: i32,
+        radius: u32,
+        sides: u32,
+        color: (u8, u8, u8, u8),
+        rotation: f32,
+    ) -> PyResult<Self> {
         self.draw_regular_polygon_impl(center_x, center_y, radius, sides, rotation, color)
     }
 
-    fn draw_text(&mut self, text: &str, x: i32, y: i32, color: (u8, u8, u8, u8), scale: u32) -> PyResult<Self> {
+    fn draw_text(
+        &mut self,
+        text: &str,
+        x: i32,
+        y: i32,
+        color: (u8, u8, u8, u8),
+        scale: u32,
+    ) -> PyResult<Self> {
         self.draw_text_impl(text, x, y, color, scale)
     }
 
-
     // Effect methods (from effects.rs)
-    fn drop_shadow(&mut self, offset_x: i32, offset_y: i32, blur_radius: f32, shadow_color: (u8, u8, u8, u8)) -> PyResult<Self> {
+    fn drop_shadow(
+        &mut self,
+        offset_x: i32,
+        offset_y: i32,
+        blur_radius: f32,
+        shadow_color: (u8, u8, u8, u8),
+    ) -> PyResult<Self> {
         self.drop_shadow_impl(offset_x, offset_y, blur_radius, shadow_color)
     }
 
-    fn inner_shadow(&mut self, offset_x: i32, offset_y: i32, blur_radius: f32, shadow_color: (u8, u8, u8, u8)) -> PyResult<Self> {
+    fn inner_shadow(
+        &mut self,
+        offset_x: i32,
+        offset_y: i32,
+        blur_radius: f32,
+        shadow_color: (u8, u8, u8, u8),
+    ) -> PyResult<Self> {
         self.inner_shadow_impl(offset_x, offset_y, blur_radius, shadow_color)
     }
 
-    fn glow(&mut self, blur_radius: f32, glow_color: (u8, u8, u8, u8), intensity: f32) -> PyResult<Self> {
+    fn glow(
+        &mut self,
+        blur_radius: f32,
+        glow_color: (u8, u8, u8, u8),
+        intensity: f32,
+    ) -> PyResult<Self> {
         self.glow_impl(blur_radius, glow_color, intensity)
     }
 
@@ -803,8 +1037,14 @@ impl PyImage {
         Ok(self.apply_mask_impl(mask.get_image()?.clone(), invert)?)
     }
 
-    fn create_gradient_mask(&mut self, direction: String, start_opacity: f32, end_opacity: f32) -> PyResult<Self> {
-        let gradient_mask = self.create_gradient_mask_impl(&direction, start_opacity, end_opacity)?;
+    fn create_gradient_mask(
+        &mut self,
+        direction: String,
+        start_opacity: f32,
+        end_opacity: f32,
+    ) -> PyResult<Self> {
+        let gradient_mask =
+            self.create_gradient_mask_impl(&direction, start_opacity, end_opacity)?;
         let py_image = crate::image::core::PyImage {
             lazy_image: crate::image::core::LazyImage::Loaded(gradient_mask),
             format: None,
@@ -812,7 +1052,12 @@ impl PyImage {
         Ok(py_image)
     }
 
-    fn create_color_mask(&mut self, target_color: (u8, u8, u8), tolerance: u8, feather: u32) -> PyResult<Self> {
+    fn create_color_mask(
+        &mut self,
+        target_color: (u8, u8, u8),
+        tolerance: u8,
+        feather: u32,
+    ) -> PyResult<Self> {
         let color_mask = self.create_color_mask_impl(target_color, tolerance, feather)?;
         let py_image = crate::image::core::PyImage {
             lazy_image: crate::image::core::LazyImage::Loaded(color_mask),
@@ -831,7 +1076,10 @@ impl PyImage {
     }
 
     fn combine_masks(&mut self, masks: Vec<Self>, operation: String) -> PyResult<Self> {
-        let rust_masks: Vec<_> = masks.into_iter().map(|mut m| m.get_image().unwrap().clone()).collect();
+        let rust_masks: Vec<_> = masks
+            .into_iter()
+            .map(|mut m| m.get_image().unwrap().clone())
+            .collect();
         let combined_mask = self.combine_masks_impl(rust_masks, &operation)?;
         let py_image = crate::image::core::PyImage {
             lazy_image: crate::image::core::LazyImage::Loaded(combined_mask),
@@ -852,7 +1100,12 @@ impl PyImage {
         Ok(self.color_shift_impl(shift_amount)?)
     }
 
-    fn selective_desaturate(&mut self, target_color: (u8, u8, u8), tolerance: u8, desaturate_factor: f32) -> PyResult<Self> {
+    fn selective_desaturate(
+        &mut self,
+        target_color: (u8, u8, u8),
+        tolerance: u8,
+        desaturate_factor: f32,
+    ) -> PyResult<Self> {
         Ok(self.selective_desaturate_impl(target_color, tolerance, desaturate_factor)?)
     }
 
@@ -860,11 +1113,22 @@ impl PyImage {
         Ok(self.color_match_impl(reference_image.get_image()?.clone(), strength)?)
     }
 
-    fn apply_gradient_overlay(&mut self, color: (u8, u8, u8, u8), direction: String, opacity: f32) -> PyResult<Self> {
+    fn apply_gradient_overlay(
+        &mut self,
+        color: (u8, u8, u8, u8),
+        direction: String,
+        opacity: f32,
+    ) -> PyResult<Self> {
         Ok(self.apply_gradient_overlay_impl(color, &direction, opacity)?)
     }
 
-    fn create_stripe_pattern(&mut self, color: (u8, u8, u8, u8), width: u32, spacing: u32, angle: f32) -> PyResult<Self> {
+    fn create_stripe_pattern(
+        &mut self,
+        color: (u8, u8, u8, u8),
+        width: u32,
+        spacing: u32,
+        angle: f32,
+    ) -> PyResult<Self> {
         let stripe_pattern = self.create_stripe_pattern_impl(color, width, spacing, angle)?;
         let py_image = crate::image::core::PyImage {
             lazy_image: crate::image::core::LazyImage::Loaded(stripe_pattern),
@@ -873,7 +1137,12 @@ impl PyImage {
         Ok(py_image)
     }
 
-    fn create_checker_pattern(&mut self, color1: (u8, u8, u8, u8), color2: (u8, u8, u8, u8), size: u32) -> PyResult<Self> {
+    fn create_checker_pattern(
+        &mut self,
+        color1: (u8, u8, u8, u8),
+        color2: (u8, u8, u8, u8),
+        size: u32,
+    ) -> PyResult<Self> {
         let checker_pattern = self.create_checker_pattern_impl(color1, color2, size)?;
         let py_image = crate::image::core::PyImage {
             lazy_image: crate::image::core::LazyImage::Loaded(checker_pattern),
@@ -899,7 +1168,13 @@ impl PyImage {
     }
 
     #[pyo3(signature = (overlay, mode, opacity, position=None))]
-    fn overlay_with(&mut self, overlay: &mut Self, mode: String, opacity: f32, position: Option<(i32, i32)>) -> PyResult<Self> {
+    fn overlay_with(
+        &mut self,
+        overlay: &mut Self,
+        mode: String,
+        opacity: f32,
+        position: Option<(i32, i32)>,
+    ) -> PyResult<Self> {
         Ok(self.overlay_with_impl(overlay.get_image()?.clone(), &mode, opacity, position)?)
     }
 
@@ -911,8 +1186,11 @@ impl PyImage {
         Ok(self.analyze_color_distribution_impl()?)
     }
 
-
-    fn find_color_regions(&mut self, target_color: (u8, u8, u8), tolerance: u8) -> PyResult<Vec<(u32, u32, u32, u32)>> {
+    fn find_color_regions(
+        &mut self,
+        target_color: (u8, u8, u8),
+        tolerance: u8,
+    ) -> PyResult<Vec<(u32, u32, u32, u32)>> {
         Ok(self.find_color_regions_impl(target_color, tolerance)?)
     }
 }

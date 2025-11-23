@@ -1,5 +1,4 @@
 /// Comprehensive library of convolution kernels for various image processing effects
-
 use crate::errors::ImgrsError;
 
 /// Predefined kernel types
@@ -17,7 +16,7 @@ pub enum KernelType {
     LaplacianOfGaussian,
     RobertsCross1,
     RobertsCross2,
-    
+
     // Sharpening
     Sharpen,
     SharpenIntense,
@@ -25,13 +24,13 @@ pub enum KernelType {
     UnsharpMask,
     EdgeEnhance,
     EdgeEnhanceMore,
-    
+
     // Blurring
     BoxBlur3,
     BoxBlur5,
     Gaussian3,
     Gaussian5,
-    
+
     // Emboss and Relief
     Emboss,
     EmbossNorth,
@@ -39,7 +38,7 @@ pub enum KernelType {
     EmbossEast,
     EmbossWest,
     Relief,
-    
+
     // Special Effects
     Ridge,
     Outline,
@@ -68,7 +67,7 @@ impl KernelType {
                 vec![0.0, 0.0, 0.0],
                 vec![1.0, 2.0, 1.0],
             ],
-            
+
             // Prewitt Operators
             KernelType::PrewittX => vec![
                 vec![-1.0, 0.0, 1.0],
@@ -80,7 +79,7 @@ impl KernelType {
                 vec![0.0, 0.0, 0.0],
                 vec![1.0, 1.0, 1.0],
             ],
-            
+
             // Scharr Operators
             KernelType::ScharrX => vec![
                 vec![-3.0, 0.0, 3.0],
@@ -92,7 +91,7 @@ impl KernelType {
                 vec![0.0, 0.0, 0.0],
                 vec![3.0, 10.0, 3.0],
             ],
-            
+
             // Laplacian
             KernelType::LaplacianSimple => vec![
                 vec![0.0, -1.0, 0.0],
@@ -106,17 +105,11 @@ impl KernelType {
                 vec![0.0, -1.0, -2.0, -1.0, 0.0],
                 vec![0.0, 0.0, -1.0, 0.0, 0.0],
             ],
-            
+
             // Roberts Cross
-            KernelType::RobertsCross1 => vec![
-                vec![1.0, 0.0],
-                vec![0.0, -1.0],
-            ],
-            KernelType::RobertsCross2 => vec![
-                vec![0.0, 1.0],
-                vec![-1.0, 0.0],
-            ],
-            
+            KernelType::RobertsCross1 => vec![vec![1.0, 0.0], vec![0.0, -1.0]],
+            KernelType::RobertsCross2 => vec![vec![0.0, 1.0], vec![-1.0, 0.0]],
+
             // Sharpening Kernels
             KernelType::Sharpen => vec![
                 vec![0.0, -1.0, 0.0],
@@ -134,11 +127,41 @@ impl KernelType {
                 vec![0.0, -0.5, 0.0],
             ],
             KernelType::UnsharpMask => vec![
-                vec![-1.0/256.0, -4.0/256.0, -6.0/256.0, -4.0/256.0, -1.0/256.0],
-                vec![-4.0/256.0, -16.0/256.0, -24.0/256.0, -16.0/256.0, -4.0/256.0],
-                vec![-6.0/256.0, -24.0/256.0, 476.0/256.0, -24.0/256.0, -6.0/256.0],
-                vec![-4.0/256.0, -16.0/256.0, -24.0/256.0, -16.0/256.0, -4.0/256.0],
-                vec![-1.0/256.0, -4.0/256.0, -6.0/256.0, -4.0/256.0, -1.0/256.0],
+                vec![
+                    -1.0 / 256.0,
+                    -4.0 / 256.0,
+                    -6.0 / 256.0,
+                    -4.0 / 256.0,
+                    -1.0 / 256.0,
+                ],
+                vec![
+                    -4.0 / 256.0,
+                    -16.0 / 256.0,
+                    -24.0 / 256.0,
+                    -16.0 / 256.0,
+                    -4.0 / 256.0,
+                ],
+                vec![
+                    -6.0 / 256.0,
+                    -24.0 / 256.0,
+                    476.0 / 256.0,
+                    -24.0 / 256.0,
+                    -6.0 / 256.0,
+                ],
+                vec![
+                    -4.0 / 256.0,
+                    -16.0 / 256.0,
+                    -24.0 / 256.0,
+                    -16.0 / 256.0,
+                    -4.0 / 256.0,
+                ],
+                vec![
+                    -1.0 / 256.0,
+                    -4.0 / 256.0,
+                    -6.0 / 256.0,
+                    -4.0 / 256.0,
+                    -1.0 / 256.0,
+                ],
             ],
             KernelType::EdgeEnhance => vec![
                 vec![0.0, -1.0, 0.0],
@@ -150,7 +173,7 @@ impl KernelType {
                 vec![-1.0, 9.0, -1.0],
                 vec![-1.0, -1.0, -1.0],
             ],
-            
+
             // Box Blur
             KernelType::BoxBlur3 => {
                 let val = 1.0 / 9.0;
@@ -159,7 +182,7 @@ impl KernelType {
                     vec![val, val, val],
                     vec![val, val, val],
                 ]
-            },
+            }
             KernelType::BoxBlur5 => {
                 let val = 1.0 / 25.0;
                 vec![
@@ -169,22 +192,52 @@ impl KernelType {
                     vec![val, val, val, val, val],
                     vec![val, val, val, val, val],
                 ]
-            },
-            
+            }
+
             // Gaussian Blur
             KernelType::Gaussian3 => vec![
-                vec![1.0/16.0, 2.0/16.0, 1.0/16.0],
-                vec![2.0/16.0, 4.0/16.0, 2.0/16.0],
-                vec![1.0/16.0, 2.0/16.0, 1.0/16.0],
+                vec![1.0 / 16.0, 2.0 / 16.0, 1.0 / 16.0],
+                vec![2.0 / 16.0, 4.0 / 16.0, 2.0 / 16.0],
+                vec![1.0 / 16.0, 2.0 / 16.0, 1.0 / 16.0],
             ],
             KernelType::Gaussian5 => vec![
-                vec![1.0/273.0, 4.0/273.0, 7.0/273.0, 4.0/273.0, 1.0/273.0],
-                vec![4.0/273.0, 16.0/273.0, 26.0/273.0, 16.0/273.0, 4.0/273.0],
-                vec![7.0/273.0, 26.0/273.0, 41.0/273.0, 26.0/273.0, 7.0/273.0],
-                vec![4.0/273.0, 16.0/273.0, 26.0/273.0, 16.0/273.0, 4.0/273.0],
-                vec![1.0/273.0, 4.0/273.0, 7.0/273.0, 4.0/273.0, 1.0/273.0],
+                vec![
+                    1.0 / 273.0,
+                    4.0 / 273.0,
+                    7.0 / 273.0,
+                    4.0 / 273.0,
+                    1.0 / 273.0,
+                ],
+                vec![
+                    4.0 / 273.0,
+                    16.0 / 273.0,
+                    26.0 / 273.0,
+                    16.0 / 273.0,
+                    4.0 / 273.0,
+                ],
+                vec![
+                    7.0 / 273.0,
+                    26.0 / 273.0,
+                    41.0 / 273.0,
+                    26.0 / 273.0,
+                    7.0 / 273.0,
+                ],
+                vec![
+                    4.0 / 273.0,
+                    16.0 / 273.0,
+                    26.0 / 273.0,
+                    16.0 / 273.0,
+                    4.0 / 273.0,
+                ],
+                vec![
+                    1.0 / 273.0,
+                    4.0 / 273.0,
+                    7.0 / 273.0,
+                    4.0 / 273.0,
+                    1.0 / 273.0,
+                ],
             ],
-            
+
             // Emboss Kernels
             KernelType::Emboss => vec![
                 vec![-2.0, -1.0, 0.0],
@@ -216,7 +269,7 @@ impl KernelType {
                 vec![-1.0, 1.0, 1.0],
                 vec![0.0, 1.0, 2.0],
             ],
-            
+
             // Special Effects
             KernelType::Ridge => vec![
                 vec![-1.0, -1.0, -1.0],
@@ -234,31 +287,31 @@ impl KernelType {
                 vec![0.0, -1.0, 0.0],
             ],
             KernelType::Smooth => vec![
-                vec![1.0/13.0, 1.0/13.0, 1.0/13.0],
-                vec![1.0/13.0, 5.0/13.0, 1.0/13.0],
-                vec![1.0/13.0, 1.0/13.0, 1.0/13.0],
+                vec![1.0 / 13.0, 1.0 / 13.0, 1.0 / 13.0],
+                vec![1.0 / 13.0, 5.0 / 13.0, 1.0 / 13.0],
+                vec![1.0 / 13.0, 1.0 / 13.0, 1.0 / 13.0],
             ],
             KernelType::SmoothMore => vec![
-                vec![1.0/25.0, 1.0/25.0, 1.0/25.0, 1.0/25.0, 1.0/25.0],
-                vec![1.0/25.0, 2.0/25.0, 2.0/25.0, 2.0/25.0, 1.0/25.0],
-                vec![1.0/25.0, 2.0/25.0, 4.0/25.0, 2.0/25.0, 1.0/25.0],
-                vec![1.0/25.0, 2.0/25.0, 2.0/25.0, 2.0/25.0, 1.0/25.0],
-                vec![1.0/25.0, 1.0/25.0, 1.0/25.0, 1.0/25.0, 1.0/25.0],
+                vec![1.0 / 25.0, 1.0 / 25.0, 1.0 / 25.0, 1.0 / 25.0, 1.0 / 25.0],
+                vec![1.0 / 25.0, 2.0 / 25.0, 2.0 / 25.0, 2.0 / 25.0, 1.0 / 25.0],
+                vec![1.0 / 25.0, 2.0 / 25.0, 4.0 / 25.0, 2.0 / 25.0, 1.0 / 25.0],
+                vec![1.0 / 25.0, 2.0 / 25.0, 2.0 / 25.0, 2.0 / 25.0, 1.0 / 25.0],
+                vec![1.0 / 25.0, 1.0 / 25.0, 1.0 / 25.0, 1.0 / 25.0, 1.0 / 25.0],
             ],
             KernelType::Denoise => vec![
-                vec![0.0, 1.0/8.0, 0.0],
-                vec![1.0/8.0, 1.0/2.0, 1.0/8.0],
-                vec![0.0, 1.0/8.0, 0.0],
+                vec![0.0, 1.0 / 8.0, 0.0],
+                vec![1.0 / 8.0, 1.0 / 2.0, 1.0 / 8.0],
+                vec![0.0, 1.0 / 8.0, 0.0],
             ],
             KernelType::HighPass => vec![
-                vec![-1.0/9.0, -1.0/9.0, -1.0/9.0],
-                vec![-1.0/9.0, 8.0/9.0, -1.0/9.0],
-                vec![-1.0/9.0, -1.0/9.0, -1.0/9.0],
+                vec![-1.0 / 9.0, -1.0 / 9.0, -1.0 / 9.0],
+                vec![-1.0 / 9.0, 8.0 / 9.0, -1.0 / 9.0],
+                vec![-1.0 / 9.0, -1.0 / 9.0, -1.0 / 9.0],
             ],
             KernelType::LowPass => vec![
-                vec![1.0/16.0, 2.0/16.0, 1.0/16.0],
-                vec![2.0/16.0, 4.0/16.0, 2.0/16.0],
-                vec![1.0/16.0, 2.0/16.0, 1.0/16.0],
+                vec![1.0 / 16.0, 2.0 / 16.0, 1.0 / 16.0],
+                vec![2.0 / 16.0, 4.0 / 16.0, 2.0 / 16.0],
+                vec![1.0 / 16.0, 2.0 / 16.0, 1.0 / 16.0],
             ],
             KernelType::BandPass => vec![
                 vec![0.0, -1.0, 0.0],
@@ -267,7 +320,7 @@ impl KernelType {
             ],
         }
     }
-    
+
     /// Get the name of the kernel
     #[allow(dead_code)]
     pub fn name(&self) -> &str {
@@ -309,7 +362,7 @@ impl KernelType {
             KernelType::BandPass => "Band Pass",
         }
     }
-    
+
     /// Get all available kernel types
     #[allow(dead_code)]
     pub fn all() -> Vec<KernelType> {
@@ -354,9 +407,11 @@ impl KernelType {
 }
 
 /// Apply a predefined kernel to an image
-    #[allow(dead_code)]
-pub fn apply_predefined_kernel(image: &image::DynamicImage, kernel_type: KernelType) -> Result<image::DynamicImage, ImgrsError> {
+#[allow(dead_code)]
+pub fn apply_predefined_kernel(
+    image: &image::DynamicImage,
+    kernel_type: KernelType,
+) -> Result<image::DynamicImage, ImgrsError> {
     let kernel = kernel_type.get_kernel();
     super::kernel::apply_convolution(image, &kernel)
 }
-

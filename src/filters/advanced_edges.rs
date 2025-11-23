@@ -1,6 +1,6 @@
-use image::{DynamicImage, ImageBuffer, Luma};
-use crate::errors::ImgrsError;
 use super::kernel::apply_convolution;
+use crate::errors::ImgrsError;
+use image::{DynamicImage, ImageBuffer, Luma};
 
 /// Apply Prewitt edge detection
 pub fn prewitt_edge_detect(image: &DynamicImage) -> Result<DynamicImage, ImgrsError> {
@@ -103,10 +103,10 @@ pub fn laplacian_of_gaussian(image: &DynamicImage, sigma: f32) -> Result<Dynamic
             let dx = x as f32 - center as f32;
             let dy = y as f32 - center as f32;
             let r_sq = dx * dx + dy * dy;
-            
-            kernel[y][x] = -1.0 / (std::f32::consts::PI * sigma_sq.powi(2)) *
-                (1.0 - r_sq / (2.0 * sigma_sq)) *
-                (-r_sq / (2.0 * sigma_sq)).exp();
+
+            kernel[y][x] = -1.0 / (std::f32::consts::PI * sigma_sq.powi(2))
+                * (1.0 - r_sq / (2.0 * sigma_sq))
+                * (-r_sq / (2.0 * sigma_sq)).exp();
         }
     }
 
@@ -114,11 +114,15 @@ pub fn laplacian_of_gaussian(image: &DynamicImage, sigma: f32) -> Result<Dynamic
 }
 
 /// Apply simplified Canny edge detection
-pub fn canny_edge_detect(image: &DynamicImage, low_threshold: f32, high_threshold: f32) -> Result<DynamicImage, ImgrsError> {
+pub fn canny_edge_detect(
+    image: &DynamicImage,
+    low_threshold: f32,
+    high_threshold: f32,
+) -> Result<DynamicImage, ImgrsError> {
     // Step 1: Apply Gaussian blur
     use super::blur::blur;
     let blurred = blur(image, 1.0)?;
-    
+
     // Step 2: Calculate gradients using Sobel
     let gray_img = blurred.to_luma8();
     let gray_dynamic = DynamicImage::ImageLuma8(gray_img.clone());
@@ -160,7 +164,7 @@ pub fn canny_edge_detect(image: &DynamicImage, low_threshold: f32, high_threshol
             for x in 1..width - 1 {
                 let angle = direction[y as usize][x as usize];
                 let mag = magnitude.get_pixel(x, y)[0] as f32;
-                
+
                 // Quantize angle to 4 directions
                 let angle_deg = angle.to_degrees();
                 let (dx, dy) = if (-22.5..=22.5).contains(&angle_deg) || angle_deg.abs() >= 157.5 {
@@ -173,8 +177,10 @@ pub fn canny_edge_detect(image: &DynamicImage, low_threshold: f32, high_threshol
                     (1, -1) // Diagonal \
                 };
 
-                let mag1 = magnitude.get_pixel((x as i32 + dx) as u32, (y as i32 + dy) as u32)[0] as f32;
-                let mag2 = magnitude.get_pixel((x as i32 - dx) as u32, (y as i32 - dy) as u32)[0] as f32;
+                let mag1 =
+                    magnitude.get_pixel((x as i32 + dx) as u32, (y as i32 + dy) as u32)[0] as f32;
+                let mag2 =
+                    magnitude.get_pixel((x as i32 - dx) as u32, (y as i32 - dy) as u32)[0] as f32;
 
                 if mag >= mag1 && mag >= mag2 {
                     suppressed.put_pixel(x, y, Luma([mag as u8]));
@@ -206,7 +212,9 @@ pub fn canny_edge_detect(image: &DynamicImage, low_threshold: f32, high_threshol
                     let mut has_strong_neighbor = false;
                     for dy in -1..=1 {
                         for dx in -1..=1 {
-                            if result.get_pixel((x as i32 + dx) as u32, (y as i32 + dy) as u32)[0] == 255 {
+                            if result.get_pixel((x as i32 + dx) as u32, (y as i32 + dy) as u32)[0]
+                                == 255
+                            {
                                 has_strong_neighbor = true;
                                 break;
                             }
@@ -223,12 +231,17 @@ pub fn canny_edge_detect(image: &DynamicImage, low_threshold: f32, high_threshol
 
         Ok(DynamicImage::ImageLuma8(result))
     } else {
-        Err(ImgrsError::InvalidOperation("Canny edge detection failed".to_string()))
+        Err(ImgrsError::InvalidOperation(
+            "Canny edge detection failed".to_string(),
+        ))
     }
 }
 
 /// Helper function to combine X and Y gradients
-fn combine_gradients(edge_x: &DynamicImage, edge_y: &DynamicImage) -> Result<DynamicImage, ImgrsError> {
+fn combine_gradients(
+    edge_x: &DynamicImage,
+    edge_y: &DynamicImage,
+) -> Result<DynamicImage, ImgrsError> {
     if let (DynamicImage::ImageLuma8(x_img), DynamicImage::ImageLuma8(y_img)) = (edge_x, edge_y) {
         let (width, height) = x_img.dimensions();
         let mut result = ImageBuffer::new(width, height);
@@ -245,7 +258,8 @@ fn combine_gradients(edge_x: &DynamicImage, edge_y: &DynamicImage) -> Result<Dyn
 
         Ok(DynamicImage::ImageLuma8(result))
     } else {
-        Err(ImgrsError::InvalidOperation("Edge detection failed".to_string()))
+        Err(ImgrsError::InvalidOperation(
+            "Edge detection failed".to_string(),
+        ))
     }
 }
-

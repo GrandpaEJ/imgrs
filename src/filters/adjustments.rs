@@ -1,14 +1,17 @@
-use image::{DynamicImage, ImageBuffer, Rgb, Rgba, Luma};
-use crate::errors::ImgrsError;
 use super::simd_ops::{fast_brightness, fast_contrast};
+use crate::errors::ImgrsError;
+use image::{DynamicImage, ImageBuffer, Luma, Rgb, Rgba};
 
 /// Apply brightness adjustment to an image
 pub fn brightness(image: &DynamicImage, adjustment: i16) -> Result<DynamicImage, ImgrsError> {
     // Use optimized version for RGB/RGBA
-    if matches!(image, DynamicImage::ImageRgb8(_) | DynamicImage::ImageRgba8(_)) {
+    if matches!(
+        image,
+        DynamicImage::ImageRgb8(_) | DynamicImage::ImageRgba8(_)
+    ) {
         return fast_brightness(image, adjustment);
     }
-    
+
     // Original implementation for other formats
     match image {
         DynamicImage::ImageRgb8(rgb_img) => {
@@ -72,7 +75,7 @@ pub fn contrast(image: &DynamicImage, factor: f32) -> Result<DynamicImage, Imgrs
     if matches!(image, DynamicImage::ImageRgb8(_)) {
         return fast_contrast(image, factor);
     }
-    
+
     let factor = factor.max(0.0); // Ensure non-negative factor
 
     match image {
@@ -83,9 +86,15 @@ pub fn contrast(image: &DynamicImage, factor: f32) -> Result<DynamicImage, Imgrs
             for y in 0..height {
                 for x in 0..width {
                     let pixel = rgb_img.get_pixel(x, y);
-                    let r = ((pixel[0] as f32 - 128.0) * factor + 128.0).max(0.0).min(255.0) as u8;
-                    let g = ((pixel[1] as f32 - 128.0) * factor + 128.0).max(0.0).min(255.0) as u8;
-                    let b = ((pixel[2] as f32 - 128.0) * factor + 128.0).max(0.0).min(255.0) as u8;
+                    let r = ((pixel[0] as f32 - 128.0) * factor + 128.0)
+                        .max(0.0)
+                        .min(255.0) as u8;
+                    let g = ((pixel[1] as f32 - 128.0) * factor + 128.0)
+                        .max(0.0)
+                        .min(255.0) as u8;
+                    let b = ((pixel[2] as f32 - 128.0) * factor + 128.0)
+                        .max(0.0)
+                        .min(255.0) as u8;
                     result.put_pixel(x, y, Rgb([r, g, b]));
                 }
             }
@@ -99,9 +108,15 @@ pub fn contrast(image: &DynamicImage, factor: f32) -> Result<DynamicImage, Imgrs
             for y in 0..height {
                 for x in 0..width {
                     let pixel = rgba_img.get_pixel(x, y);
-                    let r = ((pixel[0] as f32 - 128.0) * factor + 128.0).max(0.0).min(255.0) as u8;
-                    let g = ((pixel[1] as f32 - 128.0) * factor + 128.0).max(0.0).min(255.0) as u8;
-                    let b = ((pixel[2] as f32 - 128.0) * factor + 128.0).max(0.0).min(255.0) as u8;
+                    let r = ((pixel[0] as f32 - 128.0) * factor + 128.0)
+                        .max(0.0)
+                        .min(255.0) as u8;
+                    let g = ((pixel[1] as f32 - 128.0) * factor + 128.0)
+                        .max(0.0)
+                        .min(255.0) as u8;
+                    let b = ((pixel[2] as f32 - 128.0) * factor + 128.0)
+                        .max(0.0)
+                        .min(255.0) as u8;
                     let a = pixel[3]; // Keep alpha unchanged
                     result.put_pixel(x, y, Rgba([r, g, b, a]));
                 }
@@ -116,7 +131,9 @@ pub fn contrast(image: &DynamicImage, factor: f32) -> Result<DynamicImage, Imgrs
             for y in 0..height {
                 for x in 0..width {
                     let pixel = gray_img.get_pixel(x, y);
-                    let value = ((pixel[0] as f32 - 128.0) * factor + 128.0).max(0.0).min(255.0) as u8;
+                    let value = ((pixel[0] as f32 - 128.0) * factor + 128.0)
+                        .max(0.0)
+                        .min(255.0) as u8;
                     result.put_pixel(x, y, Luma([value]));
                 }
             }
@@ -130,4 +147,3 @@ pub fn contrast(image: &DynamicImage, factor: f32) -> Result<DynamicImage, Imgrs
         }
     }
 }
-

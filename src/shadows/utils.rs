@@ -1,20 +1,24 @@
-use image::{DynamicImage, ImageBuffer, Rgba, GenericImageView};
 use crate::errors::ImgrsError;
+use image::{DynamicImage, GenericImageView, ImageBuffer, Rgba};
 
 /// Create a shadow mask from an image
-pub fn create_shadow_mask(image: &DynamicImage, color: (u8, u8, u8, u8)) -> Result<DynamicImage, ImgrsError> {
+pub fn create_shadow_mask(
+    image: &DynamicImage,
+    color: (u8, u8, u8, u8),
+) -> Result<DynamicImage, ImgrsError> {
     let (width, height) = image.dimensions();
     let mut mask = ImageBuffer::new(width, height);
-    
+
     match image {
         DynamicImage::ImageRgba8(rgba_img) => {
             for y in 0..height {
                 for x in 0..width {
                     let pixel = rgba_img.get_pixel(x, y);
                     let alpha = pixel[3];
-                    
+
                     // Use original alpha with shadow color
-                    let shadow_alpha = ((alpha as f32 / 255.0) * (color.3 as f32 / 255.0) * 255.0) as u8;
+                    let shadow_alpha =
+                        ((alpha as f32 / 255.0) * (color.3 as f32 / 255.0) * 255.0) as u8;
                     mask.put_pixel(x, y, Rgba([color.0, color.1, color.2, shadow_alpha]));
                 }
             }
@@ -28,7 +32,7 @@ pub fn create_shadow_mask(image: &DynamicImage, color: (u8, u8, u8, u8)) -> Resu
             }
         }
     }
-    
+
     Ok(DynamicImage::ImageRgba8(mask))
 }
 
@@ -36,7 +40,7 @@ pub fn create_shadow_mask(image: &DynamicImage, color: (u8, u8, u8, u8)) -> Resu
 pub fn create_inverted_mask(image: &DynamicImage) -> Result<DynamicImage, ImgrsError> {
     let (width, height) = image.dimensions();
     let mut mask = ImageBuffer::new(width, height);
-    
+
     match image {
         DynamicImage::ImageRgba8(rgba_img) => {
             for y in 0..height {
@@ -56,15 +60,19 @@ pub fn create_inverted_mask(image: &DynamicImage) -> Result<DynamicImage, ImgrsE
             }
         }
     }
-    
+
     Ok(DynamicImage::ImageRgba8(mask))
 }
 
 /// Apply offset to an image
-pub fn apply_offset(image: &DynamicImage, offset_x: i32, offset_y: i32) -> Result<DynamicImage, ImgrsError> {
+pub fn apply_offset(
+    image: &DynamicImage,
+    offset_x: i32,
+    offset_y: i32,
+) -> Result<DynamicImage, ImgrsError> {
     let (width, height) = image.dimensions();
     let mut result = ImageBuffer::new(width, height);
-    
+
     match image {
         DynamicImage::ImageRgba8(rgba_img) => {
             // Fill with transparent pixels
@@ -73,14 +81,15 @@ pub fn apply_offset(image: &DynamicImage, offset_x: i32, offset_y: i32) -> Resul
                     result.put_pixel(x, y, Rgba([0, 0, 0, 0]));
                 }
             }
-            
+
             // Copy pixels with offset
             for y in 0..height {
                 for x in 0..width {
                     let src_x = x as i32 - offset_x;
                     let src_y = y as i32 - offset_y;
-                    
-                    if src_x >= 0 && src_y >= 0 && (src_x as u32) < width && (src_y as u32) < height {
+
+                    if src_x >= 0 && src_y >= 0 && (src_x as u32) < width && (src_y as u32) < height
+                    {
                         let pixel = rgba_img.get_pixel(src_x as u32, src_y as u32);
                         result.put_pixel(x, y, *pixel);
                     }
@@ -89,11 +98,11 @@ pub fn apply_offset(image: &DynamicImage, offset_x: i32, offset_y: i32) -> Resul
         }
         _ => {
             return Err(ImgrsError::InvalidOperation(
-                "Offset only supported for RGBA images".to_string()
+                "Offset only supported for RGBA images".to_string(),
             ));
         }
     }
-    
+
     Ok(DynamicImage::ImageRgba8(result))
 }
 
@@ -101,7 +110,7 @@ pub fn apply_offset(image: &DynamicImage, offset_x: i32, offset_y: i32) -> Resul
 pub fn apply_intensity(image: &DynamicImage, intensity: f32) -> Result<DynamicImage, ImgrsError> {
     let (width, height) = image.dimensions();
     let mut result = ImageBuffer::new(width, height);
-    
+
     match image {
         DynamicImage::ImageRgba8(rgba_img) => {
             for y in 0..height {
@@ -114,41 +123,53 @@ pub fn apply_intensity(image: &DynamicImage, intensity: f32) -> Result<DynamicIm
         }
         _ => {
             return Err(ImgrsError::InvalidOperation(
-                "Intensity only supported for RGBA images".to_string()
+                "Intensity only supported for RGBA images".to_string(),
             ));
         }
     }
-    
+
     Ok(DynamicImage::ImageRgba8(result))
 }
 
 /// Simple image pasting function
-pub fn paste_image(base: &DynamicImage, overlay: &DynamicImage, x: i32, y: i32) -> Result<DynamicImage, ImgrsError> {
+pub fn paste_image(
+    base: &DynamicImage,
+    overlay: &DynamicImage,
+    x: i32,
+    y: i32,
+) -> Result<DynamicImage, ImgrsError> {
     let mut result = base.clone();
     let (overlay_width, overlay_height) = overlay.dimensions();
-    
+
     match (&mut result, overlay) {
         (DynamicImage::ImageRgba8(base_img), DynamicImage::ImageRgba8(overlay_img)) => {
             let (base_width, base_height) = base_img.dimensions();
-            
+
             for oy in 0..overlay_height {
                 for ox in 0..overlay_width {
                     let target_x = x + ox as i32;
                     let target_y = y + oy as i32;
-                    
-                    if target_x >= 0 && target_y >= 0 
-                        && (target_x as u32) < base_width 
-                        && (target_y as u32) < base_height {
-                        
+
+                    if target_x >= 0
+                        && target_y >= 0
+                        && (target_x as u32) < base_width
+                        && (target_y as u32) < base_height
+                    {
                         let overlay_pixel = overlay_img.get_pixel(ox, oy);
                         let alpha = overlay_pixel[3] as f32 / 255.0;
-                        
+
                         if alpha > 0.0 {
                             let base_pixel = base_img.get_pixel(target_x as u32, target_y as u32);
                             let blended = Rgba([
-                                ((1.0 - alpha) * base_pixel[0] as f32 + alpha * overlay_pixel[0] as f32) as u8,
-                                ((1.0 - alpha) * base_pixel[1] as f32 + alpha * overlay_pixel[1] as f32) as u8,
-                                ((1.0 - alpha) * base_pixel[2] as f32 + alpha * overlay_pixel[2] as f32) as u8,
+                                ((1.0 - alpha) * base_pixel[0] as f32
+                                    + alpha * overlay_pixel[0] as f32)
+                                    as u8,
+                                ((1.0 - alpha) * base_pixel[1] as f32
+                                    + alpha * overlay_pixel[1] as f32)
+                                    as u8,
+                                ((1.0 - alpha) * base_pixel[2] as f32
+                                    + alpha * overlay_pixel[2] as f32)
+                                    as u8,
                                 ((1.0 - alpha) * base_pixel[3] as f32 + alpha * 255.0) as u8,
                             ]);
                             base_img.put_pixel(target_x as u32, target_y as u32, blended);
@@ -159,44 +180,46 @@ pub fn paste_image(base: &DynamicImage, overlay: &DynamicImage, x: i32, y: i32) 
         }
         _ => {
             return Err(ImgrsError::InvalidOperation(
-                "Pasting only supported for RGBA images".to_string()
+                "Pasting only supported for RGBA images".to_string(),
             ));
         }
     }
-    
+
     Ok(result)
 }
 
 /// Multiply blend mode
-pub fn multiply_blend(base: &DynamicImage, overlay: &DynamicImage) -> Result<DynamicImage, ImgrsError> {
+pub fn multiply_blend(
+    base: &DynamicImage,
+    overlay: &DynamicImage,
+) -> Result<DynamicImage, ImgrsError> {
     let mut result = base.clone();
     let (width, height) = base.dimensions();
-    
+
     match (&mut result, overlay) {
         (DynamicImage::ImageRgba8(base_img), DynamicImage::ImageRgba8(overlay_img)) => {
             for y in 0..height {
                 for x in 0..width {
                     let base_pixel = base_img.get_pixel(x, y);
                     let overlay_pixel = overlay_img.get_pixel(x, y);
-                    
+
                     let blended = Rgba([
                         ((base_pixel[0] as f32 * overlay_pixel[0] as f32) / 255.0) as u8,
                         ((base_pixel[1] as f32 * overlay_pixel[1] as f32) / 255.0) as u8,
                         ((base_pixel[2] as f32 * overlay_pixel[2] as f32) / 255.0) as u8,
                         base_pixel[3],
                     ]);
-                    
+
                     base_img.put_pixel(x, y, blended);
                 }
             }
         }
         _ => {
             return Err(ImgrsError::InvalidOperation(
-                "Multiply blend only supported for RGBA images".to_string()
+                "Multiply blend only supported for RGBA images".to_string(),
             ));
         }
     }
-    
+
     Ok(result)
 }
-

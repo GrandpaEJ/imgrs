@@ -1,8 +1,12 @@
-use image::{DynamicImage, Rgb, Rgba};
 use crate::errors::ImgrsError;
+use image::{DynamicImage, Rgb, Rgba};
 
 /// Create a new image with a filled rectangle
-pub fn create_rectangle(width: u32, height: u32, color: (u8, u8, u8, u8)) -> Result<DynamicImage, ImgrsError> {
+pub fn create_rectangle(
+    width: u32,
+    height: u32,
+    color: (u8, u8, u8, u8),
+) -> Result<DynamicImage, ImgrsError> {
     let mut img = DynamicImage::ImageRgba8(image::RgbaImage::new(width, height));
 
     if let DynamicImage::ImageRgba8(rgba_img) = &mut img {
@@ -56,7 +60,11 @@ pub fn create_circle(diameter: u32, color: (u8, u8, u8, u8)) -> Result<DynamicIm
 }
 
 /// Create a new image with a filled triangle
-pub fn create_triangle(width: u32, height: u32, color: (u8, u8, u8, u8)) -> Result<DynamicImage, ImgrsError> {
+pub fn create_triangle(
+    width: u32,
+    height: u32,
+    color: (u8, u8, u8, u8),
+) -> Result<DynamicImage, ImgrsError> {
     let mut img = DynamicImage::ImageRgba8(image::RgbaImage::new(width, height));
 
     if let DynamicImage::ImageRgba8(rgba_img) = &mut img {
@@ -81,7 +89,11 @@ pub fn create_triangle(width: u32, height: u32, color: (u8, u8, u8, u8)) -> Resu
 }
 
 /// Create a new image with a filled ellipse
-pub fn create_ellipse(width: u32, height: u32, color: (u8, u8, u8, u8)) -> Result<DynamicImage, ImgrsError> {
+pub fn create_ellipse(
+    width: u32,
+    height: u32,
+    color: (u8, u8, u8, u8),
+) -> Result<DynamicImage, ImgrsError> {
     let rx = width as f32 / 2.0;
     let ry = height as f32 / 2.0;
     let center_x = rx;
@@ -138,7 +150,11 @@ pub fn create_star(size: u32, color: (u8, u8, u8, u8)) -> Result<DynamicImage, I
 
     for i in 0..(points * 2) {
         let angle = i as f32 * angle_step - std::f32::consts::PI / 2.0; // Start from top
-        let radius = if i % 2 == 0 { outer_radius } else { inner_radius };
+        let radius = if i % 2 == 0 {
+            outer_radius
+        } else {
+            inner_radius
+        };
 
         let x = center_x + radius * angle.cos();
         let y = center_y + radius * angle.sin();
@@ -218,7 +234,12 @@ pub fn create_hexagon(size: u32, color: (u8, u8, u8, u8)) -> Result<DynamicImage
 }
 
 /// Create a new image with a filled parallelogram (skewed rectangle)
-pub fn create_parallelogram(width: u32, height: u32, skew: f32, color: (u8, u8, u8, u8)) -> Result<DynamicImage, ImgrsError> {
+pub fn create_parallelogram(
+    width: u32,
+    height: u32,
+    skew: f32,
+    color: (u8, u8, u8, u8),
+) -> Result<DynamicImage, ImgrsError> {
     let shear = (height as f32 * skew).round() as u32;
 
     let img_width = width + shear;
@@ -331,7 +352,10 @@ pub fn create_heart(size: u32, color: (u8, u8, u8, u8)) -> Result<DynamicImage, 
                 // Heart formula: (x^2 + y^2 - 1)^3 - x^2 * y^3 <= 0
                 let heart_eq = (dx * dx + dy * dy - 1.0).powi(3) - dx * dx * dy * dy * dy;
 
-                if heart_eq <= 0.0 && y as f32 >= center_y - radius && y as f32 <= center_y + radius * 1.5 {
+                if heart_eq <= 0.0
+                    && y as f32 >= center_y - radius
+                    && y as f32 <= center_y + radius * 1.5
+                {
                     rgba_img.put_pixel(x, y, Rgba([color.0, color.1, color.2, color.3]));
                 }
             }
@@ -342,7 +366,11 @@ pub fn create_heart(size: u32, color: (u8, u8, u8, u8)) -> Result<DynamicImage, 
 }
 
 /// Create a new image with a filled arrow
-pub fn create_arrow(width: u32, height: u32, color: (u8, u8, u8, u8)) -> Result<DynamicImage, ImgrsError> {
+pub fn create_arrow(
+    width: u32,
+    height: u32,
+    color: (u8, u8, u8, u8),
+) -> Result<DynamicImage, ImgrsError> {
     let mut img = DynamicImage::ImageRgba8(image::RgbaImage::new(width, height));
 
     let shaft_width = width / 4;
@@ -411,7 +439,13 @@ pub fn create_cross(size: u32, color: (u8, u8, u8, u8)) -> Result<DynamicImage, 
 }
 
 /// Create a new image with a filled quadrilateral defined by 4 points
-pub fn create_quadrilateral(p1: (i32, i32), p2: (i32, i32), p3: (i32, i32), p4: (i32, i32), color: (u8, u8, u8, u8)) -> Result<DynamicImage, ImgrsError> {
+pub fn create_quadrilateral(
+    p1: (i32, i32),
+    p2: (i32, i32),
+    p3: (i32, i32),
+    p4: (i32, i32),
+    color: (u8, u8, u8, u8),
+) -> Result<DynamicImage, ImgrsError> {
     let points = [p1, p2, p3, p4];
 
     // Find bounding box
@@ -425,10 +459,10 @@ pub fn create_quadrilateral(p1: (i32, i32), p2: (i32, i32), p3: (i32, i32), p4: 
 
     // Adjust vertices to be relative to the image
     let vertices = vec![
-        ((p1.0 - min_x) as i32, (p1.1 - min_y) as i32),
-        ((p2.0 - min_x) as i32, (p2.1 - min_y) as i32),
-        ((p3.0 - min_x) as i32, (p3.1 - min_y) as i32),
-        ((p4.0 - min_x) as i32, (p4.1 - min_y) as i32),
+        (((p1.0 - min_x)), ((p1.1 - min_y))),
+        (((p2.0 - min_x)), ((p2.1 - min_y))),
+        (((p3.0 - min_x)), ((p3.1 - min_y))),
+        (((p4.0 - min_x)), ((p4.1 - min_y))),
     ];
 
     let mut img = DynamicImage::ImageRgba8(image::RgbaImage::new(width, height));
@@ -448,7 +482,11 @@ pub fn create_quadrilateral(p1: (i32, i32), p2: (i32, i32), p3: (i32, i32), p4: 
 }
 
 /// Helper function to fill a polygon in an image using scanline algorithm
-fn fill_polygon_in_image(img: &mut DynamicImage, vertices: &[(i32, i32)], color: (u8, u8, u8, u8)) -> Result<(), ImgrsError> {
+fn fill_polygon_in_image(
+    img: &mut DynamicImage,
+    vertices: &[(i32, i32)],
+    color: (u8, u8, u8, u8),
+) -> Result<(), ImgrsError> {
     if vertices.len() < 3 {
         return Ok(());
     }
@@ -514,7 +552,11 @@ fn fill_polygon_in_image(img: &mut DynamicImage, vertices: &[(i32, i32)], color:
                         let x_end = chunk[1].min(img_width as i32 - 1);
 
                         for x in x_start..=x_end {
-                            rgba_img.put_pixel(x as u32, y as u32, Rgba([color.0, color.1, color.2, color.3]));
+                            rgba_img.put_pixel(
+                                x as u32,
+                                y as u32,
+                                Rgba([color.0, color.1, color.2, color.3]),
+                            );
                         }
                     }
                 }
@@ -522,7 +564,7 @@ fn fill_polygon_in_image(img: &mut DynamicImage, vertices: &[(i32, i32)], color:
         }
         _ => {
             return Err(ImgrsError::InvalidOperation(
-                "Unsupported image format for drawing".to_string()
+                "Unsupported image format for drawing".to_string(),
             ));
         }
     }

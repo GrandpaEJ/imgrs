@@ -10,8 +10,8 @@ mod drawing;
 mod emoji;
 mod errors;
 mod filters;
-mod image;
 mod formats;
+mod image;
 mod metadata;
 mod operations;
 mod pixels;
@@ -24,10 +24,22 @@ pub use image::PyImage;
 #[pymodule]
 fn _core(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyImage>()?;
-    m.add("ImgrsProcessingError", m.py().get_type_bound::<errors::ImgrsProcessingError>())?;
-    m.add("InvalidImageError", m.py().get_type_bound::<errors::InvalidImageError>())?;
-    m.add("UnsupportedFormatError", m.py().get_type_bound::<errors::UnsupportedFormatError>())?;
-    m.add("ImgrsIOError", m.py().get_type_bound::<errors::ImgrsIOError>())?;
+    m.add(
+        "ImgrsProcessingError",
+        m.py().get_type_bound::<errors::ImgrsProcessingError>(),
+    )?;
+    m.add(
+        "InvalidImageError",
+        m.py().get_type_bound::<errors::InvalidImageError>(),
+    )?;
+    m.add(
+        "UnsupportedFormatError",
+        m.py().get_type_bound::<errors::UnsupportedFormatError>(),
+    )?;
+    m.add(
+        "ImgrsIOError",
+        m.py().get_type_bound::<errors::ImgrsIOError>(),
+    )?;
 
     // Add shape creation functions
     m.add_function(wrap_pyfunction!(create_circle_py, m)?)?;
@@ -101,7 +113,12 @@ fn create_hexagon_py(size: u32, color: (u8, u8, u8, u8)) -> PyResult<PyImage> {
 
 #[pyfunction]
 #[pyo3(signature = (width, height, skew=0.2, color=(0, 0, 0, 255)))]
-fn create_parallelogram_py(width: u32, height: u32, skew: f32, color: (u8, u8, u8, u8)) -> PyResult<PyImage> {
+fn create_parallelogram_py(
+    width: u32,
+    height: u32,
+    skew: f32,
+    color: (u8, u8, u8, u8),
+) -> PyResult<PyImage> {
     PyImage::create_parallelogram(width, height, skew, color)
 }
 
@@ -137,6 +154,12 @@ fn create_cross_py(size: u32, color: (u8, u8, u8, u8)) -> PyResult<PyImage> {
 
 #[pyfunction]
 #[pyo3(signature = (p1, p2, p3, p4, color=(0, 0, 0, 255)))]
-fn create_quadrilateral_py(p1: (i32, i32), p2: (i32, i32), p3: (i32, i32), p4: (i32, i32), color: (u8, u8, u8, u8)) -> PyResult<PyImage> {
+fn create_quadrilateral_py(
+    p1: (i32, i32),
+    p2: (i32, i32),
+    p3: (i32, i32),
+    p4: (i32, i32),
+    color: (u8, u8, u8, u8),
+) -> PyResult<PyImage> {
     PyImage::create_quadrilateral(p1, p2, p3, p4, color)
 }

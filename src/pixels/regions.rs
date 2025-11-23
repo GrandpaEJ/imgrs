@@ -1,6 +1,6 @@
-use image::{DynamicImage, GenericImageView};
-use crate::errors::ImgrsError;
 use super::access::{get_pixel, put_pixel};
+use crate::errors::ImgrsError;
+use image::{DynamicImage, GenericImageView};
 
 /// Type alias for pixel color (RGBA)
 pub type Color = (u8, u8, u8, u8);
@@ -17,16 +17,16 @@ pub fn get_region(
     height: u32,
 ) -> Result<PixelRegion, ImgrsError> {
     let (img_width, img_height) = image.dimensions();
-    
+
     if x + width > img_width || y + height > img_height {
-        return Err(ImgrsError::InvalidOperation(
-            format!("Region ({}, {}, {}, {}) out of bounds for image size {}x{}", 
-                   x, y, width, height, img_width, img_height)
-        ));
+        return Err(ImgrsError::InvalidOperation(format!(
+            "Region ({}, {}, {}, {}) out of bounds for image size {}x{}",
+            x, y, width, height, img_width, img_height
+        )));
     }
-    
+
     let mut region = Vec::with_capacity(height as usize);
-    
+
     for row in 0..height {
         let mut row_pixels = Vec::with_capacity(width as usize);
         for col in 0..width {
@@ -35,7 +35,7 @@ pub fn get_region(
         }
         region.push(row_pixels);
     }
-    
+
     Ok(region)
 }
 
@@ -49,28 +49,27 @@ pub fn put_region(
 ) -> Result<DynamicImage, ImgrsError> {
     let (img_width, img_height) = image.dimensions();
     let height = pixels.len() as u32;
-    
+
     if height == 0 {
         return Ok(image.clone());
     }
-    
+
     let width = pixels[0].len() as u32;
-    
+
     if x + width > img_width || y + height > img_height {
-        return Err(ImgrsError::InvalidOperation(
-            format!("Region ({}, {}, {}, {}) out of bounds for image size {}x{}", 
-                   x, y, width, height, img_width, img_height)
-        ));
+        return Err(ImgrsError::InvalidOperation(format!(
+            "Region ({}, {}, {}, {}) out of bounds for image size {}x{}",
+            x, y, width, height, img_width, img_height
+        )));
     }
-    
+
     let mut result = image.clone();
-    
+
     for (row, pixel_row) in pixels.iter().enumerate() {
         for (col, &pixel) in pixel_row.iter().enumerate() {
             result = put_pixel(&result, x + col as u32, y + row as u32, pixel)?;
         }
     }
-    
+
     Ok(result)
 }
-

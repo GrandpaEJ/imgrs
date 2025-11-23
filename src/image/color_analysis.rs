@@ -1,60 +1,69 @@
 // Color analysis and palette extraction
-use image::Rgba; // DynamicImage, ImageBuffer, GenericImageView}; 
 use crate::errors::ImgrsError;
-use std::collections::HashMap;
+use image::Rgba; // DynamicImage, ImageBuffer, GenericImageView};
 use pyo3::prelude::*;
 use pyo3::types::PyDict;
+use std::collections::HashMap;
 
 impl crate::image::core::PyImage {
-    
-    pub fn get_color_palette_impl(&mut self, max_colors: u32) -> Result<Vec<(u8, u8, u8, u8)>, ImgrsError> {
+    pub fn get_color_palette_impl(
+        &mut self,
+        max_colors: u32,
+    ) -> Result<Vec<(u8, u8, u8, u8)>, ImgrsError> {
         let image = self.get_image()?;
         let rgba_image = image.to_rgba8();
         let (width, height) = rgba_image.dimensions();
-        
+
         // Collect all colors with their frequency
         let mut color_counts: HashMap<(u8, u8, u8, u8), u32> = HashMap::new();
-        
+
         for y in 0..height {
             for x in 0..width {
                 let pixel = rgba_image.get_pixel(x, y);
-                *color_counts.entry((pixel[0], pixel[1], pixel[2], pixel[3])).or_insert(0) += 1;
+                *color_counts
+                    .entry((pixel[0], pixel[1], pixel[2], pixel[3]))
+                    .or_insert(0) += 1;
             }
         }
-        
+
         // Sort by frequency and take top colors
-        let mut sorted_colors: Vec<((u8, u8, u8, u8), u32)> = color_counts.into_iter()
-            .map(|(color, count)| (color, count))
+        let mut sorted_colors: Vec<((u8, u8, u8, u8), u32)> = color_counts
+            .into_iter()
             .collect();
-        
+
         sorted_colors.sort_by(|a, b| b.1.cmp(&a.1)); // Sort by count descending
-        
-        let palette = sorted_colors.into_iter()
+
+        let palette = sorted_colors
+            .into_iter()
             .take(max_colors as usize)
             .map(|(color, _)| color)
             .collect();
-        
+
         Ok(palette)
     }
-    
-    pub fn analyze_color_distribution_impl(&mut self) -> Result<Py<pyo3::types::PyDict>, ImgrsError> {
+
+    pub fn analyze_color_distribution_impl(
+        &mut self,
+    ) -> Result<Py<pyo3::types::PyDict>, ImgrsError> {
         let image = self.get_image()?;
         let rgba_image = image.to_rgba8();
         let (width, height) = rgba_image.dimensions();
-        
+
         let mut total_pixels = 0;
         let mut color_counts: HashMap<(u8, u8, u8, u8), u32> = HashMap::new();
         let mut hue_histogram: HashMap<u32, u32> = HashMap::new();
         let mut saturation_histogram: HashMap<u32, u32> = HashMap::new();
         let mut brightness_histogram: HashMap<u32, u32> = HashMap::new();
-        
+
         // First pass: collect color data
         for y in 0..height {
             for x in 0..width {
                 let pixel = rgba_image.get_pixel(x, y);
-                *color_counts.entry((pixel[0], pixel[1], pixel[2], pixel[3])).or_insert(0) += 1;
+                *color_counts
+                    .entry((pixel[0], pixel[1], pixel[2], pixel[3]))
+                    .or_insert(0) += 1;
                 total_pixels += 1;
-                
+
                 // Convert to HSB for histograms
                 let (h, s, b) = rgb_to_hsb(pixel[0], pixel[1], pixel[2]);
                 *hue_histogram.entry(h).or_insert(0) += 1;
@@ -66,17 +75,18 @@ impl crate::image::core::PyImage {
         let unique_colors = color_counts.len();
 
         // Find dominant color
-        let dominant_color = color_counts.into_iter()
+        let dominant_color = color_counts
+            .into_iter()
             .max_by_key(|(_, count)| *count)
             .map(|(color, _)| color)
             .unwrap_or((0, 0, 0, 0));
-        
+
         // Calculate average color
         let mut avg_r = 0.0;
         let mut avg_g = 0.0;
         let mut avg_b = 0.0;
         let mut avg_a = 0.0;
-        
+
         for y in 0..height {
             for x in 0..width {
                 let pixel = rgba_image.get_pixel(x, y);
@@ -86,7 +96,7 @@ impl crate::image::core::PyImage {
                 avg_a += pixel[3] as f32;
             }
         }
-        
+
         let avg_color = if total_pixels > 0 {
             (
                 (avg_r / total_pixels as f32) as u8,
@@ -97,7 +107,7 @@ impl crate::image::core::PyImage {
         } else {
             (0, 0, 0, 0)
         };
-        
+
         // Create Python dictionary with results
         Python::with_gil(|py| {
             let dict = PyDict::new_bound(py);
@@ -112,30 +122,37 @@ impl crate::image::core::PyImage {
             // Color space distributions
             dict.set_item("unique_colors", unique_colors)?;
             dict.set_item("hue_distribution", hsb_histogram_to_list(&hue_histogram))?;
-            dict.set_item("saturation_distribution", hsb_histogram_to_list(&saturation_histogram))?;
-            dict.set_item("brightness_distribution", hsb_histogram_to_list(&brightness_histogram))?;
+            dict.set_item(
+                "saturation_distribution",
+                hsb_histogram_to_list(&saturation_histogram),
+            )?;
+            dict.set_item(
+                "brightness_distribution",
+                hsb_histogram_to_list(&brightness_histogram),
+            )?;
 
             Ok(dict.unbind())
         })
     }
-    
-    pub fn find_color_regions_impl(&mut self, target_color: (u8, u8, u8), tolerance: u8) -> Result<Vec<(u32, u32, u32, u32)>, ImgrsError> {
+
+    pub fn find_color_regions_impl(
+        &mut self,
+        target_color: (u8, u8, u8),
+        tolerance: u8,
+    ) -> Result<Vec<(u32, u32, u32, u32)>, ImgrsError> {
         let image = self.get_image()?;
         let rgba_image = image.to_rgba8();
         let (width, height) = rgba_image.dimensions();
-        
+
         let mut visited = vec![vec![false; width as usize]; height as usize];
         let mut regions = Vec::new();
-        
+
         for y in 0..height {
             for x in 0..width {
                 if !visited[y as usize][x as usize] {
                     let pixel = rgba_image.get_pixel(x, y);
-                    let distance = color_distance(
-                        (pixel[0], pixel[1], pixel[2]),
-                        target_color
-                    );
-                    
+                    let distance = color_distance((pixel[0], pixel[1], pixel[2]), target_color);
+
                     if distance <= tolerance as f32 {
                         // Found a region, perform flood fill
                         let region = flood_fill_region(
@@ -144,19 +161,23 @@ impl crate::image::core::PyImage {
                             x,
                             y,
                             target_color,
-                            tolerance
+                            tolerance,
                         );
-                        
-                        if region.pixels.len() > 10 { // Only include regions with more than 10 pixels
-                            regions.push((region.min_x, region.min_y, 
-                                        region.max_x - region.min_x, 
-                                        region.max_y - region.min_y));
+
+                        if region.pixels.len() > 10 {
+                            // Only include regions with more than 10 pixels
+                            regions.push((
+                                region.min_x,
+                                region.min_y,
+                                region.max_x - region.min_x,
+                                region.max_y - region.min_y,
+                            ));
                         }
                     }
                 }
             }
         }
-        
+
         Ok(regions)
     }
 }
@@ -186,40 +207,45 @@ fn flood_fill_region(
         max_y: start_y,
         pixels: Vec::new(),
     };
-    
+
     let width = image.width();
     let height = image.height();
     let mut stack = vec![(start_x, start_y)];
-    
+
     while let Some((x, y)) = stack.pop() {
         if x >= width || y >= height || visited[y as usize][x as usize] {
             continue;
         }
-        
+
         let pixel = image.get_pixel(x, y);
-        let distance = color_distance(
-            (pixel[0], pixel[1], pixel[2]),
-            target_color
-        );
-        
+        let distance = color_distance((pixel[0], pixel[1], pixel[2]), target_color);
+
         if distance > tolerance as f32 {
             continue;
         }
-        
+
         visited[y as usize][x as usize] = true;
         region.pixels.push((x, y));
         region.min_x = region.min_x.min(x);
         region.min_y = region.min_y.min(y);
         region.max_x = region.max_x.max(x);
         region.max_y = region.max_y.max(y);
-        
+
         // Add adjacent pixels to stack
-        if x > 0 { stack.push((x - 1, y)); }
-        if x < width - 1 { stack.push((x + 1, y)); }
-        if y > 0 { stack.push((x, y - 1)); }
-        if y < height - 1 { stack.push((x, y + 1)); }
+        if x > 0 {
+            stack.push((x - 1, y));
+        }
+        if x < width - 1 {
+            stack.push((x + 1, y));
+        }
+        if y > 0 {
+            stack.push((x, y - 1));
+        }
+        if y < height - 1 {
+            stack.push((x, y + 1));
+        }
     }
-    
+
     region
 }
 
@@ -233,21 +259,21 @@ fn rgb_to_hsb(r: u8, g: u8, b: u8) -> (u32, u32, u32) {
     let r = r as f32 / 255.0;
     let g = g as f32 / 255.0;
     let b = b as f32 / 255.0;
-    
+
     let max = r.max(g).max(b);
     let min = r.min(g).min(b);
     let diff = max - min;
-    
+
     // Brightness
     let brightness = (max * 255.0) as u32;
-    
+
     // Saturation
     let saturation = if max == 0.0 {
         0
     } else {
         ((diff / max) * 255.0) as u32
     };
-    
+
     // Hue
     let hue = if diff == 0.0 {
         0
@@ -258,7 +284,7 @@ fn rgb_to_hsb(r: u8, g: u8, b: u8) -> (u32, u32, u32) {
             _ => ((r - g) / diff * 60.0 + 240.0) as u32,
         }
     };
-    
+
     (hue % 360, saturation, brightness)
 }
 
