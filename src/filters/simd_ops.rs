@@ -14,37 +14,39 @@ pub fn rgb_to_gray_simd(r: u8, g: u8, b: u8) -> u8 {
     ((r as u32 * r_weight + g as u32 * g_weight + b as u32 * b_weight) >> 8) as u8
 }
 
-/// Fast grayscale conversion for RGB images
+/// Fast grayscale conversion for RGB images using buffer operations
 pub fn fast_rgb_to_gray(image: &DynamicImage) -> Result<DynamicImage, ImgrsError> {
     match image {
         DynamicImage::ImageRgb8(rgb_img) => {
             let (width, height) = rgb_img.dimensions();
-            let mut result = ImageBuffer::new(width, height);
-
-            // Optimized pixel-by-pixel conversion with integer math
-            for y in 0..height {
-                for x in 0..width {
-                    let pixel = rgb_img.get_pixel(x, y);
-                    let gray = rgb_to_gray_simd(pixel[0], pixel[1], pixel[2]);
-                    result.put_pixel(x, y, Luma([gray]));
-                }
+            let pixels = rgb_img.as_raw();
+            let mut gray_data = Vec::with_capacity((width * height) as usize);
+            
+            // Process pixels in chunks for better cache locality
+            for chunk in pixels.chunks_exact(3) {
+                let gray = rgb_to_gray_simd(chunk[0], chunk[1], chunk[2]);
+                gray_data.push(gray);
             }
-
+            
+            let result = ImageBuffer::from_raw(width, height, gray_data)
+                .ok_or_else(|| ImgrsError::InvalidOperation("Failed to create grayscale image".to_string()))?;
+            
             Ok(DynamicImage::ImageLuma8(result))
         }
         DynamicImage::ImageRgba8(rgba_img) => {
             let (width, height) = rgba_img.dimensions();
-            let mut result = ImageBuffer::new(width, height);
-
-            // Optimized conversion ignoring alpha
-            for y in 0..height {
-                for x in 0..width {
-                    let pixel = rgba_img.get_pixel(x, y);
-                    let gray = rgb_to_gray_simd(pixel[0], pixel[1], pixel[2]);
-                    result.put_pixel(x, y, Luma([gray]));
-                }
+            let pixels = rgba_img.as_raw();
+            let mut gray_data = Vec::with_capacity((width * height) as usize);
+            
+            // Process RGBA pixels in chunks of 4
+            for chunk in pixels.chunks_exact(4) {
+                let gray = rgb_to_gray_simd(chunk[0], chunk[1], chunk[2]);
+                gray_data.push(gray);
             }
-
+            
+            let result = ImageBuffer::from_raw(width, height, gray_data)
+                .ok_or_else(|| ImgrsError::InvalidOperation("Failed to create grayscale image".to_string()))?;
+            
             Ok(DynamicImage::ImageLuma8(result))
         }
         _ => {
