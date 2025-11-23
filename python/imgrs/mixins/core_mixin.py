@@ -237,6 +237,13 @@ class CoreMixin:
         if not obj.flags["C_CONTIGUOUS"]:
             obj = np.ascontiguousarray(obj)
 
+        # Handle float arrays (assume 0.0-1.0 range)
+        if obj.dtype.kind == "f":
+            obj = (obj * 255).astype(np.uint8)
+        # Handle other non-uint8 types
+        elif obj.dtype != np.uint8:
+            obj = obj.astype(np.uint8)
+
         rust_image = RustImage.fromarray(obj, mode)
         return cls(rust_image)
 
