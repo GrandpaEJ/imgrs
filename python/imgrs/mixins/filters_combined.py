@@ -9,6 +9,7 @@ from .filters import (
     BasicFiltersMixin,
     BlurFiltersMixin,
     ColorFiltersMixin,
+    CompositeFiltersMixin,
     CSSFiltersMixin,
     EdgeFiltersMixin,
     MorphologicalFiltersMixin,
@@ -29,12 +30,13 @@ class FilterMixin(
     ArtisticFiltersMixin,
     ColorFiltersMixin,
     CSSFiltersMixin,
+    CompositeFiltersMixin,
     AutoEnhanceFiltersMixin,
 ):
     """
     Combined filter mixin providing all filter operations.
 
-    Organized into 11 categories:
+    Organized into 12 categories:
     - BasicFiltersMixin: blur, sharpen, edge_detect, emboss, brightness, contrast
     - BlurFiltersMixin: box_blur, motion_blur, median_blur, bilateral_blur, radial_blur, zoom_blur
     - EdgeFiltersMixin: prewitt, scharr, roberts_cross, laplacian, LoG, canny
@@ -45,6 +47,7 @@ class FilterMixin(
     - ArtisticFiltersMixin: vignette, halftone, pencil_sketch, watercolor, glitch
     - ColorFiltersMixin: duotone, color_splash, chromatic_aberration, chroma_key
     - CSSFiltersMixin: sepia, grayscale_filter, invert, hue_rotate, saturate
+    - CompositeFiltersMixin: composite (28 CSS composite/blending modes)
     - AutoEnhanceFiltersMixin: histogram_equalization, auto_contrast, auto_enhance, exposure_adjust, etc.
     """
 
