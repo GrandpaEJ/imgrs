@@ -206,14 +206,6 @@ pub fn add_emojis_batch(
     let mut result = image.clone();
     for (emoji_type, style) in emojis {
         result = add_emoji(&result, emoji_type, style)?;
-        result = add_emoji(
-            &result,
-            emoji_type.as_str(),
-            "Sans", // Default font family for batch
-            style.x,
-            style.y,
-            style.size,
-        )?;
     }
     Ok(result)
 }
@@ -226,6 +218,8 @@ pub fn add_emoji_quick(
     y: i32,
     size: u32,
 ) -> Result<DynamicImage, ImgrsError> {
+    let style = EmojiStyle {
+        size,
         x,
         y,
         ..Default::default()
