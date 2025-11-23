@@ -42,6 +42,20 @@ pub fn composite(
     Ok(DynamicImage::ImageRgba8(result))
 }
 
+/// Apply a composite mode to an image (self-compositing)
+#[allow(dead_code)]
+pub fn composite_with_mode(
+    image: &DynamicImage,
+    mode: &str,
+    opacity: f32,
+) -> Result<DynamicImage, ImgrsError> {
+    let blend_mode = BlendMode::from_str(mode)
+        .map_err(|e| ImgrsError::InvalidOperation(e))?;
+    
+    // For self-compositing, we composite the image with itself
+    composite(image, image, blend_mode, opacity)
+}
+
 /// Alpha composite two images (standard alpha blending)
 #[allow(dead_code)]
 pub fn alpha_composite(base: &DynamicImage, overlay: &DynamicImage) -> Result<DynamicImage, ImgrsError> {

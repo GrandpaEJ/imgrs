@@ -7,7 +7,7 @@ mod gradient;
 #[allow(unused_imports)]
 pub use modes::BlendMode;
 #[allow(unused_imports)]
-pub use composite::{composite, alpha_composite, color_overlay};
+pub use composite::{composite, composite_with_mode, alpha_composite, color_overlay};
 #[allow(unused_imports)]
 pub use gradient::{GradientDirection, gradient_overlay};
 
