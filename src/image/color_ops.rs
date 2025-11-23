@@ -1,7 +1,7 @@
 // Enhanced color operations module
 use crate::errors::ImgrsError;
 use crate::filters::blur;
-use crate::image::core::LazyImage;
+use crate::image::core::{LazyImage, PyImage};
 use image::{DynamicImage, GenericImageView, ImageBuffer, Rgba};
 
 /// Color operations implementation
@@ -36,8 +36,10 @@ impl crate::image::core::PyImage {
             }
         }
 
-        self.lazy_image = crate::image::core::LazyImage::Loaded(DynamicImage::ImageRgba8(result));
-        Ok(self.clone())
+        Ok(PyImage {
+            lazy_image: crate::image::core::LazyImage::Loaded(DynamicImage::ImageRgba8(result)),
+            format: self.format.clone(),
+        })
     }
 
     pub fn get_alpha_impl(&mut self) -> f32 {
@@ -87,8 +89,10 @@ impl crate::image::core::PyImage {
             }
         }
 
-        self.lazy_image = LazyImage::Loaded(DynamicImage::ImageRgba8(result));
-        Ok(self.clone())
+        Ok(PyImage {
+            lazy_image: LazyImage::Loaded(DynamicImage::ImageRgba8(result)),
+            format: self.format.clone(),
+        })
     }
 
     pub fn remove_transparency_impl(
@@ -113,8 +117,10 @@ impl crate::image::core::PyImage {
             }
         }
 
-        self.lazy_image = LazyImage::Loaded(DynamicImage::ImageRgba8(result));
-        Ok(self.clone())
+        Ok(PyImage {
+            lazy_image: LazyImage::Loaded(DynamicImage::ImageRgba8(result)),
+            format: self.format.clone(),
+        })
     }
 
     // Advanced masking system
@@ -145,8 +151,10 @@ impl crate::image::core::PyImage {
             }
         }
 
-        self.lazy_image = LazyImage::Loaded(DynamicImage::ImageRgba8(result));
-        Ok(self.clone())
+        Ok(PyImage {
+            lazy_image: LazyImage::Loaded(DynamicImage::ImageRgba8(result)),
+            format: self.format.clone(),
+        })
     }
 
     pub fn create_gradient_mask_impl(
@@ -383,8 +391,10 @@ impl crate::image::core::PyImage {
             }
         }
 
-        self.lazy_image = LazyImage::Loaded(DynamicImage::ImageRgba8(result));
-        Ok(self.clone())
+        Ok(PyImage {
+            lazy_image: LazyImage::Loaded(DynamicImage::ImageRgba8(result)),
+            format: self.format.clone(),
+        })
     }
 
     pub fn color_quantize_impl(&mut self, levels: u8) -> Result<Self, ImgrsError> {
@@ -410,8 +420,10 @@ impl crate::image::core::PyImage {
             }
         }
 
-        self.lazy_image = LazyImage::Loaded(DynamicImage::ImageRgba8(result));
-        Ok(self.clone())
+        Ok(PyImage {
+            lazy_image: LazyImage::Loaded(DynamicImage::ImageRgba8(result)),
+            format: self.format.clone(),
+        })
     }
 
     pub fn color_shift_impl(&mut self, shift_amount: f32) -> Result<Self, ImgrsError> {
@@ -433,8 +445,10 @@ impl crate::image::core::PyImage {
             }
         }
 
-        self.lazy_image = LazyImage::Loaded(DynamicImage::ImageRgba8(result));
-        Ok(self.clone())
+        Ok(PyImage {
+            lazy_image: LazyImage::Loaded(DynamicImage::ImageRgba8(result)),
+            format: self.format.clone(),
+        })
     }
 
     pub fn selective_desaturate_impl(
@@ -472,8 +486,10 @@ impl crate::image::core::PyImage {
             }
         }
 
-        self.lazy_image = LazyImage::Loaded(DynamicImage::ImageRgba8(result));
-        Ok(self.clone())
+        Ok(PyImage {
+            lazy_image: LazyImage::Loaded(DynamicImage::ImageRgba8(result)),
+            format: self.format.clone(),
+        })
     }
 
     pub fn color_match_impl(
@@ -510,8 +526,10 @@ impl crate::image::core::PyImage {
             }
         }
 
-        self.lazy_image = LazyImage::Loaded(DynamicImage::ImageRgba8(result));
-        Ok(self.clone())
+        Ok(PyImage {
+            lazy_image: LazyImage::Loaded(DynamicImage::ImageRgba8(result)),
+            format: self.format.clone(),
+        })
     }
 }
 
