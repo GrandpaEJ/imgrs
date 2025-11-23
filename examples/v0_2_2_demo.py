@@ -27,7 +27,7 @@ print("\n1️⃣  Testing Arbitrary Angle Rotation...")
 # Create a simple image to rotate
 img = imgrs.Image.new("RGB", (400, 400), (255, 255, 255))
 img = img.draw_rectangle(150, 150, 100, 100, (255, 0, 0, 255))
-img = img.add_text("IMGRS", 160, 180, size=30, color=(255, 255, 255, 255))
+img = img.add_text("IMGRS", (160, 180), size=30, color=(255, 255, 255, 255))
 img.save(f"{output_dir}/original.png")
 print("   ✅ Created original image")
 
@@ -179,7 +179,7 @@ for i, (sides, color) in enumerate(zip(range(3, 9), colors)):
 
 # Add title with rotation
 title_img = imgrs.Image.new("RGBA", (300, 80), (0, 0, 0, 0))
-title_img = title_img.add_text("v0.2.2", 10, 10, size=50, color=(255, 255, 255, 255))
+title_img = title_img.add_text("v0.2.2", (10, 10), size=50, color=(255, 255, 255, 255))
 title_img = title_img.rotate(15.0)
 # Note: paste functionality would be used here in production
 
@@ -199,7 +199,7 @@ img = imgrs.Image.new("RGB", (300, 300), (255, 255, 255))
 img = img.draw_star(150, 100, 60, 30, 5, (255, 215, 0, 255))
 img = img.draw_rectangle(100, 150, 100, 50, (255, 0, 0, 255))
 img = img.draw_circle(150, 250, 40, (0, 0, 255, 255))
-img = img.add_text("ROTATE", 90, 165, size=25, color=(255, 255, 255, 255))
+img = img.add_text("ROTATE", (90, 165), size=25, color=(255, 255, 255, 255))
 
 # Create rotation sequence
 angles = [0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330]

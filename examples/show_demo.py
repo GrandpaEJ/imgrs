@@ -24,7 +24,7 @@ img = img.draw_rectangle(50, 250, 100, 100, (0, 255, 0, 255))
 img = img.draw_triangle(250, 250, 350, 250, 300, 350, (0, 100, 255, 255))
 
 # Add text
-img = img.add_text("imgrs.show()", 80, 180, size=30, color=(50, 50, 50, 255))
+img = img.add_text("imgrs.show()", (80, 180), size=30, color=(50, 50, 50, 255))
 
 print("✅ Image created")
 
@@ -47,7 +47,7 @@ time.sleep(2)
 # Test with filtered image
 print("\n3. Testing with filters...")
 img_filtered = img.blur(3).sharpen(1.5)
-img_filtered = img_filtered.adjust_brightness(1.2)
+img_filtered = img_filtered.brightness(30)
 
 print("   Showing filtered image...")
 try:
