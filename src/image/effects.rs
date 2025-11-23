@@ -1,5 +1,5 @@
 use pyo3::prelude::*;
-use crate::shadows;
+use crate::{shadows, blending};
 use super::core::{PyImage, LazyImage};
 
 impl PyImage {
@@ -38,6 +38,20 @@ impl PyImage {
         Python::with_gil(|py| {
             py.allow_threads(|| {
                 shadows::glow(image, blur_radius, glow_color, intensity)
+            })
+        }).map(|result| PyImage {
+            lazy_image: LazyImage::Loaded(result),
+            format,
+        }).map_err(|e| e.into())
+    }
+
+    pub fn composite_impl(&mut self, mode: &str, opacity: f32) -> PyResult<Self> {
+        let format = self.format;
+        let image = self.get_image()?;
+
+        Python::with_gil(|py| {
+            py.allow_threads(|| {
+                blending::composite_with_mode(image, mode, opacity)
             })
         }).map(|result| PyImage {
             lazy_image: LazyImage::Loaded(result),

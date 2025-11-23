@@ -776,6 +776,11 @@ impl PyImage {
         self.glow_impl(blur_radius, glow_color, intensity)
     }
 
+    #[pyo3(signature = (mode, opacity=1.0))]
+    fn composite(&mut self, mode: &str, opacity: f32) -> PyResult<Self> {
+        self.composite_impl(mode, opacity)
+    }
+
     // Enhanced Color Operations
     fn set_alpha(&mut self, alpha: f32) -> PyResult<Self> {
         Ok(self.set_alpha_impl(alpha)?)
