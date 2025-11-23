@@ -1,5 +1,7 @@
 // Suppress PyO3 internal warnings about gil-refs (library issue, not ours)
 #![allow(unexpected_cfgs)]
+// Allow useless_conversion warnings from PyO3's PyResult type system
+#![allow(clippy::useless_conversion)]
 
 use pyo3::prelude::*;
 use pyo3::types::PyModule;
