@@ -3,10 +3,11 @@ use crate::errors::ImgrsError;
 use ab_glyph::FontVec;
 use std::fs;
 use std::path::Path;
-use std::path::PathBuf;
+
 
 /// Font family types
 #[derive(Debug, Clone, Copy, PartialEq)]
+#[allow(dead_code)]
 pub enum FontFamily {
     #[allow(dead_code)]
     Sans,

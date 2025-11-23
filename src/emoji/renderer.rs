@@ -10,6 +10,7 @@ use pangocairo;
 
 /// Style options for emoji rendering
 #[derive(Debug, Clone)]
+#[allow(dead_code)]
 pub struct EmojiStyle {
     pub size: u32,
     pub x: i32,
@@ -38,7 +39,7 @@ pub fn add_text(
     text: &str,
     x: f64,
     y: f64,
-    font_family: &str,
+    _font_family: &str,
     font_size: f64,
     color: (f64, f64, f64),
 ) -> Result<DynamicImage, ImgrsError> {
@@ -211,6 +212,7 @@ pub fn add_emojis_batch(
 }
 
 /// Quick emoji add with minimal parameters
+#[allow(dead_code)]
 pub fn add_emoji_quick(
     image: &DynamicImage,
     emoji_type: EmojiType,
