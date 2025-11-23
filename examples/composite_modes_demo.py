@@ -33,7 +33,6 @@ modes = [
     "destination-in",
     "destination-out",
     "destination-atop",
-    
     # Blending modes
     "normal",
     "multiply",
@@ -63,11 +62,11 @@ success_count = 0
 for i, mode in enumerate(modes, 1):
     try:
         result = img.composite(mode)
-        
+
         # Save output
         output_path = f"{output_dir}/{i:02d}_{mode.replace('-', '_')}.png"
         result.save(output_path)
-        
+
         print(f"✓ {i:2d}. {mode:20s} - Saved to {output_path}")
         success_count += 1
     except Exception as e:

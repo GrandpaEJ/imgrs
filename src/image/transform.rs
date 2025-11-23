@@ -56,27 +56,19 @@ impl PyImage {
 
         let image = self.get_image()?;
 
-        // Validate crop bounds
-        if x + width > image.width() || y + height > image.height() {
+        // Fast validation - single bounds check
+        let img_width = image.width();
+        let img_height = image.height();
+        
+        if width == 0 || height == 0 || x + width > img_width || y + height > img_height {
             return Err(ImgrsError::InvalidOperation(format!(
-                "Crop coordinates ({}+{}, {}+{}) exceed image bounds ({}x{})",
-                x,
-                width,
-                y,
-                height,
-                image.width(),
-                image.height()
+                "Invalid crop: ({},{}) {}x{} exceeds image bounds {}x{}",
+                x, y, width, height, img_width, img_height
             ))
             .into());
         }
 
-        if width == 0 || height == 0 {
-            return Err(ImgrsError::InvalidOperation(
-                "Crop dimensions must be greater than 0".to_string(),
-            )
-            .into());
-        }
-
+        // Optimized crop - release GIL for better performance
         Ok(Python::with_gil(|py| {
             py.allow_threads(|| {
                 let cropped = image.crop_imm(x, y, width, height);
@@ -94,33 +86,39 @@ impl PyImage {
 
         Python::with_gil(|py| {
             py.allow_threads(|| {
-                // Fast paths for 90-degree increments
-                let rotated = if (angle - 90.0).abs() < f64::EPSILON {
-                    image.rotate90()
-                } else if (angle - 180.0).abs() < f64::EPSILON {
-                    image.rotate180()
-                } else if (angle - 270.0).abs() < f64::EPSILON {
-                    image.rotate270()
-                } else if angle.abs() < f64::EPSILON {
-                    // 0 degrees, return as is
+                // Normalize angle to 0-360 range
+                let normalized_angle = angle.rem_euclid(360.0);
+                
+                // Fast paths for common rotations (with tolerance for floating point)
+                let rotated = if normalized_angle.abs() < 0.01 {
+                    // 0 degrees - no rotation needed
                     image.clone()
+                } else if (normalized_angle - 90.0).abs() < 0.01 {
+                    image.rotate90()
+                } else if (normalized_angle - 180.0).abs() < 0.01 {
+                    image.rotate180()
+                } else if (normalized_angle - 270.0).abs() < 0.01 {
+                    image.rotate270()
                 } else {
-                    // Always expand to fit for arbitrary angles
+                    // Arbitrary angle rotation - always expand to fit
                     use image::Rgba;
                     use imageproc::geometric_transformations::{
                         rotate_about_center, Interpolation,
                     };
 
-                    let radians = angle.to_radians();
+                    let radians = normalized_angle.to_radians();
                     let w = image.width() as f64;
                     let h = image.height() as f64;
                     let cos_a = radians.cos();
                     let sin_a = radians.sin();
+                    
+                    // Calculate new dimensions
                     let corners = [(0.0, 0.0), (w, 0.0), (w, h), (0.0, h)];
                     let mut min_x = f64::INFINITY;
                     let mut max_x = f64::NEG_INFINITY;
                     let mut min_y = f64::INFINITY;
                     let mut max_y = f64::NEG_INFINITY;
+                    
                     for &(x, y) in &corners {
                         let rx = x * cos_a - y * sin_a;
                         let ry = x * sin_a + y * cos_a;
@@ -129,9 +127,11 @@ impl PyImage {
                         min_y = min_y.min(ry);
                         max_y = max_y.max(ry);
                     }
+                    
                     let new_width = (max_x - min_x).ceil() as u32;
                     let new_height = (max_y - min_y).ceil() as u32;
 
+                    // Create expanded canvas and rotate
                     let rgba_img = image.to_rgba8();
                     let mut large_rgba = image::RgbaImage::new(new_width, new_height);
                     let offset_x = ((new_width as f64 - w) / 2.0).round() as i64;
@@ -147,6 +147,7 @@ impl PyImage {
 
                     DynamicImage::ImageRgba8(rotated_rgba)
                 };
+                
                 Ok(PyImage {
                     lazy_image: LazyImage::Loaded(rotated),
                     format,
