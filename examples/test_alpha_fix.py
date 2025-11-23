@@ -38,7 +38,11 @@ def test_alpha_fix():
 
     # Test 4: Load existing PNG and test alpha
     try:
-        png_img = Image.open("img.png")
+        # Create a temporary test image
+        test_img = Image.new("RGBA", (100, 100), (0, 255, 0, 255))
+        test_img.save("test_alpha_img.png")
+        
+        png_img = Image.open("test_alpha_img.png")
         original_alpha = png_img.get_alpha()
         print(f"PNG original alpha: {original_alpha:.3f}")
 
@@ -51,10 +55,14 @@ def test_alpha_fix():
             assert abs(new_alpha - expected) < 0.05, f"Alpha mismatch for {alpha_val}"
 
         print("✓ All alpha tests passed!")
+        if os.path.exists("test_alpha_img.png"):
+            os.remove("test_alpha_img.png")
         return True
 
     except Exception as e:
         print(f"PNG test failed: {e}")
+        if os.path.exists("test_alpha_img.png"):
+            os.remove("test_alpha_img.png")
         return False
 
 

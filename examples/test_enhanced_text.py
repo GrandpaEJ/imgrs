@@ -3,7 +3,7 @@
 Test script for enhanced text functionality with full font and customization support
 """
 
-from python.imgrs import Image
+from imgrs import Image
 import os
 
 
