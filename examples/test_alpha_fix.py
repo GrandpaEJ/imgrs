@@ -8,7 +8,7 @@ import sys
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "python"))
 
-from imgrs import Image
+from imgrs import Image  # noqa: E402
 
 
 def test_alpha_fix():
