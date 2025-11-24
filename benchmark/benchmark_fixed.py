@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import Dict, Callable
 import sys
 
-sys.path.insert(0, str(Path(__file__).parent.parent))
+sys.path.insert(0, str(Path(__file__).parent.parent))  # noqa: E402
 
 try:
     from PIL import Image as PILImage
@@ -27,7 +27,7 @@ except ImportError:
     HAS_IMGRS = False
     print("⚠️ imgrs not installed")
 
-import numpy as np
+import numpy as np  # noqa: E402
 
 
 class BenchmarkRunner:
