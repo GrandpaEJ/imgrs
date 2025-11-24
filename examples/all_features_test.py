@@ -21,7 +21,7 @@ test_results = []
 
 def test(name, func, save_as=None):
     """Test helper function"""
-    global total_tests, passed_tests, failed_tests, test_results
+    global total_tests, passed_tests, failed_tests
     total_tests += 1
     try:
         result = func()
