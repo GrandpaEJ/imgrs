@@ -74,11 +74,16 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-cargo-
 
+      - name: Calculate Python dependencies hash
+        id: python-hash
+        run: |
+          python -c "import hashlib; print('hash=' + hashlib.sha256(open('requirements.txt', 'rb').read() + open('pyproject.toml', 'rb').read()).hexdigest())" >> $GITHUB_OUTPUT
+
       - name: Cache Python dependencies
         uses: actions/cache@v3
         with:
           path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements*.txt', '**/pyproject.toml') }}
+          key: ${{ runner.os }}-pip-${{ steps.python-hash.outputs.hash }}
           restore-keys: |
             ${{ runner.os }}-pip-
 
