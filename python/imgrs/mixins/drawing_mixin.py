@@ -2,7 +2,7 @@
 Drawing operations mixin - shapes and text
 """
 
-from typing import TYPE_CHECKING, Tuple
+from typing import TYPE_CHECKING, List, Tuple
 
 if TYPE_CHECKING:
     from .image import Image
@@ -162,7 +162,7 @@ class DrawingMixin:
 
     def draw_polygon(
         self,
-        points: list[Tuple[int, int]],
+        points: List[Tuple[int, int]],
         color: Tuple[int, int, int, int],
     ) -> "Image":
         """
