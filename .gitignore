@@ -279,6 +279,7 @@ cobertura.xml
 uv.lock
 .pdm.lock
 *.lock
+!Cargo.lock
 
 .zen*
 me/*
