@@ -43,7 +43,7 @@ jobs:
             mingw-w64-x86_64-pkg-config
             mingw-w64-x86_64-cairo
             mingw-w64-x86_64-pango
-            mingw-w64-x86_64-glib
+            mingw-w64-x86_64-glib2
           update: true
           path-type: inherit
 
