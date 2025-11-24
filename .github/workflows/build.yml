@@ -119,9 +119,9 @@ jobs:
 
       - name: Build and install Rust extension with maturin
         run: |
-          # Install in editable mode using pip install -e .
-          # This ensures maturin builds and installs properly
-          pip install -e . --verbose
+          # Install using pip install . (standard install)
+          # This ensures the package is installed into site-packages and avoids path issues on Windows
+          pip install . --verbose
           # Verify installation
           python -c "import imgrs; print('imgrs installed successfully')"
 
