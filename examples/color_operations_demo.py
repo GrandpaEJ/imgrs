@@ -18,7 +18,7 @@ import sys
 # Add the parent directory to the path to import imgrs
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "python"))
 
-import imgrs
+import imgrs  # noqa: E402
 
 # Create output directory
 OUTPUT_DIR = "examples/output/color_operations_demo"
