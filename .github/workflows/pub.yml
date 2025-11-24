@@ -15,15 +15,15 @@ jobs:
       matrix:
         include:
           - target: x86_64
-            manylinux: auto
+            container: quay.io/pypa/manylinux2014_x86_64
           - target: aarch64
-            manylinux: quay.io/pypa/manylinux2014_aarch64
+            container: quay.io/pypa/manylinux2014_aarch64
           # - target: armv7
-          #   manylinux: quay.io/pypa/manylinux2014_armv7l
+          #   container: quay.io/pypa/manylinux2014_armv7l
           # - target: s390x
-          #   manylinux: quay.io/pypa/manylinux2014_s390x
+          #   container: quay.io/pypa/manylinux2014_s390x
           # - target: ppc64le
-          #   manylinux: quay.io/pypa/manylinux2014_ppc64le
+          #   container: quay.io/pypa/manylinux2014_ppc64le
     
     steps:
       - name: Checkout
@@ -36,10 +36,11 @@ jobs:
         uses: PyO3/maturin-action@v1
         with:
           target: ${{ matrix.target }}
-          manylinux: ${{ matrix.manylinux }}
+          manylinux: auto
+          container: ${{ matrix.container }}
           args: --release --out dist --find-interpreter
           sccache: 'true'
-          before-script: |
+          before-script-linux: |
             yum install -y glib2-devel cairo-devel pango-devel
 
       - name: Upload Linux wheels
