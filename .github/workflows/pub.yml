@@ -6,36 +6,41 @@ on:
 
 jobs:
   # Build wheels for Linux (manylinux)
+  # Build wheels for Linux (manylinux)
   build-linux:
     name: Build Linux Wheels (${{ matrix.target }})
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        target: [aarch64, armv7, s390x, ppc64le]
+        include:
+          - target: x86_64
+            manylinux: auto
+          - target: aarch64
+            manylinux: quay.io/pypa/manylinux2014_aarch64
+          # - target: armv7
+          #   manylinux: quay.io/pypa/manylinux2014_armv7l
+          # - target: s390x
+          #   manylinux: quay.io/pypa/manylinux2014_s390x
+          # - target: ppc64le
+          #   manylinux: quay.io/pypa/manylinux2014_ppc64le
     
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.11'
-
-      - name: Install Rust
-        uses: dtolnay/rust-toolchain@stable
-
-      - name: Install maturin
-        run: pip install maturin
-
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+      
       - name: Build manylinux wheels
         uses: PyO3/maturin-action@v1
         with:
           target: ${{ matrix.target }}
+          manylinux: ${{ matrix.manylinux }}
           args: --release --out dist --find-interpreter
           sccache: 'true'
-          manylinux: auto
+          before-script: |
+            yum install -y glib2-devel cairo-devel pango-devel
 
       - name: Upload Linux wheels
         uses: actions/upload-artifact@v4
