@@ -39,6 +39,11 @@ jobs:
         with:
           toolchain: stable
 
+      - name: Calculate Cargo.lock hash
+        id: cargo-hash
+        run: |
+          python -c "import hashlib; print('hash=' + hashlib.sha256(open('Cargo.lock', 'rb').read()).hexdigest())" >> $GITHUB_OUTPUT
+
       - name: Cache Rust dependencies
         uses: actions/cache@v3
         with:
@@ -46,7 +51,7 @@ jobs:
             ~/.cargo/registry
             ~/.cargo/git
             target
-          key: ${{ runner.os }}-cargo-${{ hashFiles('Cargo.lock') }}
+          key: ${{ runner.os }}-cargo-${{ steps.cargo-hash.outputs.hash }}
           restore-keys: |
             ${{ runner.os }}-cargo-
 
