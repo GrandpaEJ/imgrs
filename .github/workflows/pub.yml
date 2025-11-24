@@ -41,7 +41,7 @@ jobs:
           args: --release --out dist --find-interpreter
           sccache: 'true'
           before-script-linux: |
-            yum install -y glib2-devel cairo-devel pango-devel
+            yum install -y glib2-devel cairo-devel cairo-gobject-devel pango-devel
 
       - name: Upload Linux wheels
         uses: actions/upload-artifact@v4
