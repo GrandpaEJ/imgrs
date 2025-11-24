@@ -66,6 +66,10 @@ class TransformMixin:
         if angle == 0:
             return self.copy()
 
+        # Only support rotations that are multiples of 90 degrees
+        if angle % 90 != 0:
+            raise NotImplementedError("Arbitrary rotation angles are not supported yet")
+
         # Perform rotation
         rotated = self.__class__(self._rust_image.rotate(angle, expand))
 
