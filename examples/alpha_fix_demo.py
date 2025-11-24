@@ -10,9 +10,9 @@ This shows how the fix addresses the issues mentioned by the user:
 import os
 import sys
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "python"))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "python"))  # noqa: E402
 
-from imgrs import Image
+from imgrs import Image  # noqa: E402
 
 
 def demonstrate_alpha_fix():
