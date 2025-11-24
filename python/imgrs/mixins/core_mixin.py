@@ -129,7 +129,7 @@ class CoreMixin:
         cls,
         mode: Union[str, Any],
         size: Tuple[int, int],
-        color: Union[int, Tuple[int, int, int], Tuple[int, int, int, int], str] = 0,
+        color: Union[int, Tuple[int, int], Tuple[int, int, int], Tuple[int, int, int, int], str] = 0,
     ) -> "Image":
         """
         Create a new image with specified mode, size, and color.
@@ -199,8 +199,15 @@ class CoreMixin:
         # Convert color to RGBA tuple
         rgba_color = cls._parse_color(color, mode)
 
-        rust_image = RustImage.new(mode, size, rgba_color)
-        return cls(rust_image)
+        # Handle LA mode (grayscale with alpha) which may not be directly supported by the Rust backend
+        if mode == "LA":
+            # Create an RGBA image first, then convert to LA
+            rust_image = RustImage.new("RGBA", size, rgba_color)
+            img = cls(rust_image)
+            return img.convert("LA")
+        else:
+            rust_image = RustImage.new(mode, size, rgba_color)
+            return cls(rust_image)
 
     @classmethod
     def fromarray(
@@ -299,6 +306,11 @@ class CoreMixin:
                 return tuple(color) + (255,)
             elif len(color) == 4:
                 return tuple(color)
+            elif len(color) == 2:
+                # Handle (gray, alpha) for LA mode
+                # Convert to RGBA where RGB channels are the gray value
+                gray, alpha = color
+                return (gray, gray, gray, alpha)
             elif len(color) == 1:
                 return (color[0], color[0], color[0], 255)
             else:
