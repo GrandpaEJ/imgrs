@@ -3,7 +3,11 @@ import subprocess
 import sys
 
 examples_dir = "examples"
-scripts = [f for f in os.listdir(examples_dir) if f.endswith(".py") and f != "run_all_examples.py"]
+scripts = [
+    f
+    for f in os.listdir(examples_dir)
+    if f.endswith(".py") and f != "run_all_examples.py"
+]
 scripts.sort()
 
 print(f"Found {len(scripts)} example scripts.")
@@ -21,17 +25,17 @@ for script in scripts:
             capture_output=True,
             text=True,
             timeout=30,
-            cwd=os.getcwd()
+            cwd=os.getcwd(),
         )
-        
+
         if result.returncode == 0:
             print("✅ PASS")
             passed.append(script)
         else:
             print("❌ FAIL")
-            print(f"  Error: {result.stderr[:500]}...") # Show first 500 chars of error
+            print(f"  Error: {result.stderr[:500]}...")  # Show first 500 chars of error
             failed.append(script)
-            
+
     except subprocess.TimeoutExpired:
         print("⏰ TIMEOUT")
         failed.append(f"{script} (timeout)")

@@ -129,7 +129,9 @@ class CoreMixin:
         cls,
         mode: Union[str, Any],
         size: Tuple[int, int],
-        color: Union[int, Tuple[int, int], Tuple[int, int, int], Tuple[int, int, int, int], str] = 0,
+        color: Union[
+            int, Tuple[int, int], Tuple[int, int, int], Tuple[int, int, int, int], str
+        ] = 0,
     ) -> "Image":
         """
         Create a new image with specified mode, size, and color.
