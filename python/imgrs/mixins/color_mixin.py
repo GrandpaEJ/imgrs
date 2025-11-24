@@ -336,7 +336,9 @@ class ColorMixin:
 
         Args:
             other: Image to blend with
-            mode: Blend mode ("normal", "multiply", "screen", "overlay", "soft_light", "hard_light", "color_dodge", "color_burn", "darken", "lighten", "difference", "exclusion")
+            mode: Blend mode ("normal", "multiply", "screen", "overlay", "soft_light",
+                              "hard_light", "color_dodge", "color_burn", "darken",
+                              "lighten", "difference", "exclusion")
             opacity: Blend opacity (0.0-1.0)
 
         Returns:
