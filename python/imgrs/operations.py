@@ -11,7 +11,7 @@ from .image import Image
 
 if TYPE_CHECKING:
     # Import for IDE auto-completion only
-    from .enums import ImageMode, Resampling
+    from .enums import ImageMode
 
 
 def open(
