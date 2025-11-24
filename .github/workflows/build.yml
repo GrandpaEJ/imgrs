@@ -117,11 +117,22 @@ jobs:
       #   run: |
       #     cargo fmt --check
 
-      - name: Build and install Rust extension with maturin
+      - name: Build and install (Linux/macOS)
+        if: runner.os != 'Windows'
         run: |
-          # Install using pip install . (standard install)
-          # This ensures the package is installed into site-packages and avoids path issues on Windows
-          pip install . --verbose
+          # Install in editable mode for Linux/macOS (proven to work)
+          pip install -e . --verbose
+          python -c "import imgrs; print('imgrs installed successfully')"
+
+      - name: Build and install (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          # Install using standard install for Windows (safer for CI)
+          python -m pip install . --verbose
+          # Debug info
+          python -m pip list
+          python -m pip show imgrs || echo "imgrs not found in pip"
+          python -c "import sys; print(sys.path)"
           # Verify installation
           python -c "import imgrs; print('imgrs installed successfully')"
 
