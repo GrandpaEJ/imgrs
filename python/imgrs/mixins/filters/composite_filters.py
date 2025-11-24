@@ -31,7 +31,8 @@ class CompositeFiltersMixin:
         - **source-over**: ডিফল্ট। নতুন ছবি (source) আগের ছবির (destination) উপরে আঁকা হয়।
         - **source-in**: শুধুমাত্র destination এর opaque অংশে source দেখা যায়।
         - **source-out**: শুধুমাত্র destination এর transparent অংশে source দেখা যায়।
-        - **source-atop**: source কে destination এর shape অনুযায়ী কাটে। শুধুমাত্র destination এর opaque অংশে source দেখা যায়।
+        - **source-atop**: source কে destination এর shape অনুযায়ী কাটে।
+          শুধুমাত্র destination এর opaque অংশে source দেখা যায়।
         - **destination-over**: নতুন ছবি (source) পেছনে আঁকা হয়।
         - **destination-in**: destination শুধু source এর opaque অংশে দেখা যায়।
         - **destination-out**: destination শুধু source এর transparent অংশে দেখা যায়।
