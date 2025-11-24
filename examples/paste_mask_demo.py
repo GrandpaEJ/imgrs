@@ -12,7 +12,7 @@ from pathlib import Path
 # Add the parent directory to sys.path to import imgrs
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from imgrs import new, paste
+from imgrs import new, paste  # noqa: E402
 
 
 def create_gradient_mask(width, height, direction="horizontal"):
