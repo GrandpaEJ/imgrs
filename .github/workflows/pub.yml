@@ -47,15 +47,22 @@ jobs:
   # Build wheels for macOS
   build-macos:
     name: Build macOS Wheels (${{ matrix.target }})
-    runs-on: macos-latest
+    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        target: [x86_64, aarch64]
+        include:
+          - target: x86_64
+            os: macos-13
+          - target: aarch64
+            os: macos-14
     
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Install system dependencies
+        run: brew install glib cairo pango
 
       - name: Set up Python
         uses: actions/setup-python@v4
