@@ -49,9 +49,10 @@ jobs:
 
       - name: Set up Environment (Windows)
         if: runner.os == 'Windows'
+        shell: bash
         run: |
-          echo "C:\msys64\mingw64\bin" >> $GITHUB_PATH
-          echo "PKG_CONFIG_PATH=C:\msys64\mingw64\lib\pkgconfig" >> $GITHUB_ENV
+          echo "${{ runner.temp }}/msys64/mingw64/bin" >> $GITHUB_PATH
+          echo "PKG_CONFIG_PATH=${{ runner.temp }}/msys64/mingw64/lib/pkgconfig" >> $GITHUB_ENV
 
       - name: Set up Rust
         uses: dtolnay/rust-toolchain@stable
