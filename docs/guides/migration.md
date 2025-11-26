@@ -284,13 +284,105 @@ processed = imgrs_img.resize((800, 600)).blur(5.0)
 # (save and reopen, or use numpy array)
 ```
 
+## Migrating to imgrs 0.3.0
+
+### Breaking Changes in v0.3.0
+
+**Text and Emoji Support Completely Removed**
+
+imgrs 0.3.0 removes all text rendering and emoji functionality to eliminate Cairo/Pango dependencies.
+
+#### Removed Methods
+
+All of these methods are no longer available:
+
+```python
+# Text rendering (all removed)
+img.add_text("Hello", (50, 50))
+img.add_text_styled("Styled", (50, 50), outline=(0,0,0,255,2))
+img.add_text_centered("Center", 50)
+img.add_text_multiline("Multi\nLine", (50, 50))
+img.add_text_advanced(...)  # Same as add_text_styled
+
+# Text measurement (all removed)
+Image.get_text_size("Hello")
+Image.get_multiline_text_size("Multi\nLine")
+Image.get_text_box("Hello", 0, 0)
+Image.list_available_fonts()
+
+# Emoji rendering (all removed)
+img.add_emoji("😀", (50, 50))
+img.add_emoji_text("Hello 😀")
+img.add_emoji_quick("🚀")
+img.add_emojis([("😀", (50, 50)), ("🚀", (100, 100))])
+```
+
+#### Migration Options
+
+**Option 1: Use External Libraries for Text**
+```python
+# Use Pillow for text rendering
+from PIL import Image as PILImage, ImageDraw, ImageFont
+import numpy as np
+from imgrs import Image
+
+# Render text with Pillow
+pil_img = PILImage.new("RGBA", (200, 50), (0, 0, 0, 0))
+draw = ImageDraw.Draw(pil_img)
+font = ImageFont.truetype("arial.ttf", 32)
+draw.text((10, 10), "Hello World", fill=(255, 0, 0, 255), font=font)
+
+# Convert to imgrs for further processing
+array = np.array(pil_img)
+text_img = Image.fromarray(array)
+
+# Composite onto main image
+result = main_img.paste(text_img, position=(50, 50))
+```
+
+**Option 2: Use Bitmap Text (Still Available)**
+```python
+from imgrs import Image
+
+img = Image.open("photo.jpg")
+# Simple bitmap text (A-Z, 0-9, space only)
+img = img.draw_text("HELLO WORLD", 50, 50, (255, 255, 255, 255), scale=2)
+```
+
+**Option 3: Pre-render Text Assets**
+```python
+# Create text as separate images, then use as assets
+text_assets = {
+    "title": Image.open("title_text.png"),
+    "subtitle": Image.open("subtitle_text.png")
+}
+
+# Composite in your application
+result = background.paste(text_assets["title"], (50, 50))
+result = result.paste(text_assets["subtitle"], (50, 120))
+```
+
+#### Benefits of Removal
+
+- **Simplified Installation**: No Cairo/Pango system dependencies
+- **Smaller Binary**: Reduced package size
+- **Faster Builds**: No complex font rendering compilation
+- **Cross-platform**: Consistent behavior across platforms
+
+### Other v0.3.0 Changes
+
+- **Dependency Updates**: Removed cairo and pango from Cargo.toml
+- **Build System**: Simplified without font rendering dependencies
+- **Example Updates**: All examples updated to work without text/emoji
+
 ## Tips for Smooth Migration
 
 1. **Start with new code** - Use imgrs for new features
 2. **Test thoroughly** - Especially crop and rotate
 3. **Benchmark** - Measure speed improvements
 4. **Keep Pillow** - For features not yet in imgrs
-5. **Report issues** - Help us improve compatibility!
+5. **For text needs** - Use Pillow or pre-rendered assets
+6. **Report issues** - Help us improve compatibility!
 
 ---
 
