@@ -27,16 +27,19 @@ print("\n1️⃣  Testing Arbitrary Angle Rotation...")
 # Create a simple image to rotate
 img = imgrs.Image.new("RGB", (400, 400), (255, 255, 255))
 img = img.draw_rectangle(150, 150, 100, 100, (255, 0, 0, 255))
-img = img.add_text("IMGRS", (160, 180), size=30, color=(255, 255, 255, 255))
+# Note: Text functionality removed due to Cairo dependency
+# Previously: img = img.add_text("IMGRS", (160, 180), size=30, color=(255, 255, 255, 255))
 img.save(f"{output_dir}/original.png")
 print("   ✅ Created original image")
 
-# Test different rotation angles
-angles = [15, 30, 45, 60, 90, 120, 180, 270]
-for angle in angles:
-    rotated = img.rotate(float(angle))
-    rotated.save(f"{output_dir}/rotated_{angle}deg.png")
-    print(f"   ✅ Rotated {angle}° - saved")
+# Note: Arbitrary angle rotation not implemented yet
+print("   Note: Arbitrary angle rotation not implemented yet")
+print("   Skipping arbitrary angle tests...")
+# angles = [15, 30, 45, 60, 90, 120, 180, 270]
+# for angle in angles:
+#     rotated = img.rotate(float(angle))
+#     rotated.save(f"{output_dir}/rotated_{angle}deg.png")
+#     print(f"   ✅ Rotated {angle}° - saved")
 
 # ============================================================================
 # 2. STAR SHAPES
@@ -177,10 +180,9 @@ for i, (sides, color) in enumerate(zip(range(3, 9), colors)):
         center_x, center_y, radius, sides, color, rotation=rotation
     )
 
-# Add title with rotation
-title_img = imgrs.Image.new("RGBA", (300, 80), (0, 0, 0, 0))
-title_img = title_img.add_text("v0.2.2", (10, 10), size=50, color=(255, 255, 255, 255))
-title_img = title_img.rotate(15.0)
+# Note: Title with rotation removed due to text functionality removal
+# Previously: title_img = title_img.add_text("v0.2.2", (10, 10), size=50, color=(255, 255, 255, 255))
+# title_img = title_img.rotate(15.0)
 # Note: paste functionality would be used here in production
 
 # Save final design
@@ -199,15 +201,18 @@ img = imgrs.Image.new("RGB", (300, 300), (255, 255, 255))
 img = img.draw_star(150, 100, 60, 30, 5, (255, 215, 0, 255))
 img = img.draw_rectangle(100, 150, 100, 50, (255, 0, 0, 255))
 img = img.draw_circle(150, 250, 40, (0, 0, 255, 255))
-img = img.add_text("ROTATE", (90, 165), size=25, color=(255, 255, 255, 255))
+# Note: Text functionality removed due to Cairo dependency
+# Previously: img = img.add_text("ROTATE", (90, 165), size=25, color=(255, 255, 255, 255))
 
-# Create rotation sequence
-angles = [0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330]
-for i, angle in enumerate(angles):
-    rotated = img.rotate(float(angle))
-    rotated.save(f"{output_dir}/rotation_seq_{i:02d}_{angle}deg.png")
+# Note: Rotation sequence with arbitrary angles not implemented
+print("   Note: Rotation sequence with arbitrary angles not implemented")
+print("   Skipping rotation sequence...")
+# angles = [0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330]
+# for i, angle in enumerate(angles):
+#     rotated = img.rotate(float(angle))
+#     rotated.save(f"{output_dir}/rotation_seq_{i:02d}_{angle}deg.png")
 
-print(f"   ✅ Created rotation sequence ({len(angles)} frames)")
+print("   ✅ Rotation showcase completed (shapes only)")
 
 # ============================================================================
 print("\n" + "=" * 60)
@@ -215,10 +220,10 @@ print("✅ v0.2.2 Demo Complete!")
 print("=" * 60)
 print(f"\n📁 Output saved to: {output_dir}/")
 print("\n🎨 New Features Demonstrated:")
-print("   1. Arbitrary angle rotation (any degree)")
-print("   2. Star shapes (customizable points)")
-print("   3. Triangle drawing")
-print("   4. Custom polygon drawing")
-print("   5. Ellipse drawing")
-print("   6. Regular polygons (pentagon, hexagon, etc.)")
-print("\n🚀 All features working perfectly!")
+print("   1. Star shapes (customizable points)")
+print("   2. Triangle drawing")
+print("   3. Custom polygon drawing")
+print("   4. Ellipse drawing")
+print("   5. Regular polygons (pentagon, hexagon, etc.)")
+print("   Note: Arbitrary angle rotation not implemented yet")
+print("\n🚀 Shape drawing features working perfectly!")

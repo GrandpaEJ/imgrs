@@ -23,8 +23,8 @@ img = img.draw_star(300, 100, 70, 35, 5, (255, 215, 0, 255))
 img = img.draw_rectangle(50, 250, 100, 100, (0, 255, 0, 255))
 img = img.draw_triangle(250, 250, 350, 250, 300, 350, (0, 100, 255, 255))
 
-# Add text
-img = img.add_text("imgrs.show()", (80, 180), size=30, color=(50, 50, 50, 255))
+# Note: Text functionality removed due to Cairo dependency
+# Previously: img = img.add_text("imgrs.show()", (80, 180), size=30, color=(50, 50, 50, 255))
 
 print("✅ Image created")
 

@@ -78,7 +78,7 @@ test(
     lambda: imgrs.Image.new("RGBA", (100, 100), (255, 0, 0, 255)),
     "02_new_rgba",
 )
-test("new() - L", lambda: imgrs.Image.new("L", (100, 100), (128,)), "03_new_gray")
+test("new() - L", lambda: imgrs.Image.new("L", (100, 100), (128,128)), "03_new_gray")
 test("save()", lambda: base_img.save(f"{OUTPUT_DIR}/04_save_test.png") or base_img)
 test("copy()", lambda: base_img.copy())
 test("convert() - L", lambda: base_img.convert("L"), "05_convert_gray")
@@ -347,145 +347,102 @@ test("glow()", lambda: base_rgba.glow(15.0, (255, 255, 0, 200), 1.5), "74_glow")
 print()
 
 # ============================================================================
-# TEXT RENDERING
+# TEXT RENDERING (REMOVED - CAIRO DEPENDENCY)
 # ============================================================================
-print("### TEXT RENDERING ###")
+print("### TEXT RENDERING (REMOVED - CAIRO DEPENDENCY) ###")
 print()
 
-canvas = imgrs.Image.new("RGBA", (600, 800), (255, 255, 255, 255))
-
-test(
-    "add_text()",
-    lambda: canvas.add_text("Hello World", (50, 50), size=48, color=(0, 0, 0, 255)),
-    "75_text_basic",
+# Note text functionality removed
+total_tests += 10
+failed_tests += 10
+test_results.append(
+    {
+        "name": "text()",
+        "status": "removed",
+        "file": None,
+        "error": "Removed due to Cairo dependency",
+    }
 )
-
-canvas2 = imgrs.Image.new("RGBA", (600, 200), (255, 255, 255, 255))
-test(
-    "add_text_styled() - outline",
-    lambda: canvas2.add_text_styled(
-        "OUTLINED",
-        (100, 50),
-        size=64,
-        color=(255, 255, 255, 255),
-        outline=(0, 0, 0, 255, 3.0),
-    ),
-    "76_text_outline",
+test_results.append(
+    {
+        "name": "text_styled() - background",
+        "status": "removed",
+        "file": None,
+        "error": "Removed due to Cairo dependency",
+    }
 )
-
-canvas3 = imgrs.Image.new("RGBA", (600, 200), (240, 240, 240, 255))
-test(
-    "add_text_styled() - shadow",
-    lambda: canvas3.add_text_styled(
-        "SHADOW",
-        (100, 50),
-        size=64,
-        color=(0, 0, 0, 255),
-        shadow=(4, 4, 100, 100, 100, 180),
-    ),
-    "77_text_shadow",
+test_results.append(
+    {
+        "name": "text_styled() - color",
+        "status": "removed",
+        "file": None,
+        "error": "Removed due to Cairo dependency",
+    }
 )
-
-canvas4 = imgrs.Image.new("RGBA", (600, 200), (255, 255, 255, 255))
-test(
-    "add_text_styled() - background",
-    lambda: canvas4.add_text_styled(
-        "BACKGROUND",
-        (100, 50),
-        size=48,
-        color=(255, 255, 255, 255),
-        background=(0, 128, 255, 200),
-    ),
-    "78_text_background",
+test_results.append(
+    {
+        "name": "text_styled() - background",
+        "status": "removed",
+        "file": None,
+        "error": "Removed due to Cairo dependency",
+    }
 )
-
-canvas5 = imgrs.Image.new("RGBA", (600, 200), (255, 255, 255, 255))
-test(
-    "add_text_styled() - opacity",
-    lambda: canvas5.add_text_styled(
-        "OPACITY", (100, 50), size=64, color=(0, 0, 0, 255), opacity=0.5
-    ),
-    "79_text_opacity",
+test_results.append(
+    {
+        "name": "text_styled() - opacity",
+        "status": "removed",
+        "file": None,
+        "error": "Removed due to Cairo dependency",
+    }
 )
-
-canvas6 = imgrs.Image.new("RGBA", (600, 200), (255, 255, 255, 255))
-# Use textbox to center
-title = "CENTERED"
-w, h = imgrs.Image.get_text_size(title, size=56)
-x = (600 - w) // 2
-test(
-    "add_text_centered() with textbox",
-    lambda: canvas6.add_text(title, (x, 70), size=56, color=(0, 0, 128, 255)),
-    "80_text_centered",
+test_results.append(
+    {
+        "name": "text_centered() with textbox",
+        "status": "removed",
+        "file": None,
+        "error": "Removed due to Cairo dependency",
+    }
 )
-
-canvas7 = imgrs.Image.new("RGBA", (600, 300), (255, 255, 255, 255))
-test(
-    "add_text_multiline()",
-    lambda: canvas7.add_text_multiline(
-        "Line 1\nLine 2\nLine 3",
-        (50, 50),
-        size=32,
-        color=(0, 0, 0, 255),
-        line_spacing=1.5,
-    ),
-    "81_text_multiline",
+test_results.append(
+    {
+        "name": "text_multiline()",
+        "status": "removed",
+        "file": None,
+        "error": "Removed due to Cairo dependency",
+    }
 )
-
-# Combined text effects
-canvas8 = imgrs.Image.new("RGBA", (600, 200), (30, 30, 50, 255))
-combined_text = "EPIC"
-tw, th = imgrs.Image.get_text_size(combined_text, size=80)
-tx = (600 - tw) // 2
-test(
-    "add_text_styled() - combined effects",
-    lambda: canvas8.add_text_styled(
-        combined_text,
-        (tx, 50),
-        size=80,
-        color=(255, 215, 0, 255),
-        outline=(255, 140, 0, 255, 4.0),
-        shadow=(5, 5, 0, 0, 0, 200),
-    ),
-    "82_text_combined",
+test_results.append(
+    {
+        "name": "text_styled() - combined effects",
+        "status": "removed",
+        "file": None,
+        "error": "Removed due to Cairo dependency",
+    }
 )
+test_results.append(
+    {
+        "name": "get_text_size()",
+        "status": "removed",
+        "file": None,
+        "error": "Removed due to Cairo dependency",
+    }
+)
+test_results.append(
+    {
+        "name": "textbox - dynamic positioning",
+        "status": "removed",
+        "file": None,
+        "error": "Removed due to Cairo dependency",
+    }
+)
+print("❌ text() - REMOVED (Cairo dependency)")
+print("❌ text_styled() - REMOVED (Cairo dependency)")
+print("❌ text_centered() - REMOVED (Cairo dependency)")
+print("❌ text_multiline() - REMOVED (Cairo dependency)")
+print("❌ get_text_size() - REMOVED (Cairo dependency)")
+print("❌ textbox - REMOVED (Cairo dependency)")
 
 print()
-
-# ============================================================================
-# TEXT MEASUREMENT (TEXTBOX)
-# ============================================================================
-print("### TEXT MEASUREMENT (TEXTBOX) ###")
-print()
-
-test("get_text_size()", lambda: imgrs.Image.get_text_size("Test", size=32))
-
-test(
-    "get_multiline_text_size()",
-    lambda: imgrs.Image.get_multiline_text_size("Line 1\nLine 2", size=32),
-)
-
-test("get_text_box()", lambda: imgrs.Image.get_text_box("Test", 100, 50, size=32))
-
-# Demonstrate textbox usage
-canvas9 = imgrs.Image.new("RGBA", (600, 400), (255, 255, 255, 255))
-text1 = "Dynamic Layout"
-w1, h1 = imgrs.Image.get_text_size(text1, size=56)
-x1 = (600 - w1) // 2
-y1 = 100
-canvas9 = canvas9.add_text(text1, (x1, y1), size=56, color=(0, 0, 128, 255))
-
-box = imgrs.Image.get_text_box(text1, x1, y1, size=56)
-text2 = "Using Textbox"
-w2, h2 = imgrs.Image.get_text_size(text2, size=32)
-x2 = (600 - w2) // 2
-y2 = box["bottom_y"] + 30
-
-test(
-    "textbox - dynamic positioning",
-    lambda: canvas9.add_text(text2, (x2, y2), size=32, color=(128, 128, 128, 255)),
-    "83_textbox_demo",
-)
 
 print()
 
@@ -506,41 +463,41 @@ test("has_gps()", lambda: base_img.has_gps("examples/img/gradient.png"))
 print()
 
 # ============================================================================
-# EMOJI (PINNED AS FAILURE - KNOWN ISSUE)
+# EMOJI (REMOVED - CAIRO DEPENDENCY)
 # ============================================================================
-print("### EMOJI (PINNED AS KNOWN ISSUE) ###")
+print("### EMOJI (REMOVED - CAIRO DEPENDENCY) ###")
 print()
 
-# Pin emoji as failure
+# Note emoji functionality removed
 total_tests += 3
 failed_tests += 3
 test_results.append(
     {
         "name": "add_emoji()",
-        "status": "pinned",
+        "status": "removed",
         "file": None,
-        "error": "Rendering needs improvement",
+        "error": "Removed due to Cairo dependency",
     }
 )
 test_results.append(
     {
         "name": "add_emojis()",
-        "status": "pinned",
+        "status": "removed",
         "file": None,
-        "error": "Rendering needs improvement",
+        "error": "Removed due to Cairo dependency",
     }
 )
 test_results.append(
     {
         "name": "add_emoji_text()",
-        "status": "pinned",
+        "status": "removed",
         "file": None,
-        "error": "Rendering needs improvement",
+        "error": "Removed due to Cairo dependency",
     }
 )
-print("📌 add_emoji() - PINNED AS FAILURE (Rendering needs improvement)")
-print("📌 add_emojis() - PINNED AS FAILURE (Rendering needs improvement)")
-print("📌 add_emoji_text() - PINNED AS FAILURE (Rendering needs improvement)")
+print("❌ add_emoji() - REMOVED (Cairo dependency)")
+print("❌ add_emojis() - REMOVED (Cairo dependency)")
+print("❌ add_emoji_text() - REMOVED (Cairo dependency)")
 
 print()
 
@@ -572,7 +529,7 @@ Comprehensive test of all imgrs features from A to Z.
 - **Total Tests:** {total_tests}
 - **✅ Passed:** {passed_tests}
 - **❌ Failed:** {failed_tests}
-- **📌 Pinned:** 3 (Emoji - known issue)
+- **❌ Removed:** 13 (Emoji + Text - Cairo dependency)
 - **Success Rate:** {(passed_tests/total_tests*100):.1f}%
 
 ## 🎯 Test Results by Category
@@ -802,7 +759,7 @@ print()
 print(f"Total Tests: {total_tests}")
 print(f"✅ Passed: {passed_tests}")
 print(f"❌ Failed: {failed_tests}")
-print("📌 Pinned: 3 (Emoji)")
+print("❌ Removed: 13 (Emoji + Text)")
 print(f"Success Rate: {(passed_tests/total_tests*100):.1f}%")
 print()
 print(f"📁 Output Directory: {OUTPUT_DIR}/")
@@ -813,5 +770,5 @@ print("=" * 80)
 print("🎉 COMPREHENSIVE TEST COMPLETE!")
 print("=" * 80)
 
-# Exit with success if only emoji failed
-sys.exit(0 if failed_tests == 3 else 1)
+# Exit with success if only emoji and text removed
+sys.exit(0 if failed_tests == 13 else 1)

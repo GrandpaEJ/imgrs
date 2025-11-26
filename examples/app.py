@@ -13,6 +13,21 @@ print("=" * 70)
 print("🎨 Creating IMGRS Cover Photo...")
 print("=" * 70)
 print()
+print("❌ Text functionality has been removed due to Cairo dependency removal.")
+print()
+print("This example previously created a professional cover photo with:")
+print("  • Rich text styling with gold colors and shadows")
+print("  • Text outlines and centering")
+print("  • Multiple text sizes and professional layout")
+print()
+print("Alternative: Use basic drawing operations for graphics")
+print()
+print("=" * 70)
+print("EXAMPLE DISABLED - TEXT FEATURES REMOVED")
+print("=" * 70)
+
+# Exit early since functionality is removed
+exit(0)
 
 # Create a large canvas with dark gradient background
 print("Creating canvas...")
@@ -61,14 +76,14 @@ features = [
     ("EXIF DATA", (1550, features_y), (255, 100, 150, 255)),
 ]
 
-for text, (x, y), color in features:
-    # Use textbox to center each feature text
-    feat_width, feat_height = imgrs.Image.get_text_size(text, size=38)
-    feat_x = x - (feat_width // 2)
+# for text, (x, y), color in features:
+#     # Use textbox to center each feature text
+#     # feat_width, feat_height = imgrs.Image.get_text_size(text, size=38)
+#     # feat_x = x - (feat_width // 2)
 
-    canvas = canvas.add_text_styled(
-        text, (feat_x, y), size=38, color=color, outline=(0, 0, 0, 255, 2.0)
-    )
+#     canvas = canvas.add_text_styled(
+#         text, (feat_x, y), size=38, color=color, outline=(0, 0, 0, 255, 2.0)
+#     )
 
 # Add bottom badges
 print("Adding info badges...")
