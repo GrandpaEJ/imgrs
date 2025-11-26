@@ -78,7 +78,7 @@ test(
     lambda: imgrs.Image.new("RGBA", (100, 100), (255, 0, 0, 255)),
     "02_new_rgba",
 )
-test("new() - L", lambda: imgrs.Image.new("L", (100, 100), (128,128)), "03_new_gray")
+test("new() - L", lambda: imgrs.Image.new("L", (100, 100), (128, 128)), "03_new_gray")
 test("save()", lambda: base_img.save(f"{OUTPUT_DIR}/04_save_test.png") or base_img)
 test("copy()", lambda: base_img.copy())
 test("convert() - L", lambda: base_img.convert("L"), "05_convert_gray")
