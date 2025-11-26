@@ -2,7 +2,7 @@
 Drawing operations mixin - shapes and text
 """
 
-from typing import TYPE_CHECKING, List, Tuple
+from typing import TYPE_CHECKING, List, Optional, Tuple, Union
 
 if TYPE_CHECKING:
     from .image import Image
@@ -230,3 +230,136 @@ class DrawingMixin:
                 center_x, center_y, radius, sides, color, rotation
             )
         )
+
+    def add_text(
+        self,
+        text: str,
+        x_or_position: Union[int, Tuple[int, int]],
+        y: Optional[int] = None,
+        size: int = 40,
+        color: Tuple[int, int, int, int] = (0, 0, 0, 255),
+    ) -> "Image":
+        """
+        Add text to the image (convenience method).
+
+        Args:
+            text: Text to add
+            x_or_position: X coordinate or (x, y) tuple
+            y: Y coordinate (if x_or_position is int)
+            size: Font size (approximated to scale)
+            color: (R, G, B, A) color values
+
+        Returns:
+            New Image instance with text added
+        """
+        if isinstance(x_or_position, tuple):
+            x, y = x_or_position
+        else:
+            x = x_or_position
+            if y is None:
+                raise ValueError("y coordinate must be provided")
+
+        # Approximate size to scale (8px base font * scale)
+        scale = max(1, size // 8)
+        return self.draw_text(text, x, y, color, scale)
+
+    def add_text_styled(
+        self,
+        text: str,
+        position: Tuple[int, int],
+        size: int = 40,
+        color: Tuple[int, int, int, int] = (0, 0, 0, 255),
+        outline: Optional[Tuple[int, int, int, int, float]] = None,
+        shadow: Optional[Tuple[int, int, int, int, int, int]] = None,
+        background: Optional[Tuple[int, int, int, int]] = None,
+    ) -> "Image":
+        """
+        Add styled text to the image.
+
+        Args:
+            text: Text to add
+            position: (x, y) tuple for text position
+            size: Font size
+            color: (R, G, B, A) color values
+            outline: (R, G, B, A, width) for outline
+            shadow: (offset_x, offset_y, R, G, B, A) for shadow
+            background: (R, G, B, A) for background box
+
+        Returns:
+            New Image instance with styled text
+        """
+        # For now, just draw basic text (advanced styling not implemented in Rust yet)
+        x, y = position
+        return self.add_text(text, x, y, size, color)
+
+    def add_text_multiline(
+        self,
+        text: str,
+        position: Tuple[int, int],
+        size: int = 40,
+        color: Tuple[int, int, int, int] = (0, 0, 0, 255),
+        line_spacing: float = 1.2,
+    ) -> "Image":
+        """
+        Add multi-line text to the image.
+
+        Args:
+            text: Multi-line text (separated by \n)
+            position: (x, y) tuple for text position
+            size: Font size
+            color: (R, G, B, A) color values
+            line_spacing: Spacing between lines (multiplier)
+
+        Returns:
+            New Image instance with multi-line text
+        """
+        x, y = position
+        lines = text.split("\n")
+        result = self
+
+        for i, line in enumerate(lines):
+            line_y = y + int(i * size * line_spacing)
+            result = result.add_text(line, x, line_y, size, color)
+
+        return result
+
+    @classmethod
+    def get_text_size(cls, text: str, size: int = 40) -> Tuple[int, int]:
+        """
+        Get the size of text when rendered.
+
+        Args:
+            text: Text to measure
+            size: Font size
+
+        Returns:
+            (width, height) tuple
+        """
+        # Approximate: 8px base width per char, 8px height, scaled
+        scale = max(1, size // 8)
+        width = len(text) * 8 * scale
+        height = 8 * scale
+        return (width, height)
+
+    @classmethod
+    def get_text_box(cls, text: str, x: int, y: int, size: int = 40) -> dict:
+        """
+        Get text bounding box information.
+
+        Args:
+            text: Text to measure
+            x: X position
+            y: Y position
+            size: Font size
+
+        Returns:
+            Dictionary with box information
+        """
+        width, height = cls.get_text_size(text, size)
+        return {
+            "x": x,
+            "y": y,
+            "width": width,
+            "height": height,
+            "baseline_y": y + height,
+        }
