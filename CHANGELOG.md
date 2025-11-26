@@ -2,6 +2,45 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.3.1] - 2025-11-26
+
+### Added
+
+#### Enhanced Text Rendering
+- `add_text()` - Flexible text rendering with position tuple or separate x,y parameters
+- `add_text_styled()` - Styled text with outline, shadow, and background support
+- `add_text_multiline()` - Multi-line text rendering with line spacing
+- `get_text_size()` - Text dimension calculation
+- `get_text_box()` - Complete text bounding box information
+
+#### Modular Blend Mode Architecture
+- Split `src/blending/modes.rs` into 14 individual files
+- Each blend mode now has its own dedicated module:
+  - `normal.rs`, `multiply.rs`, `screen.rs`, `overlay.rs`
+  - `soft_light.rs`, `hard_light.rs`, `darken.rs`, `lighten.rs`
+  - `difference.rs`, `exclusion.rs`, and more
+- Improved code organization and maintainability
+
+### Changed
+
+#### Rust Codebase Updates
+- Updated deprecated PyO3 APIs to current versions:
+  - `PyDict::new_bound()` → `PyDict::new()`
+  - `PyBytes::new_bound()` → `PyBytes::new()`
+  - `get_type_bound<>()` → `get_type<>()`
+- Refactored blending system for better modularity
+
+#### Testing Infrastructure
+- Updated pytest configuration for isolated testing with `--import-mode=importlib`
+- Excluded test files from package distribution
+- Streamlined test suite by removing unit tests directory
+- Added pytest conftest.py for test configuration
+
+### Fixed
+- Resolved import conflicts in isolated testing environments
+- Improved build system configuration
+- Enhanced code organization and maintainability
+
 ## [0.3.0] - 2025-11-26
 
 ### Removed
