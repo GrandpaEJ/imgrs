@@ -166,81 +166,62 @@ pub fn blend_pixels(
     }
 
     // Standard blending modes with color operations
-    let (blended_r, blended_g, blended_b) = match blend_mode {
-        BlendMode::Normal => (overlay_r, overlay_g, overlay_b),
-        BlendMode::Multiply => (base_r * overlay_r, base_g * overlay_g, base_b * overlay_b),
-        BlendMode::Screen => (
-            1.0 - (1.0 - base_r) * (1.0 - overlay_r),
-            1.0 - (1.0 - base_g) * (1.0 - overlay_g),
-            1.0 - (1.0 - base_b) * (1.0 - overlay_b),
-        ),
-        BlendMode::Overlay => (
-            overlay_blend(base_r, overlay_r),
-            overlay_blend(base_g, overlay_g),
-            overlay_blend(base_b, overlay_b),
-        ),
-        BlendMode::SoftLight => (
-            soft_light_blend(base_r, overlay_r),
-            soft_light_blend(base_g, overlay_g),
-            soft_light_blend(base_b, overlay_b),
-        ),
-        BlendMode::HardLight => (
-            hard_light_blend(base_r, overlay_r),
-            hard_light_blend(base_g, overlay_g),
-            hard_light_blend(base_b, overlay_b),
-        ),
-        BlendMode::ColorDodge => (
-            color_dodge_blend(base_r, overlay_r),
-            color_dodge_blend(base_g, overlay_g),
-            color_dodge_blend(base_b, overlay_b),
-        ),
-        BlendMode::ColorBurn => (
-            color_burn_blend(base_r, overlay_r),
-            color_burn_blend(base_g, overlay_g),
-            color_burn_blend(base_b, overlay_b),
-        ),
-        BlendMode::Darken => (
-            base_r.min(overlay_r),
-            base_g.min(overlay_g),
-            base_b.min(overlay_b),
-        ),
-        BlendMode::Lighten => (
-            base_r.max(overlay_r),
-            base_g.max(overlay_g),
-            base_b.max(overlay_b),
-        ),
-        BlendMode::Difference => (
-            (base_r - overlay_r).abs(),
-            (base_g - overlay_g).abs(),
-            (base_b - overlay_b).abs(),
-        ),
-        BlendMode::Exclusion => (
-            base_r + overlay_r - 2.0 * base_r * overlay_r,
-            base_g + overlay_g - 2.0 * base_g * overlay_g,
-            base_b + overlay_b - 2.0 * base_b * overlay_b,
-        ),
-        BlendMode::Lighter => (base_r + overlay_r, base_g + overlay_g, base_b + overlay_b),
-        BlendMode::Hue => {
-            let (h, _, _) = rgb_to_hsl(overlay_r, overlay_g, overlay_b);
-            let (_, s, l) = rgb_to_hsl(base_r, base_g, base_b);
-            hsl_to_rgb(h, s, l)
+    let (blended_r, blended_g, blended_b) = if super::normal::is_normal(blend_mode) {
+        super::normal::apply_normal((base_r, base_g, base_b), (overlay_r, overlay_g, overlay_b))
+    } else if super::multiply::is_multiply(blend_mode) {
+        super::multiply::apply_multiply((base_r, base_g, base_b), (overlay_r, overlay_g, overlay_b))
+    } else if super::screen::is_screen(blend_mode) {
+        super::screen::apply_screen((base_r, base_g, base_b), (overlay_r, overlay_g, overlay_b))
+    } else if super::overlay::is_overlay(blend_mode) {
+        super::overlay::apply_overlay((base_r, base_g, base_b), (overlay_r, overlay_g, overlay_b))
+    } else if super::soft_light::is_soft_light(blend_mode) {
+        super::soft_light::apply_soft_light((base_r, base_g, base_b), (overlay_r, overlay_g, overlay_b))
+    } else if super::hard_light::is_hard_light(blend_mode) {
+        super::hard_light::apply_hard_light((base_r, base_g, base_b), (overlay_r, overlay_g, overlay_b))
+    } else if super::darken::is_darken(blend_mode) {
+        super::darken::apply_darken((base_r, base_g, base_b), (overlay_r, overlay_g, overlay_b))
+    } else if super::lighten::is_lighten(blend_mode) {
+        super::lighten::apply_lighten((base_r, base_g, base_b), (overlay_r, overlay_g, overlay_b))
+    } else if super::difference::is_difference(blend_mode) {
+        super::difference::apply_difference((base_r, base_g, base_b), (overlay_r, overlay_g, overlay_b))
+    } else if super::exclusion::is_exclusion(blend_mode) {
+        super::exclusion::apply_exclusion((base_r, base_g, base_b), (overlay_r, overlay_g, overlay_b))
+    } else {
+        // For remaining modes, use the original logic
+        match blend_mode {
+            BlendMode::ColorDodge => (
+                color_dodge_blend(base_r, overlay_r),
+                color_dodge_blend(base_g, overlay_g),
+                color_dodge_blend(base_b, overlay_b),
+            ),
+            BlendMode::ColorBurn => (
+                color_burn_blend(base_r, overlay_r),
+                color_burn_blend(base_g, overlay_g),
+                color_burn_blend(base_b, overlay_b),
+            ),
+            BlendMode::Lighter => (base_r + overlay_r, base_g + overlay_g, base_b + overlay_b),
+            BlendMode::Hue => {
+                let (h, _, _) = rgb_to_hsl(overlay_r, overlay_g, overlay_b);
+                let (_, s, l) = rgb_to_hsl(base_r, base_g, base_b);
+                hsl_to_rgb(h, s, l)
+            }
+            BlendMode::Saturation => {
+                let (_, s, _) = rgb_to_hsl(overlay_r, overlay_g, overlay_b);
+                let (h, _, l) = rgb_to_hsl(base_r, base_g, base_b);
+                hsl_to_rgb(h, s, l)
+            }
+            BlendMode::Color => {
+                let (h, s, _) = rgb_to_hsl(overlay_r, overlay_g, overlay_b);
+                let (_, _, l) = rgb_to_hsl(base_r, base_g, base_b);
+                hsl_to_rgb(h, s, l)
+            }
+            BlendMode::Luminosity => {
+                let (_, _, l) = rgb_to_hsl(overlay_r, overlay_g, overlay_b);
+                let (h, s, _) = rgb_to_hsl(base_r, base_g, base_b);
+                hsl_to_rgb(h, s, l)
+            }
+            _ => (overlay_r, overlay_g, overlay_b),
         }
-        BlendMode::Saturation => {
-            let (_, s, _) = rgb_to_hsl(overlay_r, overlay_g, overlay_b);
-            let (h, _, l) = rgb_to_hsl(base_r, base_g, base_b);
-            hsl_to_rgb(h, s, l)
-        }
-        BlendMode::Color => {
-            let (h, s, _) = rgb_to_hsl(overlay_r, overlay_g, overlay_b);
-            let (_, _, l) = rgb_to_hsl(base_r, base_g, base_b);
-            hsl_to_rgb(h, s, l)
-        }
-        BlendMode::Luminosity => {
-            let (_, _, l) = rgb_to_hsl(overlay_r, overlay_g, overlay_b);
-            let (h, s, _) = rgb_to_hsl(base_r, base_g, base_b);
-            hsl_to_rgb(h, s, l)
-        }
-        _ => (overlay_r, overlay_g, overlay_b),
     };
 
     // Apply standard alpha compositing for blending modes
