@@ -62,12 +62,14 @@ python-source = "python"
 module-name = "imgrs._core"
 features = ["pyo3/extension-module"]
 manifest-path = "Cargo.toml"
+exclude = ["**/tests/**"]
 
 [tool.pytest.ini_options]
-testpaths = ["python/imgrs/tests"]
+testpaths = ["test"]
 python_files = ["test_*.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]
+addopts = "--import-mode=importlib"
 
 [tool.black]
 line-length = 88
