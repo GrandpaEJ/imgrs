@@ -1,7 +1,7 @@
-name: OLD Build and Test
+name: Build and Test
 
 on:
-  wrokflow_dispatch:
+  workflow_dispatch:
 
 jobs:
   test:
@@ -81,11 +81,11 @@ jobs:
           # This ensures maturin builds and installs properly
           pip install -e . --verbose
           # Verify installation
-          python -c "import puhu; print('Puhu installed successfully')"
+          python -c "import imgrs; print('Imgrs installed successfully')"
 
       - name: Run Python tests
         run: |
-          pytest python/puhu/tests/ -v
+          pytest python/imgrs/tests/ -v
 
   build-wheels:
     name: Build wheels on ${{ matrix.os }}
