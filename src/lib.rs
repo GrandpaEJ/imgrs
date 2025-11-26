@@ -9,7 +9,6 @@ use pyo3::types::PyModule;
 mod blending;
 mod css_filters;
 mod drawing;
-mod emoji;
 mod errors;
 mod filters;
 mod formats;
@@ -18,7 +17,6 @@ mod metadata;
 mod operations;
 mod pixels;
 mod shadows;
-mod text;
 
 pub use errors::ImgrsError;
 pub use image::PyImage;
