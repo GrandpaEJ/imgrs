@@ -49,7 +49,7 @@ That's it! We provide **pre-built wheels** for all major platforms.
 pip install imgrs
 
 # Specific version
-pip install imgrs==0.1.0
+pip install imgrs==0.3.0
 
 # Upgrade to latest
 pip install --upgrade imgrs
@@ -132,7 +132,7 @@ pip install pytest pytest-cov black flake8 isort mypy
 ```python
 import imgrs
 print(imgrs.__version__)
-# Output: 0.1.0
+# Output: 0.3.0
 ```
 
 ### Run Quick Test
