@@ -156,5 +156,5 @@ document.addEventListener('DOMContentLoaded', createPerformanceChart);
 const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
 const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
 
-console.log('📸 imgrs documentation loaded - v0.1.0');
+console.log('📸 imgrs documentation loaded - v0.3.0');
 
