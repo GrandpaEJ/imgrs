@@ -110,7 +110,7 @@ impl crate::image::core::PyImage {
 
         // Create Python dictionary with results
         Python::with_gil(|py| {
-            let dict = PyDict::new_bound(py);
+            let dict = PyDict::new(py);
 
             // Basic statistics
             dict.set_item("total_pixels", total_pixels)?;

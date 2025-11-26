@@ -26,19 +26,19 @@ fn _core(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyImage>()?;
     m.add(
         "ImgrsProcessingError",
-        m.py().get_type_bound::<errors::ImgrsProcessingError>(),
+        m.py().get_type::<errors::ImgrsProcessingError>(),
     )?;
     m.add(
         "InvalidImageError",
-        m.py().get_type_bound::<errors::InvalidImageError>(),
+        m.py().get_type::<errors::InvalidImageError>(),
     )?;
     m.add(
         "UnsupportedFormatError",
-        m.py().get_type_bound::<errors::UnsupportedFormatError>(),
+        m.py().get_type::<errors::UnsupportedFormatError>(),
     )?;
     m.add(
         "ImgrsIOError",
-        m.py().get_type_bound::<errors::ImgrsIOError>(),
+        m.py().get_type::<errors::ImgrsIOError>(),
     )?;
 
     // Add shape creation functions

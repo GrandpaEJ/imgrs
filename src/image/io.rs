@@ -44,7 +44,7 @@ impl PyImage {
         let image = self.get_image()?;
         Python::with_gil(|py| {
             let bytes = py.allow_threads(|| image.as_bytes().to_vec());
-            Ok(PyBytes::new_bound(py, &bytes).into())
+            Ok(PyBytes::new(py, &bytes).into())
         })
     }
 }

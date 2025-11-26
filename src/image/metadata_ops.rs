@@ -10,7 +10,7 @@ impl PyImage {
             let metadata = metadata::read_exif_from_path(&path)
                 .map_err(|e| PyErr::new::<pyo3::exceptions::PyIOError, _>(format!("{}", e)))?;
 
-            let dict = PyDict::new_bound(py);
+            let dict = PyDict::new(py);
 
             // Basic info
             dict.set_item("width", metadata.basic.width)?;
@@ -22,7 +22,7 @@ impl PyImage {
 
             // EXIF data
             if let Some(exif) = metadata.exif {
-                let exif_dict = PyDict::new_bound(py);
+                let exif_dict = PyDict::new(py);
 
                 if let Some(make) = exif.make {
                     exif_dict.set_item("make", make)?;
@@ -48,7 +48,7 @@ impl PyImage {
 
             // GPS data
             if let Some(gps) = metadata.gps {
-                let gps_dict = PyDict::new_bound(py);
+                let gps_dict = PyDict::new(py);
 
                 if let Some(lat) = gps.latitude {
                     gps_dict.set_item("latitude", lat)?;
@@ -65,7 +65,7 @@ impl PyImage {
 
             // Camera info
             if let Some(camera) = metadata.camera {
-                let camera_dict = PyDict::new_bound(py);
+                let camera_dict = PyDict::new(py);
 
                 if let Some(iso) = camera.iso {
                     camera_dict.set_item("iso", iso)?;
