@@ -9,4 +9,4 @@ pub use composite::{alpha_composite, color_overlay, composite, composite_with_mo
 #[allow(unused_imports)]
 pub use gradient::{gradient_overlay, GradientDirection};
 #[allow(unused_imports)]
-pub use modes::BlendMode;
+pub use modes::{BlendMode, blend_pixels};
