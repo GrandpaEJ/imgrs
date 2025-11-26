@@ -4,11 +4,11 @@ Comprehensive test of all imgrs features from A to Z.
 
 ## 📊 Test Summary
 
-- **Total Tests:** 102
-- **✅ Passed:** 99
-- **❌ Failed:** 3
-- **📌 Pinned:** 3 (Emoji - known issue)
-- **Success Rate:** 97.1%
+- **Total Tests:** 100
+- **✅ Passed:** 87
+- **❌ Failed:** 13
+- **❌ Removed:** 13 (Emoji + Text - Cairo dependency)
+- **Success Rate:** 87.0%
 
 ## 🎯 Test Results by Category
 
@@ -439,68 +439,31 @@ Comprehensive test of all imgrs features from A to Z.
 ![glow()](74_glow.png)
 
 
-
-### Text Rendering
-
-✅ **add_text()**
-
-![add_text()](75_text_basic.png)
-
-
-✅ **add_text_styled() - outline**
-
-![add_text_styled() - outline](76_text_outline.png)
-
-
-
-### Effects & Shadows
-
-✅ **add_text_styled() - shadow**
-
-![add_text_styled() - shadow](77_text_shadow.png)
-
+❌ **text()**
 
 
 ### Text Rendering
 
-✅ **add_text_styled() - background**
+❌ **text_styled() - background**
 
-![add_text_styled() - background](78_text_background.png)
+❌ **text_styled() - color**
 
+❌ **text_styled() - background**
 
-✅ **add_text_styled() - opacity**
+❌ **text_styled() - opacity**
 
-![add_text_styled() - opacity](79_text_opacity.png)
+❌ **text_centered() with textbox**
 
+❌ **text_multiline()**
 
-✅ **add_text_centered() with textbox**
+❌ **text_styled() - combined effects**
 
-![add_text_centered() with textbox](80_text_centered.png)
-
-
-✅ **add_text_multiline()**
-
-![add_text_multiline()](81_text_multiline.png)
-
-
-✅ **add_text_styled() - combined effects**
-
-![add_text_styled() - combined effects](82_text_combined.png)
-
-
-✅ **get_text_size()**
-
-✅ **get_multiline_text_size()**
-
-✅ **get_text_box()**
+❌ **get_text_size()**
 
 
 ### Text Measurement (Textbox)
 
-✅ **textbox - dynamic positioning**
-
-![textbox - dynamic positioning](83_textbox_demo.png)
-
+❌ **textbox - dynamic positioning**
 
 
 ### Metadata & EXIF
@@ -516,11 +479,11 @@ Comprehensive test of all imgrs features from A to Z.
 
 ### Emoji Overlays
 
-📌 **add_emoji()** - *Rendering needs improvement*
+❌ **add_emoji()**
 
-📌 **add_emojis()** - *Rendering needs improvement*
+❌ **add_emojis()**
 
-📌 **add_emoji_text()** - *Rendering needs improvement*
+❌ **add_emoji_text()**
 
 
 ### Properties
