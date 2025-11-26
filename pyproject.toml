@@ -38,7 +38,9 @@ dependencies = []
 numpy = ["numpy>=1.20.0"]
 
 # Full installation (includes NumPy)
-full = ["numpy>=1.20.0"]
+full = [
+    "numpy>=1.20.0",
+    ]
 
 # Development dependencies
 dev = [
