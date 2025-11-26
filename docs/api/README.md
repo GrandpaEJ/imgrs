@@ -150,67 +150,6 @@ copy = img.copy()
 # Modify copy without affecting original
 ```
 
----
-
-## 📝 Text API
-
-### Rich Text Rendering
-
-#### `img.add_text(text, position, size=32, color=(0, 0, 0, 255), font_family="sans", font_weight="normal", font_style="normal", font_path=None, letter_spacing=0.0, opacity=1.0)`
-Draw text with enhanced font support.
-
-**Example:**
-```python
-# Basic text with custom font
-img = img.add_text("Hello World", (50, 50), size=48, font_path="/path/to/font.ttf")
-
-# Colored text with styling
-img = img.add_text("Red Text", (50, 100), size=36, color=(255, 0, 0, 255), font_weight="bold")
-```
-
-#### `img.add_text_styled(text, position, size=32, color=(0, 0, 0, 255), font_family="sans", font_weight="normal", font_style="normal", font_path=None, letter_spacing=0.0, opacity=1.0, align="left", background=None, outline=None, shadow=None, glow=None, max_width=None, line_spacing=1.2, text_justify="left", rotation=0.0)`
-Draw text with comprehensive styling options including glow effects.
-
-**Example:**
-```python
-# Text with glow effect
-img = img.add_text_styled(
-    "Glowing Text",
-    (100, 100),
-    size=48,
-    color=(255, 255, 0, 255),
-    glow=(255, 255, 0, 150, 5.0)  # Yellow glow
-)
-
-# Combined effects
-img = img.add_text_styled(
-    "EPIC TEXT",
-    (200, 200),
-    size=80,
-    color=(255, 215, 0, 255),
-    outline=(255, 140, 0, 255, 4.0),
-    shadow=(5, 5, 0, 0, 0, 200),
-    glow=(255, 215, 0, 100, 3.0),
-    align="center"
-)
-```
-
-### Font Support
-
-imgrs supports multiple font formats:
-- **TTF** (TrueType Font) - `.ttf`
-- **OTF** (OpenType Font) - `.otf`
-- **WOFF2** (Web Open Font Format 2.0) - `.woff2`
-
-**Example:**
-```python
-# Use system fonts
-img = img.add_text("Sans Serif", (50, 50), font_family="sans")
-img = img.add_text("Serif Font", (50, 100), font_family="serif")
-
-# Custom font file
-img = img.add_text("Custom Font", (50, 150), font_path="/path/to/font.woff2")
-```
 
 ---
 
@@ -1240,7 +1179,6 @@ result = temp3.sharpen(1.2)
 ---
 
 **See Also:**
-- [Text API](text.md) - Rich text rendering with fonts and effects
 - [Installation Guide](guides/installation.md) - Setup instructions
 - [Basic Usage Guide](guides/basic-usage.md) - Getting started
 - [Examples Directory](../examples/) - More code examples
