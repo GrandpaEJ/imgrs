@@ -2,6 +2,64 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.3.0] - 2025-11-26
+
+### Removed
+
+#### Breaking Changes - Cairo/Pango Dependency Removal
+- **Emoji Support Completely Removed**
+  - `add_emoji()` - Preset emoji addition
+  - `add_emoji_text()` - Unicode emoji rendering
+  - `add_emoji_quick()` - Quick emoji addition
+  - `add_emojis()` - Batch emoji operations
+  - `emoji_demo.py` example removed
+
+- **Text Rendering Completely Removed**
+  - `add_text()` - Basic text rendering
+  - `add_text_styled()` - Styled text with effects
+  - `add_text_multiline()` - Multi-line text
+  - `add_text_centered()` - Centered text
+  - `add_text_with_fonts()` - Multi-font text
+  - `get_text_size()` - Text dimension measurement
+  - `get_multiline_text_size()` - Multi-line text dimensions
+  - `get_text_box()` - Text bounding box
+  - `list_available_fonts()` - Font listing
+  - `draw_text()` - Basic text drawing
+  - `textbox_demo.py`, `text_demo.py`, `text_emoji_demo.py` examples removed
+
+- **Rust Codebase Changes**
+  - Removed `src/text/` directory entirely
+  - Removed `src/emoji/` directory entirely
+  - Removed `src/image/text_ops.rs`
+  - Removed `src/image/emoji.rs`
+  - Updated `src/lib.rs` and `src/image/mod.rs`
+
+- **Python Codebase Changes**
+  - Removed `text_mixin.py` completely
+  - Removed `emoji_mixin.py` completely
+  - Updated `image.py` and `mixins/__init__.py`
+
+### Changed
+- **Dependency Updates**
+  - Removed cairo and pango dependencies from `Cargo.toml`
+  - Updated `Cargo.lock` with new dependency tree
+  - Reduced binary size and build complexity
+
+- **Example Organization**
+  - Organized 122+ example output images into categorized subfolders
+  - Updated examples to handle removed functionality gracefully
+  - Added organized subfolders: blur/, brightness_contrast/, channels_color/, etc.
+
+### Fixed
+- Build system simplified without Cairo/Pango dependencies
+- Examples now run without text/emoji functionality
+- All remaining features (65+ filters, transforms, etc.) still fully functional
+
+### Migration Guide
+- **Text Rendering**: Use external libraries like Pillow for text operations
+- **Emoji Support**: Use Unicode text rendering or external emoji libraries
+- **Build Requirements**: No longer need Cairo/Pango system dependencies
+
 ## [0.2.10] - 2025-11-19
 
 ### Added
