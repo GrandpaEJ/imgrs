@@ -1,5 +1,5 @@
 """
-Drawing operations mixin - shapes and text
+Drawing operations mixin - shapes and advanced text rendering
 """
 
 from typing import TYPE_CHECKING, List, Optional, Tuple, Union
@@ -9,7 +9,14 @@ if TYPE_CHECKING:
 
 
 class DrawingMixin:
-    """Mixin for drawing operations"""
+    """
+    Mixin for drawing operations including shapes and advanced text rendering.
+
+    Provides comprehensive drawing capabilities:
+    - Basic shapes: rectangles, circles, lines, triangles, polygons, stars, ellipses
+    - Advanced text: add_text, add_text_styled, add_text_multiline, get_text_size, get_text_box
+    - Text positioning: flexible coordinate system with tuple or separate x,y parameters
+    """
 
     def draw_rectangle(
         self,
