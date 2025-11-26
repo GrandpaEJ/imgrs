@@ -7,11 +7,9 @@ from .mixins import (
     CoreMixin,
     DrawingMixin,
     EffectsMixin,
-    EmojiMixin,
     FilterMixin,
     MetadataMixin,
     PixelMixin,
-    TextMixin,
     TransformMixin,
 )
 
@@ -24,9 +22,7 @@ class Image(
     PixelMixin,
     DrawingMixin,
     EffectsMixin,
-    EmojiMixin,
     MetadataMixin,
-    TextMixin,
 ):
     """
     A high-performance image class backed by Rust.
@@ -41,9 +37,7 @@ class Image(
     - PixelMixin: Pixel-level operations
     - DrawingMixin: Drawing shapes and text
     - EffectsMixin: Special effects (shadows, glow)
-    - EmojiMixin: Emoji overlays
     - MetadataMixin: EXIF/metadata reading
-    - TextMixin: Rich text rendering with full styling
     """
 
     pass  # All functionality is provided by mixins
