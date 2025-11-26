@@ -5,6 +5,8 @@
 [![Rust](https://img.shields.io/badge/rust-1.70+-orange.svg)](https://www.rust-lang.org/)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
+> **Version 0.3.0** - Text and emoji rendering support has been removed to eliminate Cairo/Pango dependencies. For text operations, consider using external libraries like Pillow.
+
 Imgrs is a **blazingly fast**, modern image processing library for Python, powered by Rust. Imgrs provides a Pillow-compatible API while delivering significantly better performance for common image operations.
 
 ## 📚 Documentation
@@ -22,6 +24,10 @@ Imgrs is a **blazingly fast**, modern image processing library for Python, power
 - **🦀 Rust Powered**: Memory-safe and efficient core written in Rust
 - **📦 Easy to Use**: Simple, intuitive API that feels familiar
 - **🎯 Format Support**: PNG, JPEG, BMP, TIFF, GIF, WEBP
+- **🎨 65+ Filters**: Comprehensive filter library (blur, sharpen, artistic effects)
+- **🔧 Pixel Operations**: Direct pixel manipulation and analysis
+- **🎭 Drawing Tools**: Shapes, lines, and basic drawing operations
+- **⚡ Auto-Enhancement**: Smart image optimization and color correction
 
 ## 🚀 Quick Start
 
@@ -74,34 +80,24 @@ import numpy as np
 array = np.random.randint(0, 256, (100, 100, 3), dtype=np.uint8)
 img_from_array = imgrs.fromarray(array)
 
-# Rich text rendering with styling
-img = img.add_text("Hello World", (50, 50), size=48, color=(255, 0, 0, 255))
+# Apply filters for image enhancement
+blurred = img.blur(2.0)
+sharpened = img.sharpen(1.5)
+sepia_tone = img.sepia()
 
-# Text with outline and shadow
-img = img.add_text_styled(
-    "BOLD TEXT", 
-    (100, 100), 
-    size=64,
-    color=(255, 255, 255, 255),
-    outline=(0, 0, 0, 255, 3.0),
-    shadow=(3, 3, 0, 0, 0, 180)
-)
+# Pixel manipulation
+pixel_color = img.getpixel((50, 50))
+img.putpixel((50, 50), (255, 0, 0, 255))
 
-# Centered text
-img = img.add_text_centered("Centered Title", 50, size=56, color=(0, 0, 128, 255))
+# Color analysis
+histogram = img.histogram()
+dominant = img.dominant_color()
+average = img.average_color()
 
-# Multi-line text
-multiline = "Line 1\nLine 2\nLine 3"
-img = img.add_text_multiline(multiline, (50, 50), size=32, line_spacing=1.5)
-
-# Measure text dimensions before rendering
-width, height = imgrs.Image.get_text_size("Sample Text", size=48)
-print(f"Text will be {width}x{height} pixels")
-
-# Get complete text bounding box information
-box = imgrs.Image.get_text_box("Sample", 100, 50, size=64)
-print(f"Text spans from ({box['x']}, {box['y']}) to ({box['right_x']}, {box['bottom_y']})")
-print(f"Baseline at y={box['baseline_y']}")
+# Drawing operations
+img.draw_rectangle(10, 10, 100, 100, (255, 0, 0, 128))
+img.draw_circle(150, 150, 50, (0, 255, 0, 128))
+img.draw_line(0, 0, 200, 200, (0, 0, 255, 255))
 ```
 
 ### Drop-in Pillow Replacement
@@ -164,7 +160,7 @@ img.save("resized.jpg")
 - `draw_rectangle()` - Filled rectangles with alpha blending
 - `draw_circle()` - Filled circles with alpha blending
 - `draw_line()` - Lines using Bresenham's algorithm
-- `draw_text()` - Basic text rendering with bitmap fonts
+- Shape generation: `circle()`, `rectangle()`, `triangle()`, `ellipse()`, `star()`, etc.
 
 ### ✨ Shadow Effects - **NEW!**
 
@@ -175,9 +171,9 @@ img.save("resized.jpg")
 ### 🚧 Planned Features
 
 - `frombytes()`, `tobytes()` - _Enhanced I/O_
-- Advanced text rendering with font support
 - Path operations and vector graphics
 - Additional blend modes and compositing operations
+- Arbitrary angle rotation support
 
 ## 📖 API Reference
 
@@ -296,10 +292,10 @@ pytest python/imgrs/tests/
 
 Contributions are welcome! Areas where help is needed:
 
-1. **Medium Priority Features**: `getpixel()`, `putpixel()`, `frombytes()`
+1. **Medium Priority Features**: `frombytes()`, `tobytes()`, arbitrary angle rotation
 2. **Performance Optimization**: Further speed improvements and benchmarking
 3. **Format Support**: Additional image formats and metadata handling
-4. **Advanced Operations**: CSS-like filters, path operations, text rendering
+4. **Advanced Operations**: Path operations, vector graphics, additional blend modes
 5. **Documentation**: More examples and tutorials
 6. **Testing**: Edge cases, compatibility tests, and performance benchmarks
 
