@@ -2,14 +2,15 @@ from imgrs import Image
 import tempfile
 import os
 
+
 # --- COLOR PARSER (USED BY IMGRS BACKGROUND) ---
 def parse_color_string(color_str) -> tuple[int, int, int]:
     """
     Converts hex "#f8ca3e" to tuple (248, 202, 62)
     """
-    if color_str.startswith('#'):
+    if color_str.startswith("#"):
         color_str = color_str[1:]
-        r, g, b = [int(color_str[i:i+2], 16) for i in (0, 2, 4)]
+        r, g, b = [int(color_str[i : i + 2], 16) for i in (0, 2, 4)]
         return (r, g, b)
     else:
         # Fallback
@@ -25,7 +26,7 @@ def imgrs_generate_image(
     slog="Hello world! Ebtisam here!",
     custom_name=None,
     slogan=None,
-    output_filename=None
+    output_filename=None,
 ):
     """
     Imgrs-only image generation tool.
@@ -33,13 +34,13 @@ def imgrs_generate_image(
     """
 
     # Save temp image
-    with tempfile.NamedTemporaryFile(suffix='.png', delete=False) as temp_file:
+    with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as temp_file:
         temp_file.write(image_data)
         img_path = temp_file.name
 
     try:
         # Convert color
-        color_bg = parse_color_string(anime['primary_color']) + (255,)
+        color_bg = parse_color_string(anime["primary_color"]) + (255,)
 
         # Open main image
         aboy = Image.open(img_path)
@@ -47,14 +48,14 @@ def imgrs_generate_image(
         # Load static layers (create dummy transparent layers if not exist)
         try:
             layer2 = Image.open(layer2_path)
-        except:
-            layer2 = Image.new('RGBA', (2000, 750), (0, 0, 0, 0))
+        except Exception:
+            layer2 = Image.new("RGBA", (2000, 750), (0, 0, 0, 0))
         try:
             layer3 = Image.open(layer3_path)
-        except:
-            layer3 = Image.new('RGBA', (2000, 750), (0, 0, 0, 0))
+        except Exception:
+            layer3 = Image.new("RGBA", (2000, 750), (0, 0, 0, 0))
 
-        name_text = custom_name or anime['name']
+        name_text = custom_name or anime["name"]
         slogan_text = slogan or slog
 
         # --- START IMAGE GENERATION LOGIC ---
@@ -63,13 +64,11 @@ def imgrs_generate_image(
         img = Image.new("RGBA", (2000, 750), color_bg)
 
         # Rotated white background strip
-        layer4 = Image.new('RGB', (1800, 450), (255, 255, 255))
+        layer4 = Image.new("RGB", (1800, 450), (255, 255, 255))
         layer4 = layer4.rotate(45, expand=True)
         layer4.paste(
-            aboy.resize(size=(1500,1500))\
-             .grayscale_filter(1.0)\
-             .set_alpha(0.15),
-            (20,0)
+            aboy.resize(size=(1500, 1500)).grayscale_filter(1.0).set_alpha(0.15),
+            (20, 0),
         )
 
         # Paste strip
@@ -92,7 +91,7 @@ def imgrs_generate_image(
             size=300,
             color=(0, 255, 255, 255),
             font_path="fonts/HighSchoolUsaSerif-6vwM.ttf",
-            outline=(0, 0, 0, 255, 3.0)
+            outline=(0, 0, 0, 255, 3.0),
         )
 
         # Main character image
@@ -104,13 +103,11 @@ def imgrs_generate_image(
             text=name_text.upper(),
             position=(400, 380),
             size=67,
-            font_path="fonts/GMVDINPro-CondMedium.ttf"
+            font_path="fonts/GMVDINPro-CondMedium.ttf",
         )
 
         img = img.add_text(
-            text=slogan_text,
-            position=(400, 440),
-            font_path="fonts/arial/ARIAL.TTF"
+            text=slogan_text, position=(400, 440), font_path="fonts/arial/ARIAL.TTF"
         )
 
         # --- END IMAGE GENERATION LOGIC ---
@@ -121,18 +118,17 @@ def imgrs_generate_image(
 
         img.save(output_filename)
 
-        return {
-            "status": "success",
-            "filename": output_filename
-        }
+        return {"status": "success", "filename": output_filename}
 
     finally:
         os.unlink(img_path)
+
+
 if __name__ == "__main__":
     img = Image.open("examples/Boy.png")
-    with tempfile.NamedTemporaryFile(suffix='.png', delete=False) as temp_file:
+    with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as temp_file:
         img.save(temp_file.name)
-        with open(temp_file.name, 'rb') as f:
+        with open(temp_file.name, "rb") as f:
             image_data = f.read()
         os.unlink(temp_file.name)
 
