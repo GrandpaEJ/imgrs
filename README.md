@@ -5,7 +5,7 @@
 [![Rust](https://img.shields.io/badge/rust-1.70+-orange.svg)](https://www.rust-lang.org/)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
-> **Version 0.3.0** - Text and emoji rendering support has been removed to eliminate Cairo/Pango dependencies. For text operations, consider using external libraries like Pillow.
+> **Version 0.3.1** - Advanced text rendering has been re-added through the new TextMixin system, providing comprehensive text operations without external dependencies.
 
 Imgrs is a **blazingly fast**, modern image processing library for Python, powered by Rust. Imgrs provides a Pillow-compatible API while delivering significantly better performance for common image operations.
 
@@ -26,7 +26,8 @@ Imgrs is a **blazingly fast**, modern image processing library for Python, power
 - **🎯 Format Support**: PNG, JPEG, BMP, TIFF, GIF, WEBP
 - **🎨 65+ Filters**: Comprehensive filter library (blur, sharpen, artistic effects)
 - **🔧 Pixel Operations**: Direct pixel manipulation and analysis
-- **🎭 Drawing Tools**: Shapes, lines, and basic drawing operations
+- **🎭 Drawing Tools**: Shapes, lines, and advanced drawing operations
+- **📝 Text Rendering**: Advanced text operations with styling and effects
 - **⚡ Auto-Enhancement**: Smart image optimization and color correction
 
 ## 🚀 Quick Start
@@ -98,6 +99,12 @@ average = img.average_color()
 img.draw_rectangle(10, 10, 100, 100, (255, 0, 0, 128))
 img.draw_circle(150, 150, 50, (0, 255, 0, 128))
 img.draw_line(0, 0, 200, 200, (0, 0, 255, 255))
+
+# Text rendering
+img.add_text("Hello World!", (20, 20), size=32, color=(0, 0, 0, 255))
+img.add_text_styled("Styled Text", (20, 60), size=24, color=(255, 255, 255, 255),
+                   outline=(0, 0, 0, 255, 1.0), background=(100, 149, 237, 255))
+img.add_text_multiline("Multi-line\ntext example", (20, 100), size=18, color=(0, 100, 0, 255))
 ```
 
 ### Drop-in Pillow Replacement
@@ -161,6 +168,17 @@ img.save("resized.jpg")
 - `draw_circle()` - Filled circles with alpha blending
 - `draw_line()` - Lines using Bresenham's algorithm
 - Shape generation: `circle()`, `rectangle()`, `triangle()`, `ellipse()`, `star()`, etc.
+
+### 📝 Text Rendering - **NEW!**
+
+- `add_text()` - Basic text rendering with flexible positioning
+- `add_text_styled()` - Styled text with outlines, shadows, backgrounds, and opacity
+- `add_text_multiline()` - Multi-line text with alignment and custom line spacing
+- `add_text_centered()` - Horizontally centered text rendering
+- `get_text_dimensions()` - Text size and metrics calculation
+- `get_multiline_text_dimensions()` - Multi-line text dimensions with line count
+- `get_text_bounding_box()` - Complete text bounding box with ascent/descent/baseline
+- Convenience methods: `add_text_with_shadow()`, `add_text_with_outline()`, `add_text_with_background()`
 
 ### ✨ Shadow Effects - **NEW!**
 
@@ -234,6 +252,49 @@ format = img.format  # "JPEG", "PNG", etc.
 
 # Raw pixel data
 bytes_data = img.to_bytes()
+```
+
+### Text Rendering
+
+```python
+# Basic text rendering
+img.add_text("Hello World!", (x, y), size=32, color=(0, 0, 0, 255))
+img.add_text("Text", x, y, size=24, color=(255, 0, 0, 255))  # Separate x,y
+
+# Styled text with effects
+img.add_text_styled(
+    "Styled Text",
+    (x, y),
+    size=28,
+    color=(255, 255, 255, 255),
+    outline=(0, 0, 0, 255, 2.0),      # Black outline, 2px width
+    shadow=(3, 3, 128, 128, 128, 200), # Gray shadow, offset by 3px
+    background=(100, 149, 237, 255),   # Blue background
+    opacity=0.9
+)
+
+# Multi-line text
+img.add_text_multiline(
+    "Line 1\nLine 2\nLine 3",
+    (x, y),
+    size=20,
+    color=(0, 0, 0, 255),
+    align="center",      # "left", "center", or "right"
+    line_spacing=1.5     # Line spacing multiplier
+)
+
+# Centered text
+img.add_text_centered("Centered Text", y, size=32, color=(0, 0, 0, 255))
+
+# Text measurement
+width, height, ascent, descent = img.get_text_dimensions("Text", 24)
+bbox = img.get_text_bounding_box("Text", x, y, 24)  # Returns dict with box info
+
+# Convenience methods
+img.add_text_with_shadow("Shadow Text", (x, y), size=24, color=(255, 0, 0, 255),
+                        shadow_color=(0, 0, 0, 180), shadow_offset=(2, 2))
+img.add_text_with_outline("Outlined", (x, y), size=20, color=(255, 255, 0, 255),
+                         outline_color=(0, 0, 0, 255), outline_width=1.5)
 ```
 
 ## 🔧 Development
