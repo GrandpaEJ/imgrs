@@ -1,76 +1,181 @@
-# 📝 Text API - Removed in v0.3.0
+# 📝 Text API - Advanced Text Rendering
 
-## Text Rendering Removed
+## Overview
 
-**Important:** All rich text rendering functionality has been **completely removed** in imgrs v0.3.0 due to the removal of Cairo/Pango dependencies.
+imgrs now provides comprehensive text rendering capabilities with advanced styling options, multi-line support, and precise text measurement. All text functions use bitmap fonts for fast, dependency-free rendering.
 
-### Removed Features
+## Available Methods
 
-The following text-related methods are no longer available:
+### Basic Text Rendering
 
-- `add_text()` - Basic text rendering
-- `add_text_styled()` - Styled text with effects
-- `add_text_centered()` - Centered text
-- `add_text_multiline()` - Multi-line text
-- `add_text_advanced()` - Advanced text rendering
-- `get_text_size()` - Text dimension measurement
-- `get_multiline_text_size()` - Multi-line text dimensions
-- `get_text_box()` - Text bounding box
-- `list_available_fonts()` - Font listing
+#### `add_text(text, position, size=40, color=(0,0,0,255))`
 
-### Migration Options
+Add text to an image with flexible positioning.
 
-For text rendering needs, consider these alternatives:
-
-#### 1. Use External Libraries
-```python
-# Pillow for text rendering
-from PIL import Image, ImageDraw, ImageFont
-
-img = Image.open("photo.jpg")
-draw = ImageDraw.Draw(img)
-font = ImageFont.truetype("arial.ttf", 32)
-draw.text((50, 50), "Hello World", fill=(255, 0, 0), font=font)
-
-# Convert back to imgrs if needed
-import numpy as np
-array = np.array(img)
-imgrs_img = Image.fromarray(array)
-```
-
-#### 2. Use Bitmap Text (Still Available)
 ```python
 from imgrs import Image
 
-img = Image.open("photo.jpg")
-# Simple bitmap text (A-Z, 0-9 only)
-img = img.draw_text("HELLO", 50, 50, (255, 255, 255, 255), scale=2)
+img = Image.new("RGB", (400, 300), (255, 255, 255))
+
+# Using tuple position
+img = img.add_text("Hello World", (20, 20), size=32, color=(0, 0, 0, 255))
+
+# Using separate x,y coordinates
+img = img.add_text("Hello World", 20, 20, size=32, color=(0, 0, 0, 255))
 ```
 
-#### 3. Pre-render Text Images
+**Parameters:**
+- `text` (str): Text to render
+- `position` (int, int) or (int): X coordinate or (x, y) tuple
+- `size` (int): Font size (default: 40)
+- `color` (tuple): RGBA color tuple (default: black)
+
+### Styled Text Rendering
+
+#### `add_text_styled(text, position, size=40, color=(0,0,0,255), outline=None, shadow=None, background=None)`
+
+Add styled text with outline, shadow, and background effects.
+
 ```python
-# Create text as separate images, then composite
-text_img = Image.new("RGBA", (200, 50), (0, 0, 0, 0))
-text_img = text_img.draw_text("TITLE", 10, 10, (255, 255, 255, 255), 2)
+# Text with outline
+img = img.add_text_styled(
+    "OUTLINED",
+    (50, 50),
+    size=32,
+    color=(255, 255, 255, 255),
+    outline=(0, 0, 0, 255, 2.0)  # (r, g, b, a, width)
+)
 
-# Composite onto main image
-result = img.paste(text_img, position=(50, 50))
+# Text with shadow
+img = img.add_text_styled(
+    "SHADOW",
+    (50, 100),
+    size=32,
+    color=(255, 0, 0, 255),
+    shadow=(3, 3, 128, 128, 128, 200)  # (offset_x, offset_y, r, g, b, a)
+)
+
+# Text with background
+img = img.add_text_styled(
+    "BACKGROUND",
+    (50, 150),
+    size=32,
+    color=(255, 255, 255, 255),
+    background=(0, 100, 200, 255)  # (r, g, b, a)
+)
+
+# Combined effects
+img = img.add_text_styled(
+    "FULL STYLE",
+    (50, 200),
+    size=36,
+    color=(255, 215, 0, 255),  # Gold
+    outline=(139, 69, 19, 255, 1.5),  # Brown outline
+    shadow=(2, 2, 105, 105, 105, 180),  # Gray shadow
+    background=(25, 25, 112, 255)  # Midnight blue background
+)
 ```
 
-### Why Was Text Removed?
+**Parameters:**
+- `text` (str): Text to render
+- `position` (int, int): (x, y) position tuple
+- `size` (int): Font size (default: 40)
+- `color` (tuple): RGBA color tuple (default: black)
+- `outline` (tuple): (r, g, b, a, width) for outline effect
+- `shadow` (tuple): (offset_x, offset_y, r, g, b, a) for shadow effect
+- `background` (tuple): (r, g, b, a) for background box
 
-- **Simplified Dependencies**: No longer requires Cairo/Pango system libraries
-- **Reduced Binary Size**: Smaller installation footprint
-- **Faster Builds**: No complex font rendering dependencies
-- **Cross-platform**: Easier deployment without font system requirements
+### Multi-line Text Rendering
 
-### Still Available
+#### `add_text_multiline(text, position, size=40, color=(0,0,0,255), line_spacing=1.2)`
 
-Basic bitmap text drawing remains available via `draw_text()` in the [Drawing API](drawing.md).
+Add multi-line text with customizable line spacing.
 
----
+```python
+# Basic multi-line text
+img = img.add_text_multiline(
+    "Line 1\nLine 2\nLine 3",
+    (20, 20),
+    size=24,
+    color=(0, 0, 0, 255)
+)
+
+# Multi-line with custom spacing
+img = img.add_text_multiline(
+    "Tight spacing\nbetween lines",
+    (20, 100),
+    size=20,
+    color=(0, 100, 0, 255),
+    line_spacing=1.1  # Tighter than default
+)
+
+# Multi-line with wide spacing
+img = img.add_text_multiline(
+    "Wide spacing\nmakes text\neasier to read",
+    (20, 180),
+    size=18,
+    color=(0, 0, 150, 255),
+    line_spacing=2.0  # Double spacing
+)
+```
+
+**Parameters:**
+- `text` (str): Multi-line text (separated by `\n`)
+- `position` (int, int): (x, y) position tuple
+- `size` (int): Font size (default: 40)
+- `color` (tuple): RGBA color tuple (default: black)
+- `line_spacing` (float): Line spacing multiplier (default: 1.2)
+
+### Text Measurement
+
+#### `get_text_size(text, size=40)`
+
+Get the dimensions of rendered text.
+
+```python
+width, height = img.get_text_size("Hello World", size=32)
+print(f"Text dimensions: {width} x {height}")
+```
+
+**Parameters:**
+- `text` (str): Text to measure
+- `size` (int): Font size (default: 40)
+
+**Returns:** (width, height) tuple
+
+#### `get_text_box(text, x, y, size=40)`
+
+Get complete bounding box information for text.
+
+```python
+bbox = img.get_text_box("Hello", 50, 50, size=32)
+print(bbox)
+# Output: {'x': 50, 'y': 50, 'width': 160, 'height': 32, 'baseline_y': 82}
+```
+
+**Parameters:**
+- `text` (str): Text to measure
+- `x` (int): X position
+- `y` (int): Y position
+- `size` (int): Font size (default: 40)
+
+**Returns:** Dictionary with bounding box information
+
+## Font Information
+
+- **Font Type**: 8x8 bitmap font
+- **Supported Characters**: A-Z, 0-9, basic punctuation (! ? . ,)
+- **Rendering**: Scalable pixel-perfect rendering
+- **Performance**: Fast, dependency-free rendering
+
+## Examples
+
+See the example scripts for comprehensive demonstrations:
+
+- `examples/text_quick_demo.py` - Quick overview of all features
+- `examples/text_demo.py` - Detailed examples with multiple demonstrations
 
 ## See Also
 
-- [Drawing API](drawing.md) - Basic drawing operations (bitmap text still available)
-- [Migration Guide](../guides/migration.md) - Migration information for v0.3.0
+- [Drawing API](drawing.md) - Basic drawing operations
+- [Image API](image.md) - Core image operations
