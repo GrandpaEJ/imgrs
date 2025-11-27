@@ -66,10 +66,6 @@ class TransformMixin:
         if angle == 0:
             return self.copy()
 
-        # Only support rotations that are multiples of 90 degrees
-        if angle % 90 != 0:
-            raise NotImplementedError("Arbitrary rotation angles are not supported yet")
-
         # Perform rotation
         rotated = self.__class__(self._rust_image.rotate(angle, expand))
 
@@ -194,7 +190,6 @@ class TransformMixin:
         """
         rust_images = self._rust_image.split()
         return [self.__class__(img) for img in rust_images]
-
     def paste(
         self,
         im: "Image",
@@ -207,14 +202,14 @@ class TransformMixin:
         Args:
             im: Image to paste onto this image
             position: Position as (x, y) tuple or None for (0, 0).
-                     The top-left corner of im will be placed at this position.
+                      The top-left corner of im will be placed at this position.
             mask: Optional mask image. Must be the same size as im.
-                  Supports:
-                  - 'L' (grayscale) masks: White areas are fully visible, black areas are invisible
-                  - 'LA' (grayscale with alpha) masks: Uses alpha channel for transparency
-                  - 'RGB' masks: Uses luminance (0.299*R + 0.587*G + 0.114*B) for opacity
-                  - 'RGBA' masks: Uses alpha channel for transparency
-                  - Other formats are automatically converted to grayscale
+                   Supports:
+                   - 'L' (grayscale) masks: White areas are fully visible, black areas are invisible
+                   - 'LA' (grayscale with alpha) masks: Uses alpha channel for transparency
+                   - 'RGB' masks: Uses luminance (0.299*R + 0.587*G + 0.114*B) for opacity
+                   - 'RGBA' masks: Uses alpha channel for transparency
+                   - Other formats are automatically converted to grayscale
 
         Returns:
             New Image instance with pasted content
@@ -252,6 +247,12 @@ class TransformMixin:
                     f"mask size {mask.size} does not match paste image size {im.size}"
                 )
 
-        rust_mask = mask._rust_image if mask is not None else None
-        rust_image = self._rust_image.paste(im._rust_image, position, rust_mask)
+        # Handle both Image wrappers and RustImage objects
+        # Extract the internal RustImage if it's wrapped, otherwise use directly
+        im_rust = im._rust_image if hasattr(im, '_rust_image') else im
+        mask_rust = mask._rust_image if (mask and hasattr(mask, '_rust_image')) else mask
+        
+        rust_image = self._rust_image.paste(im_rust, position, mask_rust)
+        # Wrap the returned RustImage in the Image class
         return self.__class__(rust_image)
+
