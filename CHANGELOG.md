@@ -6,12 +6,27 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
-#### Enhanced Text Rendering
-- `add_text()` - Flexible text rendering with position tuple or separate x,y parameters
-- `add_text_styled()` - Styled text with outline, shadow, and background support
-- `add_text_multiline()` - Multi-line text rendering with line spacing
-- `get_text_size()` - Text dimension calculation
-- `get_text_box()` - Complete text bounding box information
+#### Advanced Text Rendering System (TextMixin)
+- **Core Text Methods:**
+  - `add_text()` - Flexible text rendering with position tuple or separate x,y parameters
+  - `add_text_styled()` - Styled text with outline, shadow, background, opacity, and alignment support
+  - `add_text_multiline()` - Multi-line text rendering with line spacing and alignment
+  - `add_text_centered()` - Horizontally centered text rendering
+
+- **Text Measurement:**
+  - `get_text_dimensions()` - Text size and metrics calculation
+  - `get_multiline_text_dimensions()` - Multi-line text dimensions with line count
+  - `get_text_bounding_box()` - Complete text bounding box with ascent/descent/baseline
+
+- **Convenience Methods:**
+  - `add_text_with_shadow()` - Easy drop shadow effects
+  - `add_text_with_outline()` - Simple outline effects
+  - `add_text_with_background()` - Quick background text
+
+- **Rust Implementation:**
+  - Complete text rendering module (`src/text/`) with fonts, styles, and renderer
+  - Advanced text rendering functions in Python bindings
+  - Font management with embedded DejaVuSans fallback
 
 #### Modular Blend Mode Architecture
 - Split `src/blending/modes.rs` into 14 individual files
@@ -23,12 +38,19 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
+#### Text System Reorganization
+- Moved text functionality from `feat/` directory to `mixins/text_mixin.py`
+- Integrated TextMixin into main Image class inheritance
+- Updated text examples to showcase new TextMixin API
+- Removed old text mixin files from deprecated `feat/` directory
+
 #### Rust Codebase Updates
 - Updated deprecated PyO3 APIs to current versions:
   - `PyDict::new_bound()` → `PyDict::new()`
   - `PyBytes::new_bound()` → `PyBytes::new()`
   - `get_type_bound<>()` → `get_type<>()`
 - Refactored blending system for better modularity
+- Added comprehensive text rendering module with fonts, styles, and renderer
 
 #### Testing Infrastructure
 - Updated pytest configuration for isolated testing with `--import-mode=importlib`
