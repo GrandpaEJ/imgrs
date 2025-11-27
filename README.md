@@ -27,7 +27,7 @@ Imgrs is a **blazingly fast**, modern image processing library for Python, power
 - **🎨 65+ Filters**: Comprehensive filter library (blur, sharpen, artistic effects)
 - **🔧 Pixel Operations**: Direct pixel manipulation and analysis
 - **🎭 Drawing Tools**: Shapes, lines, and advanced drawing operations
-- **📝 Text Rendering**: Advanced text operations with styling and effects
+- **📝 Text Rendering**: Advanced text operations with styling and effects - **NEW!**
 - **⚡ Auto-Enhancement**: Smart image optimization and color correction
 
 ## 🚀 Quick Start
