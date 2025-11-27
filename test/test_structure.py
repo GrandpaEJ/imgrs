@@ -14,10 +14,10 @@ def test_imports():
     """Test that all our new functions can be imported."""
     try:
         print("✓ All new functions can be imported")
-        return True
+        pass
     except ImportError as e:
         print(f"✗ Import error: {e}")
-        return False
+        assert False
 
 
 def test_image_class_methods():
@@ -35,14 +35,14 @@ def test_image_class_methods():
 
         if missing_methods:
             print(f"✗ Missing methods in Image class: {missing_methods}")
-            return False
+            assert False
         else:
             print("✓ All new methods exist in Image class")
-            return True
+            pass
 
     except ImportError as e:
         print(f"✗ Could not import Image class: {e}")
-        return False
+        assert False
 
 
 def test_operations_module():
@@ -60,14 +60,14 @@ def test_operations_module():
 
         if missing_functions:
             print(f"✗ Missing functions in operations module: {missing_functions}")
-            return False
+            assert False
         else:
             print("✓ All new functions exist in operations module")
-            return True
+            pass
 
     except ImportError as e:
         print(f"✗ Could not import operations module: {e}")
-        return False
+        assert False
 
 
 def test_numpy_handling():
@@ -76,10 +76,10 @@ def test_numpy_handling():
         from imgrs.mixins.core_mixin import HAS_NUMPY
 
         print(f"✓ NumPy availability detected: {HAS_NUMPY}")
-        return True
+        pass
     except ImportError as e:
         print(f"✗ Could not check NumPy availability: {e}")
-        return False
+        assert False
 
 
 def main():
@@ -98,8 +98,11 @@ def main():
     total = len(tests)
 
     for test in tests:
-        if test():
+        try:
+            test()
             passed += 1
+        except AssertionError:
+            pass
         print()
 
     print("=" * 50)
