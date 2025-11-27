@@ -536,6 +536,76 @@ impl PyImage {
         self.draw_text_impl(text, x, y, color, scale)
     }
 
+    fn add_text(
+        &mut self,
+        text: &str,
+        x: i32,
+        y: i32,
+        size: u32,
+        color: (u8, u8, u8, u8),
+    ) -> PyResult<Self> {
+        self.add_text_impl(text, x, y, size, color)
+    }
+
+    fn add_text_styled(
+        &mut self,
+        text: &str,
+        x: i32,
+        y: i32,
+        size: u32,
+        color: (u8, u8, u8, u8),
+        outline_r: u8,
+        outline_g: u8,
+        outline_b: u8,
+        outline_a: u8,
+        outline_width: f32,
+        shadow_offset_x: i32,
+        shadow_offset_y: i32,
+        shadow_r: u8,
+        shadow_g: u8,
+        shadow_b: u8,
+        shadow_a: u8,
+        background_r: u8,
+        background_g: u8,
+        background_b: u8,
+        background_a: u8,
+    ) -> PyResult<Self> {
+        self.add_text_styled_impl(
+            text, x, y, size, color, outline_r, outline_g, outline_b, outline_a, outline_width,
+            shadow_offset_x, shadow_offset_y, shadow_r, shadow_g, shadow_b, shadow_a,
+            background_r, background_g, background_b, background_a,
+        )
+    }
+
+    fn add_text_multiline(
+        &mut self,
+        text: &str,
+        x: i32,
+        y: i32,
+        size: u32,
+        color: (u8, u8, u8, u8),
+        line_spacing: f32,
+    ) -> PyResult<Self> {
+        self.add_text_multiline_impl(text, x, y, size, color, line_spacing)
+    }
+
+    fn get_text_size(&self, text: &str, size: u32) -> (u32, u32) {
+        crate::text::get_text_size(text, size)
+    }
+
+    fn get_text_box(&self, text: &str, x: i32, y: i32, size: u32) -> Py<pyo3::types::PyDict> {
+        Python::with_gil(|py| {
+            let text_box = crate::text::get_text_box(text, x, y, size);
+            let dict = pyo3::types::PyDict::new(py);
+            dict.set_item("x", text_box.x).unwrap();
+            dict.set_item("y", text_box.y).unwrap();
+            dict.set_item("width", text_box.width).unwrap();
+            dict.set_item("height", text_box.height).unwrap();
+            dict.set_item("baseline_y", text_box.baseline_y).unwrap();
+            dict.into()
+        })
+    }
+
     // Effect methods (from effects.rs)
     fn drop_shadow(
         &mut self,
