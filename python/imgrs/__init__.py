@@ -15,6 +15,7 @@ from .enums import (
     Transpose,
 )
 from .image import Image
+from .imagefont import Font as ImageFont
 from .mixins.color_mixin import ColorMixin
 from .operations import (
     blur,
@@ -36,7 +37,7 @@ from .operations import (
     split,
 )
 
-__version__ = "0.3.0"
+__version__ = "0.3.1"
 __author__ = "Grandpa EJ"
 
 __all__ = [
@@ -44,6 +45,7 @@ __all__ = [
     "ColorFormat",
     "ColorMixin",
     "Image",
+    "ImageFont",
     "ImageMode",
     "ImageFormat",
     "MaskType",

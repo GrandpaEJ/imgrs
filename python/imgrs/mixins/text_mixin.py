@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING, Optional, Tuple, Union
 
 if TYPE_CHECKING:
     from .image import Image
+    from ..imagefont import Font
 
 
 class TextMixin:
@@ -26,9 +27,10 @@ class TextMixin:
         text: str,
         position: Union[Tuple[int, int], int],
         y: Optional[int] = None,
-        size: float = 32.0,
+        size: Optional[float] = None,
         color: Tuple[int, int, int, int] = (0, 0, 0, 255),
         font_path: Optional[str] = None,
+        font: Optional["Font"] = None,
     ) -> "Image":
         """
         Add basic text to the image.
@@ -37,9 +39,10 @@ class TextMixin:
             text: Text to render
             position: Either (x, y) tuple or just x coordinate
             y: Y coordinate (if position is int)
-            size: Font size in pixels
+            size: Font size in pixels (ignored if font is provided)
             color: (R, G, B, A) color values
             font_path: Path to TTF/OTF font file (optional, uses default if None)
+            font: Font object (alternative to font_path and size)
 
         Returns:
             New Image instance with text added
@@ -53,8 +56,18 @@ class TextMixin:
         if y_pos is None:
             raise ValueError("y coordinate must be provided")
 
+        # Handle font parameter
+        final_font_path = font_path
+        final_size = size or 32.0
+
+        if font is not None:
+            if hasattr(font, 'get_font_path') and font.get_font_path():
+                final_font_path = font.get_font_path()
+            if hasattr(font, 'get_size'):
+                final_size = font.get_size()
+
         return self.__class__(
-            self.draw_text(text, x, y_pos, color, int(size))
+            self.draw_text(text, x, y_pos, color, int(final_size))
         )
 
     def add_text_styled(
@@ -407,3 +420,68 @@ class TextMixin:
 
         # For now, just render the text (background not supported yet)
         return self.add_text(text, x, y_pos, size, color, font_path)
+
+    def text(
+        self,
+        position: Tuple[int, int],
+        text: str,
+        fill: Optional[Tuple[int, int, int, int]] = None,
+        font: Optional["Font"] = None,
+        anchor: Optional[str] = None,
+        spacing: int = 4,
+        align: str = "left",
+        direction: Optional[str] = None,
+        features: Optional[list] = None,
+        language: Optional[str] = None,
+        stroke_width: int = 0,
+        stroke_fill: Optional[Tuple[int, int, int, int]] = None,
+        embedded_color: bool = False,
+    ) -> "Image":
+        """
+        Draw text on the image (Pillow-compatible API).
+
+        Args:
+            position: (x, y) tuple for text position
+            text: Text to draw
+            fill: Text color as (R, G, B, A) tuple or None for default
+            font: Font object (from ImageFont) or None for default
+            anchor: Text anchor point (not yet supported)
+            spacing: Line spacing for multi-line text
+            align: Text alignment ("left", "center", "right")
+            direction: Text direction (not yet supported)
+            features: OpenType features (not yet supported)
+            language: Language code (not yet supported)
+            stroke_width: Text outline width (not yet supported)
+            stroke_fill: Outline color (not yet supported)
+            embedded_color: Use embedded color glyphs (not yet supported)
+
+        Returns:
+            New Image instance with text drawn
+        """
+        x, y = position
+
+        # Handle font parameter
+        font_path = None
+        size = 12  # Default size
+
+        if font is not None:
+            if hasattr(font, 'get_font_path') and font.get_font_path():
+                font_path = font.get_font_path()
+            if hasattr(font, 'get_size'):
+                size = font.get_size()
+
+        # Handle color parameter
+        color = fill if fill is not None else (0, 0, 0, 255)
+
+        # Check if text contains newlines
+        if '\n' in text:
+            # Multi-line text
+            return self.add_text_multiline(
+                text, (x, y), size=float(size), color=color,
+                font_path=font_path, align=align
+            )
+        else:
+            # Single line text
+            return self.add_text(
+                text, (x, y), size=float(size), color=color, font_path=font_path
+            )
