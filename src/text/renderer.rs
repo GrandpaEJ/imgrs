@@ -88,7 +88,109 @@ pub fn draw_text_styled(
     let mut rgba_image = image.to_rgba8();
     let font = fonts::load_font(font_path)?;
     
-    render_text_with_effects(&mut rgba_image, text, x, y, style, &font)?;
+    // Handle rotation
+    if style.rotation != 0.0 {
+        // Measure text size
+        let (width, height, _, _) = get_text_size(text, style.size, font_path)?;
+        
+        // Create temporary image for text
+        // Add padding for shadow/outline if needed
+        let padding = style.size as u32 / 2; // Heuristic padding
+        let temp_width = width + padding * 2;
+        let temp_height = height + padding * 2;
+        
+        let mut temp_img = RgbaImage::new(temp_width, temp_height);
+        
+        // Draw text on temp image (centered in padding)
+        render_text_with_effects(
+            &mut temp_img, 
+            text, 
+            padding as i32, 
+            padding as i32, 
+            style, 
+            &font
+        )?;
+        
+        // Rotate temp image
+        use imageproc::geometric_transformations::{rotate_about_center, Interpolation};
+        
+        let radians = style.rotation.to_radians();
+        let w = temp_width as f64;
+        let h = temp_height as f64;
+        let cos_a = (radians as f64).cos();
+        let sin_a = (radians as f64).sin();
+        
+        // Calculate new dimensions
+        let corners = [(0.0, 0.0), (w, 0.0), (w, h), (0.0, h)];
+        let mut min_x = f64::INFINITY;
+        let mut max_x = f64::NEG_INFINITY;
+        let mut min_y = f64::INFINITY;
+        let mut max_y = f64::NEG_INFINITY;
+        
+        for &(cx, cy) in &corners {
+            let rx = cx * cos_a - cy * sin_a;
+            let ry = cx * sin_a + cy * cos_a;
+            min_x = min_x.min(rx);
+            max_x = max_x.max(rx);
+            min_y = min_y.min(ry);
+            max_y = max_y.max(ry);
+        }
+        
+        let new_width = (max_x - min_x).ceil() as u32;
+        let new_height = (max_y - min_y).ceil() as u32;
+        
+        // Create expanded canvas and rotate
+        let mut large_rgba = RgbaImage::new(new_width, new_height);
+        let offset_x = ((new_width as f64 - w) / 2.0).round() as i64;
+        let offset_y = ((new_height as f64 - h) / 2.0).round() as i64;
+        image::imageops::overlay(&mut large_rgba, &temp_img, offset_x, offset_y);
+        
+        let rotated_rgba = rotate_about_center(
+            &large_rgba,
+            radians,
+            Interpolation::Bilinear,
+            Rgba([0, 0, 0, 0]),
+        );
+        
+        // Calculate paste position
+        // We want to align the center of the rotated text with the center of the original text box
+        // Original text box center (relative to image):
+        // ox = x + width/2
+        // oy = y + height/2
+        //
+        // Rotated text box center (relative to rotated image):
+        // rx = new_width/2
+        // ry = new_height/2
+        //
+        // Paste position (top-left):
+        // px = ox - rx
+        // py = oy - ry
+        //
+        // However, we added padding.
+        // Original content was at (x, y) but we drew it at (padding, padding) in temp_img.
+        // So the "visual" center of text in temp_img is (padding + width/2, padding + height/2).
+        //
+        // Let's simplify:
+        // We want the text to appear at (x, y) but rotated around its center.
+        // Center of text: cx = x + width/2, cy = y + height/2.
+        //
+        // The rotated image has the text centered in it (because we centered temp_img in large_rgba).
+        // So the center of rotated_rgba corresponds to the center of the text.
+        //
+        // So we just need to place rotated_rgba such that its center is at (cx, cy).
+        // px = cx - new_width/2
+        // py = cy - new_height/2
+        
+        let cx = x + (width as i32) / 2;
+        let cy = y + (height as i32) / 2;
+        
+        let px = cx - (new_width as i32) / 2;
+        let py = cy - (new_height as i32) / 2;
+        
+        image::imageops::overlay(&mut rgba_image, &rotated_rgba, px as i64, py as i64);
+    } else {
+        render_text_with_effects(&mut rgba_image, text, x, y, style, &font)?;
+    }
     
     Ok(DynamicImage::ImageRgba8(rgba_image))
 }

@@ -219,6 +219,7 @@ impl PyImage {
         shadow: Option<(i32, i32, u8, u8, u8, u8)>,
         opacity: Option<f32>,
         max_width: Option<u32>,
+        rotation: Option<f32>,
     ) -> PyResult<Self> {
         let format = self.format;
         let image = self.get_image()?;
@@ -257,6 +258,10 @@ impl PyImage {
 
         if let Some(max_width) = max_width {
             style = style.with_max_width(max_width);
+        }
+
+        if let Some(rotation) = rotation {
+            style = style.with_rotation(rotation);
         }
 
         Python::with_gil(|py| {

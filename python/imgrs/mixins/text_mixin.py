@@ -81,12 +81,10 @@ class TextMixin:
         shadow: Optional[Tuple[int, int, int, int, int, int]] = None,
         opacity: Optional[float] = None,
         max_width: Optional[int] = None,
+        rotation: Optional[float] = None,
     ) -> "Image":
         """
         Add styled text with advanced formatting options.
-
-        NOTE: Advanced styling features (background, outline, shadow, opacity, max_width)
-        are not yet available. This method currently falls back to basic text rendering.
 
         Args:
             text: Text to render
@@ -95,12 +93,13 @@ class TextMixin:
             size: Font size in pixels
             color: (R, G, B, A) color values
             font_path: Path to TTF/OTF font file (optional)
-            background: (R, G, B, A) background color (optional) - NOT YET SUPPORTED
-            align: Text alignment - "left", "center", or "right" (optional) - NOT YET SUPPORTED
-            outline: (R, G, B, A, width) outline color and width (optional) - NOT YET SUPPORTED
-            shadow: (offset_x, offset_y, R, G, B, A) shadow offset and color (optional) - NOT YET SUPPORTED
-            opacity: Text opacity 0.0-1.0 (optional) - NOT YET SUPPORTED
-            max_width: Maximum width for text wrapping (optional) - NOT YET SUPPORTED
+            background: (R, G, B, A) background color (optional)
+            align: Text alignment - "left", "center", or "right" (optional)
+            outline: (R, G, B, A, width) outline color and width (optional)
+            shadow: (offset_x, offset_y, R, G, B, A) shadow offset and color (optional)
+            opacity: Text opacity 0.0-1.0 (optional)
+            max_width: Maximum width for text wrapping (optional)
+            rotation: Rotation angle in degrees (optional)
 
         Returns:
             New Image instance with styled text added
@@ -114,8 +113,23 @@ class TextMixin:
         if y_pos is None:
             raise ValueError("y coordinate must be provided")
 
-        # For now, fall back to basic text rendering
-        return self.__class__(self.draw_text(text, x, y_pos, color, int(size)))
+        return self.__class__(
+            self._rust_image.draw_text_styled(
+                text,
+                x,
+                y_pos,
+                size,
+                color,
+                font_path,
+                background,
+                align,
+                outline,
+                shadow,
+                opacity,
+                max_width,
+                rotation,
+            )
+        )
 
     def add_text_multiline(
         self,

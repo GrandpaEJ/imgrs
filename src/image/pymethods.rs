@@ -537,7 +537,7 @@ impl PyImage {
         self.draw_text_impl(text, x, y, color, scale)
     }
 
-    #[pyo3(signature = (text, x, y, size=32.0, color=(0, 0, 0, 255), font_path=None, background=None, align=None, outline=None, shadow=None, opacity=None, max_width=None))]
+    #[pyo3(signature = (text, x, y, size=32.0, color=(0, 0, 0, 255), font_path=None, background=None, align=None, outline=None, shadow=None, opacity=None, max_width=None, rotation=None))]
     fn draw_text_styled(
         &mut self,
         text: &str,
@@ -552,8 +552,9 @@ impl PyImage {
         shadow: Option<(i32, i32, u8, u8, u8, u8)>,
         opacity: Option<f32>,
         max_width: Option<u32>,
+        rotation: Option<f32>,
     ) -> PyResult<Self> {
-        self.draw_text_styled_impl(text, x, y, size, color, font_path, background, align, outline, shadow, opacity, max_width)
+        self.draw_text_styled_impl(text, x, y, size, color, font_path, background, align, outline, shadow, opacity, max_width, rotation)
     }
 
     #[pyo3(signature = (text, x, y, size=32.0, color=(0, 0, 0, 255), font_path=None, line_spacing=None, align=None))]
