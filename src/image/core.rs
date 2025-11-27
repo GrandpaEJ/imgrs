@@ -65,7 +65,7 @@ impl LazyImage {
 }
 
 #[derive(Clone)]
-#[pyclass(name = "Image")]
+#[pyclass(name = "RustImage")]
 pub struct PyImage {
     pub(crate) lazy_image: LazyImage,
     pub(crate) format: Option<ImageFormat>,

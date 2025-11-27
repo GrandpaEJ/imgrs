@@ -46,7 +46,7 @@ class CoreMixin:
             ImportError: If imgrs Rust extension is not installed
             RuntimeError: If Rust backend fails to initialize
         """
-        from .._core import Image as RustImage
+        from .._core import RustImage
 
         if RustImage is None:
             raise ImportError(
@@ -116,7 +116,7 @@ class CoreMixin:
             >>> # With format hint
             >>> img = Image.open("file.dat", formats=['JPEG', 'PNG'])
         """
-        from .._core import Image as RustImage
+        from .._core import RustImage
 
         if isinstance(fp, Path):
             fp = str(fp)
@@ -196,7 +196,7 @@ class CoreMixin:
             >>> # Using named color
             >>> img = Image.new('RGB', (300, 200), 'blue')
         """
-        from .._core import Image as RustImage
+        from .._core import RustImage
 
         # Convert color to RGBA tuple
         rgba_color = cls._parse_color(color, mode)
@@ -227,7 +227,7 @@ class CoreMixin:
         Returns:
             Image instance
         """
-        from .._core import Image as RustImage
+        from .._core import RustImage
 
         if not HAS_NUMPY:
             raise ImportError(
@@ -286,7 +286,7 @@ class CoreMixin:
 
             # Works on mobile without NumPy!
         """
-        from .._core import Image as RustImage
+        from .._core import RustImage
 
         rust_image = RustImage.frombytes(mode, size, data)
         return cls(rust_image)
