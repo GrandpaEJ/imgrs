@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
 """
-Text rendering examples for imgrs.
+Text rendering examples for imgrs TextMixin.
 
-This script demonstrates all the advanced text rendering features:
+This script demonstrates all the advanced text rendering features available through the TextMixin:
 - Basic text rendering with flexible positioning
-- Styled text with outlines, shadows, and backgrounds
-- Multi-line text with custom line spacing
+- Styled text with outlines, shadows, backgrounds, and opacity
+- Multi-line text with custom alignment and line spacing
+- Centered text rendering
 - Text measurement and bounding box calculations
+- Convenience methods for common effects (shadow, outline, background)
 """
 
 import imgrs
@@ -16,30 +18,33 @@ def demo_basic_text():
     """Demonstrate basic text rendering with different positioning methods."""
     print("Creating basic text demo...")
 
-    # Create a white background image
-    img = imgrs.new("RGB", (600, 400), (255, 255, 255))
+    # Create a gradient background
+    img = imgrs.new("RGB", (600, 400), (240, 248, 255))
 
-    # Add text using tuple position
-    img = img.add_text("Hello World!", (20, 20), size=32, color=(0, 0, 0, 255))
+    # Add text using tuple position (recommended)
+    img = img.add_text("Hello TextMixin!", (20, 20), size=32, color=(0, 0, 0, 255))
 
     # Add text using separate x,y parameters
-    img = img.add_text("Separate positioning", 20, 70, size=24, color=(255, 0, 0, 255))
+    img = img.add_text("Flexible positioning", 20, 70, size=24, color=(255, 0, 0, 255))
 
     # Add text with different colors and sizes
     img = img.add_text("Large Text", (20, 100), size=48, color=(0, 100, 0, 255))
     img = img.add_text("Small Text", (20, 160), size=16, color=(0, 0, 255, 255))
+
+    # Add text with custom font (if available)
+    img = img.add_text("Custom font support", (20, 190), size=20, color=(128, 0, 128, 255))
 
     img.save("examples/output/text_basic_demo.png")
     print("✓ Basic text demo saved as examples/output/text_basic_demo.png")
 
 
 def demo_styled_text():
-    """Demonstrate styled text with outlines, shadows, and backgrounds."""
+    """Demonstrate styled text with all formatting options."""
     print("Creating styled text demo...")
 
-    img = imgrs.new("RGB", (800, 600), (240, 240, 240))
+    img = imgrs.new("RGB", (800, 600), (250, 250, 250))
 
-    # Text with outline
+    # Text with outline effect
     img = img.add_text_styled(
         "OUTLINED TEXT",
         (50, 50),
@@ -48,7 +53,7 @@ def demo_styled_text():
         outline=(0, 0, 0, 255, 2.0)  # Black outline, 2px width
     )
 
-    # Text with shadow
+    # Text with drop shadow
     img = img.add_text_styled(
         "SHADOW TEXT",
         (50, 120),
@@ -57,7 +62,7 @@ def demo_styled_text():
         shadow=(3, 3, 128, 128, 128, 200)  # Gray shadow, offset by 3px
     )
 
-    # Text with background
+    # Text with background rectangle
     img = img.add_text_styled(
         "BACKGROUND",
         (50, 190),
@@ -66,24 +71,43 @@ def demo_styled_text():
         background=(0, 100, 200, 255)  # Blue background
     )
 
+    # Text with opacity
+    img = img.add_text_styled(
+        "50% OPACITY",
+        (50, 240),
+        size=28,
+        color=(0, 150, 0, 128),  # Semi-transparent green
+        opacity=0.5
+    )
+
     # Text with all effects combined
     img = img.add_text_styled(
         "FULL STYLE",
-        (50, 250),
+        (50, 290),
         size=40,
         color=(255, 215, 0, 255),  # Gold text
         outline=(139, 69, 19, 255, 1.5),  # Brown outline
         shadow=(2, 2, 105, 105, 105, 180),  # Dark gray shadow
-        background=(25, 25, 112, 255)  # Midnight blue background
+        background=(25, 25, 112, 255),  # Midnight blue background
+        opacity=0.9
     )
 
-    # Text with colored outline
+    # Text with text wrapping (max_width)
     img = img.add_text_styled(
-        "RAINBOW OUTLINE",
-        (50, 320),
-        size=28,
-        color=(255, 255, 255, 255),
-        outline=(255, 0, 255, 255, 3.0)  # Magenta outline
+        "This text will wrap when it exceeds the maximum width specified",
+        (400, 50),
+        size=20,
+        color=(0, 0, 0, 255),
+        max_width=200  # Wrap at 200 pixels
+    )
+
+    # Text with alignment
+    img = img.add_text_styled(
+        "CENTER\nALIGNED\nTEXT",
+        (500, 150),
+        size=24,
+        color=(0, 0, 150, 255),
+        align="center"
     )
 
     img.save("examples/output/text_styled_demo.png")
@@ -91,41 +115,59 @@ def demo_styled_text():
 
 
 def demo_multiline_text():
-    """Demonstrate multi-line text rendering."""
+    """Demonstrate multi-line text rendering with alignment."""
     print("Creating multi-line text demo...")
 
     img = imgrs.new("RGB", (700, 500), (255, 250, 240))
 
-    # Multi-line text with default line spacing
+    # Left-aligned multi-line text (default)
     img = img.add_text_multiline(
-        "This is multi-line text\nwith default spacing\nand multiple lines",
+        "Left aligned text\nspans multiple lines\nwith default spacing",
         (30, 30),
         size=24,
         color=(0, 0, 0, 255)
     )
 
+    # Center-aligned multi-line text
+    img = img.add_text_multiline(
+        "Center aligned\nmulti-line text\nlooks great",
+        (250, 30),
+        size=22,
+        color=(0, 100, 0, 255),
+        align="center"
+    )
+
+    # Right-aligned multi-line text
+    img = img.add_text_multiline(
+        "Right aligned text\nis useful for\ncertain layouts",
+        (470, 30),
+        size=20,
+        color=(0, 0, 150, 255),
+        align="right"
+    )
+
     # Multi-line text with custom line spacing
     img = img.add_text_multiline(
-        "Tight spacing\nbetween lines\nmakes text\nmore compact",
+        "Tight spacing\nmakes text\nmore compact",
         (30, 150),
         size=20,
-        color=(0, 100, 0, 255),
+        color=(150, 0, 0, 255),
         line_spacing=1.1  # Tighter spacing
     )
 
     # Multi-line text with wide line spacing
     img = img.add_text_multiline(
-        "Wide spacing\nmakes text\neasier to read\nwith more\nvertical space",
-        (30, 250),
+        "Wide spacing\nmakes text\neasier to read",
+        (30, 220),
         size=18,
-        color=(0, 0, 150, 255),
+        color=(0, 100, 100, 255),
         line_spacing=2.0  # Double spacing
     )
 
     # Multi-line text with styled background
     img = img.add_text_styled(
         "Multi-line\nwith background\nand outline",
-        (400, 30),
+        (400, 150),
         size=22,
         color=(255, 255, 255, 255),
         outline=(0, 0, 0, 255, 1.0),
@@ -136,44 +178,165 @@ def demo_multiline_text():
     print("✓ Multi-line text demo saved as examples/output/text_multiline_demo.png")
 
 
+def demo_centered_text():
+    """Demonstrate centered text rendering."""
+    print("Creating centered text demo...")
+
+    img = imgrs.new("RGB", (600, 400), (255, 255, 255))
+
+    # Add some visual guides
+    img = img.draw_line(0, 200, 600, 200, (200, 200, 200, 255))  # Horizontal center line
+    img = img.draw_line(300, 0, 300, 400, (200, 200, 200, 255))  # Vertical center line
+
+    # Basic centered text
+    img = img.add_text_centered("CENTERED TEXT", 180, size=32, color=(0, 0, 0, 255))
+
+    # Centered text with styling
+    img = img.add_text_centered(
+        "STYLED CENTERED",
+        220,
+        size=28,
+        color=(255, 255, 255, 255),
+        outline=(0, 0, 0, 255, 1.5),
+        background=(70, 130, 180, 255)  # Steel blue
+    )
+
+    # Centered text with shadow
+    img = img.add_text_centered(
+        "SHADOW CENTERED",
+        260,
+        size=24,
+        color=(255, 0, 0, 255),
+        shadow=(2, 2, 128, 128, 128, 180)
+    )
+
+    # Centered multi-line text
+    img = img.add_text_centered(
+        "Multi-line\ncentered text\nworks perfectly",
+        300,
+        size=18,
+        color=(0, 100, 0, 255)
+    )
+
+    img.save("examples/output/text_centered_demo.png")
+    print("✓ Centered text demo saved as examples/output/text_centered_demo.png")
+
+
+def demo_convenience_methods():
+    """Demonstrate convenience methods for common text effects."""
+    print("Creating convenience methods demo...")
+
+    img = imgrs.new("RGB", (800, 500), (245, 245, 245))
+
+    # Text with shadow using convenience method
+    img = img.add_text_with_shadow(
+        "SHADOW TEXT",
+        (50, 50),
+        size=32,
+        color=(255, 0, 0, 255),
+        shadow_color=(0, 0, 0, 180),
+        shadow_offset=(3, 3)
+    )
+
+    # Text with outline using convenience method
+    img = img.add_text_with_outline(
+        "OUTLINE TEXT",
+        (50, 120),
+        size=32,
+        color=(255, 255, 255, 255),
+        outline_color=(255, 0, 255, 255),
+        outline_width=2.0
+    )
+
+    # Text with background using convenience method
+    img = img.add_text_with_background(
+        "BACKGROUND TEXT",
+        (50, 190),
+        size=28,
+        color=(255, 255, 255, 255),
+        background_color=(0, 100, 200, 255)
+    )
+
+    # Combine multiple convenience methods
+    img = img.add_text_with_shadow(
+        "SHADOW + OUTLINE",
+        (400, 50),
+        size=24,
+        color=(255, 255, 0, 255),
+        shadow_color=(128, 128, 128, 200),
+        shadow_offset=(2, 2)
+    )
+    img = img.add_text_with_outline(
+        "SHADOW + OUTLINE",
+        (400, 50),
+        size=24,
+        color=(255, 255, 0, 255),
+        outline_color=(0, 0, 0, 255),
+        outline_width=1.0
+    )
+
+    # Show that these are just convenience methods - you can achieve the same with add_text_styled
+    img = img.add_text_styled(
+        "MANUAL STYLE",
+        (400, 120),
+        size=24,
+        color=(255, 255, 0, 255),
+        outline=(0, 0, 0, 255, 1.0),
+        shadow=(2, 2, 128, 128, 128, 200)
+    )
+
+    img.save("examples/output/text_convenience_demo.png")
+    print("✓ Convenience methods demo saved as examples/output/text_convenience_demo.png")
+
+
 def demo_text_measurement():
     """Demonstrate text measurement and bounding box functions."""
     print("Creating text measurement demo...")
 
     img = imgrs.new("RGB", (800, 600), (255, 255, 255))
 
-    test_texts = [
+    test_cases = [
         ("Small", 16),
         ("Medium", 24),
         ("Large", 40),
-        ("Extra Large", 64),
         ("Hello World!", 32),
         ("Short", 48),
+        ("Very long text for measurement", 20),
     ]
 
     y_offset = 50
 
-    for text, size in test_texts:
+    for text, size in test_cases:
         # Get text dimensions
-        width, height = img.get_text_size(text, size)
+        width, height, ascent, descent = img.get_text_dimensions(text, size)
 
         # Get bounding box
-        bbox = img.get_text_box(text, 50, y_offset, size)
+        bbox = img.get_text_bounding_box(text, 50, y_offset, size)
 
-        # Draw bounding box (light gray background)
-        img = img.add_text_styled(
-            text,
-            (50, y_offset),
-            size=size,
-            color=(0, 0, 0, 255),
-            background=(240, 240, 240, 255)
+        # Draw bounding box background
+        img = img.draw_rectangle(
+            45, y_offset - ascent, width + 10, height + 10,
+            (240, 240, 240, 255)
         )
 
-        # Add measurement info
-        info_text = f"Size: {width}x{height}, BBox: {bbox}"
-        img = img.add_text(info_text, 50, y_offset + height + 10, size=12, color=(100, 100, 100, 255))
+        # Add the text
+        img = img.add_text(text, 50, y_offset, size=size, color=(0, 0, 0, 255))
 
-        y_offset += height + 60
+        # Add measurement info
+        info_lines = [
+            f"Size: {width}x{height}",
+            f"Ascent: {ascent}, Descent: {descent}",
+            f"Baseline Y: {bbox['baseline_y']}",
+            f"Bottom Y: {bbox['bottom_y']}"
+        ]
+
+        for i, line in enumerate(info_lines):
+            img = img.add_text(
+                line, 400, y_offset + (i * 18) - ascent + 10,
+                size=11, color=(100, 100, 100, 255)
+            )
+
+        y_offset += height + 40
 
     img.save("examples/output/text_measurement_demo.png")
     print("✓ Text measurement demo saved as examples/output/text_measurement_demo.png")
@@ -183,7 +346,7 @@ def demo_text_composition():
     """Demonstrate combining text with other image operations."""
     print("Creating text composition demo...")
 
-    # Start with a gradient background
+    # Start with a gradient-like background using drawing operations
     img = imgrs.new("RGB", (800, 600), (255, 255, 255))
 
     # Add some shapes for context
@@ -192,7 +355,7 @@ def demo_text_composition():
     img = img.draw_circle(600, 150, 80, (200, 255, 200, 255))  # Light green circle
     img = img.draw_rectangle(150, 400, 500, 100, (200, 200, 255, 255))  # Light blue rectangle
 
-    # Add various text elements
+    # Add various text elements using TextMixin
     img = img.add_text_styled(
         "TEXT COMPOSITION",
         (250, 80),
@@ -216,9 +379,18 @@ def demo_text_composition():
     img = img.add_text("Circle", 170, 250, size=16, color=(139, 0, 0, 255))
     img = img.add_text("Rectangle", 300, 520, size=16, color=(0, 0, 139, 255))
 
+    # Add centered text
+    img = img.add_text_centered(
+        "Centered Title",
+        320,
+        size=24,
+        color=(0, 0, 0, 255),
+        background=(255, 255, 200, 255)
+    )
+
     # Add a signature-style text
     img = img.add_text_styled(
-        "imgrs v0.3.1",
+        "TextMixin Demo",
         (600, 550),
         size=14,
         color=(128, 128, 128, 255),
@@ -231,7 +403,7 @@ def demo_text_composition():
 
 def main():
     """Run all text demos."""
-    print("Running imgrs text rendering demos...")
+    print("Running imgrs TextMixin demos...")
     print("=" * 50)
 
     # Ensure output directory exists
@@ -241,12 +413,22 @@ def main():
     demo_basic_text()
     demo_styled_text()
     demo_multiline_text()
+    demo_centered_text()
+    demo_convenience_methods()
     demo_text_measurement()
     demo_text_composition()
 
     print("=" * 50)
-    print("All text demos completed!")
+    print("All TextMixin demos completed!")
     print("Check the examples/output/ directory for the generated images.")
+    print("\nFeatures demonstrated:")
+    print("• Basic text rendering with flexible positioning")
+    print("• Styled text with outlines, shadows, backgrounds, opacity")
+    print("• Multi-line text with alignment and custom spacing")
+    print("• Centered text rendering")
+    print("• Text measurement and bounding box calculations")
+    print("• Convenience methods for common effects")
+    print("• Integration with other drawing operations")
 
 
 if __name__ == "__main__":
