@@ -32,7 +32,9 @@ def demo_basic_text():
     img = img.add_text("Small Text", (20, 160), size=16, color=(0, 0, 255, 255))
 
     # Add text with custom font (if available)
-    img = img.add_text("Custom font support", (20, 190), size=20, color=(128, 0, 128, 255))
+    img = img.add_text(
+        "Custom font support", (20, 190), size=20, color=(128, 0, 128, 255)
+    )
 
     img.save("examples/output/text_basic_demo.png")
     print("✓ Basic text demo saved as examples/output/text_basic_demo.png")
@@ -50,7 +52,7 @@ def demo_styled_text():
         (50, 50),
         size=36,
         color=(255, 255, 255, 255),
-        outline=(0, 0, 0, 255, 2.0)  # Black outline, 2px width
+        outline=(0, 0, 0, 255, 2.0),  # Black outline, 2px width
     )
 
     # Text with drop shadow
@@ -59,7 +61,7 @@ def demo_styled_text():
         (50, 120),
         size=36,
         color=(255, 0, 0, 255),
-        shadow=(3, 3, 128, 128, 128, 200)  # Gray shadow, offset by 3px
+        shadow=(3, 3, 128, 128, 128, 200),  # Gray shadow, offset by 3px
     )
 
     # Text with background rectangle
@@ -68,7 +70,7 @@ def demo_styled_text():
         (50, 190),
         size=32,
         color=(255, 255, 255, 255),
-        background=(0, 100, 200, 255)  # Blue background
+        background=(0, 100, 200, 255),  # Blue background
     )
 
     # Text with opacity
@@ -77,7 +79,7 @@ def demo_styled_text():
         (50, 240),
         size=28,
         color=(0, 150, 0, 128),  # Semi-transparent green
-        opacity=0.5
+        opacity=0.5,
     )
 
     # Text with all effects combined
@@ -89,7 +91,7 @@ def demo_styled_text():
         outline=(139, 69, 19, 255, 1.5),  # Brown outline
         shadow=(2, 2, 105, 105, 105, 180),  # Dark gray shadow
         background=(25, 25, 112, 255),  # Midnight blue background
-        opacity=0.9
+        opacity=0.9,
     )
 
     # Text with text wrapping (max_width)
@@ -98,7 +100,7 @@ def demo_styled_text():
         (400, 50),
         size=20,
         color=(0, 0, 0, 255),
-        max_width=200  # Wrap at 200 pixels
+        max_width=200,  # Wrap at 200 pixels
     )
 
     # Text with alignment
@@ -107,7 +109,7 @@ def demo_styled_text():
         (500, 150),
         size=24,
         color=(0, 0, 150, 255),
-        align="center"
+        align="center",
     )
 
     img.save("examples/output/text_styled_demo.png")
@@ -125,7 +127,7 @@ def demo_multiline_text():
         "Left aligned text\nspans multiple lines\nwith default spacing",
         (30, 30),
         size=24,
-        color=(0, 0, 0, 255)
+        color=(0, 0, 0, 255),
     )
 
     # Center-aligned multi-line text
@@ -134,7 +136,7 @@ def demo_multiline_text():
         (250, 30),
         size=22,
         color=(0, 100, 0, 255),
-        align="center"
+        align="center",
     )
 
     # Right-aligned multi-line text
@@ -143,7 +145,7 @@ def demo_multiline_text():
         (470, 30),
         size=20,
         color=(0, 0, 150, 255),
-        align="right"
+        align="right",
     )
 
     # Multi-line text with custom line spacing
@@ -152,7 +154,7 @@ def demo_multiline_text():
         (30, 150),
         size=20,
         color=(150, 0, 0, 255),
-        line_spacing=1.1  # Tighter spacing
+        line_spacing=1.1,  # Tighter spacing
     )
 
     # Multi-line text with wide line spacing
@@ -161,7 +163,7 @@ def demo_multiline_text():
         (30, 220),
         size=18,
         color=(0, 100, 100, 255),
-        line_spacing=2.0  # Double spacing
+        line_spacing=2.0,  # Double spacing
     )
 
     # Multi-line text with styled background
@@ -171,7 +173,7 @@ def demo_multiline_text():
         size=22,
         color=(255, 255, 255, 255),
         outline=(0, 0, 0, 255, 1.0),
-        background=(100, 149, 237, 255)  # Cornflower blue
+        background=(100, 149, 237, 255),  # Cornflower blue
     )
 
     img.save("examples/output/text_multiline_demo.png")
@@ -185,7 +187,9 @@ def demo_centered_text():
     img = imgrs.new("RGB", (600, 400), (255, 255, 255))
 
     # Add some visual guides
-    img = img.draw_line(0, 200, 600, 200, (200, 200, 200, 255))  # Horizontal center line
+    img = img.draw_line(
+        0, 200, 600, 200, (200, 200, 200, 255)
+    )  # Horizontal center line
     img = img.draw_line(300, 0, 300, 400, (200, 200, 200, 255))  # Vertical center line
 
     # Basic centered text
@@ -198,7 +202,7 @@ def demo_centered_text():
         size=28,
         color=(255, 255, 255, 255),
         outline=(0, 0, 0, 255, 1.5),
-        background=(70, 130, 180, 255)  # Steel blue
+        background=(70, 130, 180, 255),  # Steel blue
     )
 
     # Centered text with shadow
@@ -207,7 +211,7 @@ def demo_centered_text():
         260,
         size=24,
         color=(255, 0, 0, 255),
-        shadow=(2, 2, 128, 128, 128, 180)
+        shadow=(2, 2, 128, 128, 128, 180),
     )
 
     # Centered multi-line text
@@ -215,7 +219,7 @@ def demo_centered_text():
         "Multi-line\ncentered text\nworks perfectly",
         300,
         size=18,
-        color=(0, 100, 0, 255)
+        color=(0, 100, 0, 255),
     )
 
     img.save("examples/output/text_centered_demo.png")
@@ -235,7 +239,7 @@ def demo_convenience_methods():
         size=32,
         color=(255, 0, 0, 255),
         shadow_color=(0, 0, 0, 180),
-        shadow_offset=(3, 3)
+        shadow_offset=(3, 3),
     )
 
     # Text with outline using convenience method
@@ -245,7 +249,7 @@ def demo_convenience_methods():
         size=32,
         color=(255, 255, 255, 255),
         outline_color=(255, 0, 255, 255),
-        outline_width=2.0
+        outline_width=2.0,
     )
 
     # Text with background using convenience method
@@ -254,7 +258,7 @@ def demo_convenience_methods():
         (50, 190),
         size=28,
         color=(255, 255, 255, 255),
-        background_color=(0, 100, 200, 255)
+        background_color=(0, 100, 200, 255),
     )
 
     # Combine multiple convenience methods
@@ -264,7 +268,7 @@ def demo_convenience_methods():
         size=24,
         color=(255, 255, 0, 255),
         shadow_color=(128, 128, 128, 200),
-        shadow_offset=(2, 2)
+        shadow_offset=(2, 2),
     )
     img = img.add_text_with_outline(
         "SHADOW + OUTLINE",
@@ -272,7 +276,7 @@ def demo_convenience_methods():
         size=24,
         color=(255, 255, 0, 255),
         outline_color=(0, 0, 0, 255),
-        outline_width=1.0
+        outline_width=1.0,
     )
 
     # Show that these are just convenience methods - you can achieve the same with add_text_styled
@@ -282,11 +286,13 @@ def demo_convenience_methods():
         size=24,
         color=(255, 255, 0, 255),
         outline=(0, 0, 0, 255, 1.0),
-        shadow=(2, 2, 128, 128, 128, 200)
+        shadow=(2, 2, 128, 128, 128, 200),
     )
 
     img.save("examples/output/text_convenience_demo.png")
-    print("✓ Convenience methods demo saved as examples/output/text_convenience_demo.png")
+    print(
+        "✓ Convenience methods demo saved as examples/output/text_convenience_demo.png"
+    )
 
 
 def demo_text_measurement():
@@ -315,8 +321,7 @@ def demo_text_measurement():
 
         # Draw bounding box background
         img = img.draw_rectangle(
-            45, y_offset - ascent, width + 10, height + 10,
-            (240, 240, 240, 255)
+            45, y_offset - ascent, width + 10, height + 10, (240, 240, 240, 255)
         )
 
         # Add the text
@@ -327,13 +332,16 @@ def demo_text_measurement():
             f"Size: {width}x{height}",
             f"Ascent: {ascent}, Descent: {descent}",
             f"Baseline Y: {bbox['baseline_y']}",
-            f"Bottom Y: {bbox['bottom_y']}"
+            f"Bottom Y: {bbox['bottom_y']}",
         ]
 
         for i, line in enumerate(info_lines):
             img = img.add_text(
-                line, 400, y_offset + (i * 18) - ascent + 10,
-                size=11, color=(100, 100, 100, 255)
+                line,
+                400,
+                y_offset + (i * 18) - ascent + 10,
+                size=11,
+                color=(100, 100, 100, 255),
             )
 
         y_offset += height + 40
@@ -350,10 +358,14 @@ def demo_text_composition():
     img = imgrs.new("RGB", (800, 600), (255, 255, 255))
 
     # Add some shapes for context
-    img = img.draw_rectangle(50, 50, 700, 500, (240, 248, 255, 255))  # Light blue background
+    img = img.draw_rectangle(
+        50, 50, 700, 500, (240, 248, 255, 255)
+    )  # Light blue background
     img = img.draw_circle(200, 150, 80, (255, 200, 200, 255))  # Light red circle
     img = img.draw_circle(600, 150, 80, (200, 255, 200, 255))  # Light green circle
-    img = img.draw_rectangle(150, 400, 500, 100, (200, 200, 255, 255))  # Light blue rectangle
+    img = img.draw_rectangle(
+        150, 400, 500, 100, (200, 200, 255, 255)
+    )  # Light blue rectangle
 
     # Add various text elements using TextMixin
     img = img.add_text_styled(
@@ -363,7 +375,7 @@ def demo_text_composition():
         color=(255, 255, 255, 255),
         outline=(0, 0, 0, 255, 2.0),
         shadow=(3, 3, 128, 128, 128, 200),
-        background=(70, 130, 180, 255)  # Steel blue
+        background=(70, 130, 180, 255),  # Steel blue
     )
 
     # Add descriptive text
@@ -372,7 +384,7 @@ def demo_text_composition():
         (100, 200),
         size=18,
         color=(0, 0, 0, 255),
-        line_spacing=1.5
+        line_spacing=1.5,
     )
 
     # Add labels for shapes
@@ -385,7 +397,7 @@ def demo_text_composition():
         320,
         size=24,
         color=(0, 0, 0, 255),
-        background=(255, 255, 200, 255)
+        background=(255, 255, 200, 255),
     )
 
     # Add a signature-style text
@@ -394,7 +406,7 @@ def demo_text_composition():
         (600, 550),
         size=14,
         color=(128, 128, 128, 255),
-        outline=(64, 64, 64, 255, 0.5)
+        outline=(64, 64, 64, 255, 0.5),
     )
 
     img.save("examples/output/text_composition_demo.png")
@@ -408,6 +420,7 @@ def main():
 
     # Ensure output directory exists
     import os
+
     os.makedirs("examples/output", exist_ok=True)
 
     demo_basic_text()

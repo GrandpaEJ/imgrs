@@ -2,7 +2,7 @@
 Drawing operations mixin - shapes and advanced text rendering
 """
 
-from typing import TYPE_CHECKING, List, Optional, Tuple, Union
+from typing import TYPE_CHECKING, Tuple
 
 if TYPE_CHECKING:
     from .image import Image
@@ -87,6 +87,7 @@ class DrawingMixin:
         Returns:
             New Image instance with line drawn
         """
+
     def draw_text(
         self,
         text: str,
@@ -109,4 +110,3 @@ class DrawingMixin:
             New Image instance with text drawn
         """
         return self.__class__(self._rust_image.draw_text(text, x, y, color, scale))
-

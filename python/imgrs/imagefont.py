@@ -8,7 +8,6 @@ Provides Pillow-compatible font loading functionality with support for:
 - Built-in fallback fonts
 """
 
-import os
 from typing import Optional, Union, Tuple
 from pathlib import Path
 
@@ -43,11 +42,13 @@ class Font:
             raise FileNotFoundError(f"Font file not found: {font_path}")
 
         # Validate file extension
-        if path.suffix.lower() not in ['.ttf', '.otf', '.woff', '.woff2']:
-            raise ValueError(f"Unsupported font format: {path.suffix}. Supported: TTF, OTF, WOFF, WOFF2")
+        if path.suffix.lower() not in [".ttf", ".otf", ".woff", ".woff2"]:
+            raise ValueError(
+                f"Unsupported font format: {path.suffix}. Supported: TTF, OTF, WOFF, WOFF2"
+            )
 
         try:
-            with open(path, 'rb') as f:
+            with open(path, "rb") as f:
                 self._font_data = f.read()
         except Exception as e:
             raise RuntimeError(f"Failed to load font {font_path}: {e}")
@@ -132,7 +133,7 @@ def load_default(size: int = 12) -> Font:
     Returns:
         Font object using built-in font
     """
-    cache_key = ('default', size)
+    cache_key = ("default", size)
 
     if cache_key in _font_cache:
         return _font_cache[cache_key]
@@ -208,6 +209,7 @@ def getbbox(text: str, font: Font) -> Tuple[int, int, int, int]:
 # Predefined font sizes for convenience
 class FontSize:
     """Common font sizes."""
+
     SMALL = 10
     MEDIUM = 12
     LARGE = 16
@@ -217,13 +219,13 @@ class FontSize:
 
 # Export public API
 __all__ = [
-    'Font',
-    'load',
-    'truetype',
-    'load_default',
-    'load_path',
-    'get_font',
-    'getsize',
-    'getbbox',
-    'FontSize',
+    "Font",
+    "load",
+    "truetype",
+    "load_default",
+    "load_path",
+    "get_font",
+    "getsize",
+    "getbbox",
+    "FontSize",
 ]

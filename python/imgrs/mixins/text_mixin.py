@@ -57,18 +57,15 @@ class TextMixin:
             raise ValueError("y coordinate must be provided")
 
         # Handle font parameter
-        final_font_path = font_path
         final_size = size or 32.0
 
         if font is not None:
-            if hasattr(font, 'get_font_path') and font.get_font_path():
-                final_font_path = font.get_font_path()
-            if hasattr(font, 'get_size'):
+            if hasattr(font, "get_font_path") and font.get_font_path():
+                font.get_font_path()
+            if hasattr(font, "get_size"):
                 final_size = font.get_size()
 
-        return self.__class__(
-            self.draw_text(text, x, y_pos, color, int(final_size))
-        )
+        return self.__class__(self.draw_text(text, x, y_pos, color, int(final_size)))
 
     def add_text_styled(
         self,
@@ -118,9 +115,7 @@ class TextMixin:
             raise ValueError("y coordinate must be provided")
 
         # For now, fall back to basic text rendering
-        return self.__class__(
-            self.draw_text(text, x, y_pos, color, int(size))
-        )
+        return self.__class__(self.draw_text(text, x, y_pos, color, int(size)))
 
     def add_text_multiline(
         self,
@@ -163,8 +158,10 @@ class TextMixin:
 
         # For now, render each line as separate text
         img = self
-        for i, line in enumerate(text.split('\n')):
-            img = img.add_text(line, x, y_pos + i * int(size * 1.2), size, color, font_path)
+        for i, line in enumerate(text.split("\n")):
+            img = img.add_text(
+                line, x, y_pos + i * int(size * 1.2), size, color, font_path
+            )
 
         return img
 
@@ -252,7 +249,7 @@ class TextMixin:
         Returns:
             Tuple of (width, height, line_count)
         """
-        lines = text.split('\n')
+        lines = text.split("\n")
         line_count = len(lines)
         max_width = max(len(line) for line in lines) * int(size * 0.6)
         height = int(line_count * size * line_spacing)
@@ -287,15 +284,15 @@ class TextMixin:
         descent = int(size * 0.2)
 
         return {
-            'x': x,
-            'y': y - ascent,
-            'width': width,
-            'height': height,
-            'ascent': ascent,
-            'descent': descent,
-            'baseline_y': y,
-            'bottom_y': y + descent,
-            'right_x': x + width
+            "x": x,
+            "y": y - ascent,
+            "width": width,
+            "height": height,
+            "ascent": ascent,
+            "descent": descent,
+            "baseline_y": y,
+            "bottom_y": y + descent,
+            "right_x": x + width,
         }
 
     # Convenience methods for common text operations
@@ -327,7 +324,14 @@ class TextMixin:
         Returns:
             New Image instance with shadowed text added
         """
-        shadow = (shadow_offset[0], shadow_offset[1], shadow_color[0], shadow_color[1], shadow_color[2], shadow_color[3])
+        (
+            shadow_offset[0],
+            shadow_offset[1],
+            shadow_color[0],
+            shadow_color[1],
+            shadow_color[2],
+            shadow_color[3],
+        )
 
         if isinstance(position, tuple):
             x, y_pos = position
@@ -339,7 +343,14 @@ class TextMixin:
             raise ValueError("y coordinate must be provided")
 
         # For now, render shadow as separate text
-        img = self.add_text(text, x + shadow_offset[0], y_pos + shadow_offset[1], size, shadow_color, font_path)
+        img = self.add_text(
+            text,
+            x + shadow_offset[0],
+            y_pos + shadow_offset[1],
+            size,
+            shadow_color,
+            font_path,
+        )
         return img.add_text(text, x, y_pos, size, color, font_path)
 
     def add_text_with_outline(
@@ -369,7 +380,13 @@ class TextMixin:
         Returns:
             New Image instance with outlined text added
         """
-        outline = (outline_color[0], outline_color[1], outline_color[2], outline_color[3], outline_width)
+        (
+            outline_color[0],
+            outline_color[1],
+            outline_color[2],
+            outline_color[3],
+            outline_width,
+        )
 
         if isinstance(position, tuple):
             x, y_pos = position
@@ -465,20 +482,24 @@ class TextMixin:
         size = 12  # Default size
 
         if font is not None:
-            if hasattr(font, 'get_font_path') and font.get_font_path():
+            if hasattr(font, "get_font_path") and font.get_font_path():
                 font_path = font.get_font_path()
-            if hasattr(font, 'get_size'):
+            if hasattr(font, "get_size"):
                 size = font.get_size()
 
         # Handle color parameter
         color = fill if fill is not None else (0, 0, 0, 255)
 
         # Check if text contains newlines
-        if '\n' in text:
+        if "\n" in text:
             # Multi-line text
             return self.add_text_multiline(
-                text, (x, y), size=float(size), color=color,
-                font_path=font_path, align=align
+                text,
+                (x, y),
+                size=float(size),
+                color=color,
+                font_path=font_path,
+                align=align,
             )
         else:
             # Single line text
