@@ -87,14 +87,6 @@ class TransformMixin:
             bg = Image.new("RGBA", rotated.size, fillcolor)
             rotated = bg.paste(rotated, (0, 0))
 
-        if not expand and angle % 90 != 0:
-            # Crop to original size, centered (only for arbitrary angles)
-            orig_w, orig_h = self.size
-            rot_w, rot_h = rotated.size
-            left = max(0, (rot_w - orig_w) // 2)
-            top = max(0, (rot_h - orig_h) // 2)
-            rotated = rotated.crop((left, top, orig_w, orig_h))
-
         # TODO: Implement resample, center, translate
 
         return rotated
@@ -190,6 +182,7 @@ class TransformMixin:
         """
         rust_images = self._rust_image.split()
         return [self.__class__(img) for img in rust_images]
+
     def paste(
         self,
         im: "Image",
@@ -249,10 +242,11 @@ class TransformMixin:
 
         # Handle both Image wrappers and RustImage objects
         # Extract the internal RustImage if it's wrapped, otherwise use directly
-        im_rust = im._rust_image if hasattr(im, '_rust_image') else im
-        mask_rust = mask._rust_image if (mask and hasattr(mask, '_rust_image')) else mask
-        
+        im_rust = im._rust_image if hasattr(im, "_rust_image") else im
+        mask_rust = (
+            mask._rust_image if (mask and hasattr(mask, "_rust_image")) else mask
+        )
+
         rust_image = self._rust_image.paste(im_rust, position, mask_rust)
         # Wrap the returned RustImage in the Image class
         return self.__class__(rust_image)
-
