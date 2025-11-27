@@ -525,6 +525,7 @@ impl PyImage {
         self.draw_regular_polygon_impl(center_x, center_y, radius, sides, rotation, color)
     }
 
+
     fn draw_text(
         &mut self,
         text: &str,
@@ -536,74 +537,87 @@ impl PyImage {
         self.draw_text_impl(text, x, y, color, scale)
     }
 
-    fn add_text(
+    #[pyo3(signature = (text, x, y, size=32.0, color=(0, 0, 0, 255), font_path=None, background=None, align=None, outline=None, shadow=None, opacity=None, max_width=None))]
+    fn draw_text_styled(
         &mut self,
         text: &str,
         x: i32,
         y: i32,
-        size: u32,
+        size: f32,
         color: (u8, u8, u8, u8),
+        font_path: Option<String>,
+        background: Option<(u8, u8, u8, u8)>,
+        align: Option<String>,
+        outline: Option<(u8, u8, u8, u8, f32)>,
+        shadow: Option<(i32, i32, u8, u8, u8, u8)>,
+        opacity: Option<f32>,
+        max_width: Option<u32>,
     ) -> PyResult<Self> {
-        self.add_text_impl(text, x, y, size, color)
+        self.draw_text_styled_impl(text, x, y, size, color, font_path, background, align, outline, shadow, opacity, max_width)
     }
 
-    fn add_text_styled(
+    #[pyo3(signature = (text, x, y, size=32.0, color=(0, 0, 0, 255), font_path=None, line_spacing=None, align=None))]
+    fn draw_text_multiline(
         &mut self,
         text: &str,
         x: i32,
         y: i32,
-        size: u32,
+        size: f32,
         color: (u8, u8, u8, u8),
-        outline_r: u8,
-        outline_g: u8,
-        outline_b: u8,
-        outline_a: u8,
-        outline_width: f32,
-        shadow_offset_x: i32,
-        shadow_offset_y: i32,
-        shadow_r: u8,
-        shadow_g: u8,
-        shadow_b: u8,
-        shadow_a: u8,
-        background_r: u8,
-        background_g: u8,
-        background_b: u8,
-        background_a: u8,
+        font_path: Option<String>,
+        line_spacing: Option<f32>,
+        align: Option<String>,
     ) -> PyResult<Self> {
-        self.add_text_styled_impl(
-            text, x, y, size, color, outline_r, outline_g, outline_b, outline_a, outline_width,
-            shadow_offset_x, shadow_offset_y, shadow_r, shadow_g, shadow_b, shadow_a,
-            background_r, background_g, background_b, background_a,
-        )
+        self.draw_text_multiline_impl(text, x, y, size, color, font_path, line_spacing, align)
     }
 
-    fn add_text_multiline(
+    #[pyo3(signature = (text, y, size=32.0, color=(0, 0, 0, 255), font_path=None, background=None, outline=None, shadow=None, opacity=None))]
+    fn draw_text_centered(
         &mut self,
         text: &str,
-        x: i32,
         y: i32,
-        size: u32,
+        size: f32,
         color: (u8, u8, u8, u8),
+        font_path: Option<String>,
+        background: Option<(u8, u8, u8, u8)>,
+        outline: Option<(u8, u8, u8, u8, f32)>,
+        shadow: Option<(i32, i32, u8, u8, u8, u8)>,
+        opacity: Option<f32>,
+    ) -> PyResult<Self> {
+        self.draw_text_centered_impl(text, y, size, color, font_path, background, outline, shadow, opacity)
+    }
+
+    #[pyo3(signature = (text, size=32.0, font_path=None))]
+    fn get_text_size(
+        &mut self,
+        text: &str,
+        size: f32,
+        font_path: Option<String>,
+    ) -> PyResult<(u32, u32, i32, i32)> {
+        self.get_text_size_impl(text, size, font_path)
+    }
+
+    #[pyo3(signature = (text, size=32.0, line_spacing=1.2, font_path=None))]
+    fn get_multiline_text_size(
+        &mut self,
+        text: &str,
+        size: f32,
         line_spacing: f32,
-    ) -> PyResult<Self> {
-        self.add_text_multiline_impl(text, x, y, size, color, line_spacing)
+        font_path: Option<String>,
+    ) -> PyResult<(u32, u32, usize)> {
+        self.get_multiline_text_size_impl(text, size, line_spacing, font_path)
     }
 
-    fn get_text_size(&self, text: &str, size: u32) -> (u32, u32) {
-        crate::text::get_text_size(text, size)
-    }
-
-    fn get_text_box(&self, text: &str, x: i32, y: i32, size: u32) -> Py<pyo3::types::PyDict> {
-        Python::with_gil(|py| {
-            let text_box = crate::text::get_text_box(text, x, y, size);
-            let dict = pyo3::types::PyDict::new(py);
-            dict.set_item("x", text_box.x).unwrap();
-            dict.set_item("y", text_box.y).unwrap();
-            dict.set_item("width", text_box.width).unwrap();
-            dict.set_item("height", text_box.height).unwrap();
-            dict.set_item("baseline_y", text_box.baseline_y).unwrap();
-            dict.into()
-        })
+    #[pyo3(signature = (text, x, y, size=32.0, font_path=None))]
+    fn get_text_box(
+        &mut self,
+        text: &str,
+        x: i32,
+        y: i32,
+        size: f32,
+        font_path: Option<String>,
+    ) -> PyResult<pyo3::PyObject> {
+        self.get_text_box_impl(text, x, y, size, font_path)
     }
 
     // Effect methods (from effects.rs)

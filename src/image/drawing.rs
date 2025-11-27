@@ -196,7 +196,7 @@ impl PyImage {
         let image = self.get_image()?;
 
         Python::with_gil(|py| {
-            py.allow_threads(|| text::draw_text(image, text, x, y, color, scale))
+            py.allow_threads(|| text::draw_text(image, text, x, y, scale as f32, color, None))
         })
         .map(|result| PyImage {
             lazy_image: LazyImage::Loaded(result),
@@ -205,19 +205,62 @@ impl PyImage {
         .map_err(|e| e.into())
     }
 
-    pub fn add_text_impl(
+    pub fn draw_text_styled_impl(
         &mut self,
         text: &str,
         x: i32,
         y: i32,
-        size: u32,
+        size: f32,
         color: (u8, u8, u8, u8),
+        font_path: Option<String>,
+        background: Option<(u8, u8, u8, u8)>,
+        align: Option<String>,
+        outline: Option<(u8, u8, u8, u8, f32)>,
+        shadow: Option<(i32, i32, u8, u8, u8, u8)>,
+        opacity: Option<f32>,
+        max_width: Option<u32>,
     ) -> PyResult<Self> {
         let format = self.format;
         let image = self.get_image()?;
 
+        let font_path = font_path.as_ref().map(|p| std::path::Path::new(p));
+
+        // Create TextStyle from parameters
+        let mut style = crate::text::styles::TextStyle::new()
+            .with_size(size)
+            .with_color(color.0, color.1, color.2, color.3);
+
+        if let Some(bg) = background {
+            style = style.with_background(bg.0, bg.1, bg.2, bg.3);
+        }
+
+        if let Some(align_str) = align {
+            let text_align = match align_str.as_str() {
+                "center" => crate::text::styles::TextAlign::Center,
+                "right" => crate::text::styles::TextAlign::Right,
+                _ => crate::text::styles::TextAlign::Left,
+            };
+            style = style.with_align(text_align);
+        }
+
+        if let Some((or, og, ob, oa, width)) = outline {
+            style = style.with_outline(or, og, ob, oa, width);
+        }
+
+        if let Some((sx, sy, sr, sg, sb, sa)) = shadow {
+            style = style.with_shadow(sx, sy, sr, sg, sb, sa);
+        }
+
+        if let Some(opacity) = opacity {
+            style = style.with_opacity(opacity);
+        }
+
+        if let Some(max_width) = max_width {
+            style = style.with_max_width(max_width);
+        }
+
         Python::with_gil(|py| {
-            py.allow_threads(|| text::add_text(image, text, (x, y), size, color))
+            py.allow_threads(|| text::draw_text_styled(image, text, x, y, &style, font_path))
         })
         .map(|result| PyImage {
             lazy_image: LazyImage::Loaded(result),
@@ -226,52 +269,41 @@ impl PyImage {
         .map_err(|e| e.into())
     }
 
-    pub fn add_text_styled_impl(
+    pub fn draw_text_multiline_impl(
         &mut self,
         text: &str,
         x: i32,
         y: i32,
-        size: u32,
+        size: f32,
         color: (u8, u8, u8, u8),
-        outline_r: u8,
-        outline_g: u8,
-        outline_b: u8,
-        outline_a: u8,
-        outline_width: f32,
-        shadow_offset_x: i32,
-        shadow_offset_y: i32,
-        shadow_r: u8,
-        shadow_g: u8,
-        shadow_b: u8,
-        shadow_a: u8,
-        background_r: u8,
-        background_g: u8,
-        background_b: u8,
-        background_a: u8,
+        font_path: Option<String>,
+        line_spacing: Option<f32>,
+        align: Option<String>,
     ) -> PyResult<Self> {
         let format = self.format;
         let image = self.get_image()?;
 
-        let style = text::TextStyle {
-            outline: if outline_width > 0.0 {
-                Some((outline_r, outline_g, outline_b, outline_a, outline_width))
-            } else {
-                None
-            },
-            shadow: if shadow_offset_x != 0 || shadow_offset_y != 0 {
-                Some((shadow_offset_x, shadow_offset_y, shadow_r, shadow_g, shadow_b, shadow_a))
-            } else {
-                None
-            },
-            background: if background_a > 0 {
-                Some((background_r, background_g, background_b, background_a))
-            } else {
-                None
-            },
-        };
+        let font_path = font_path.as_ref().map(|p| std::path::Path::new(p));
+
+        let mut style = crate::text::styles::TextStyle::new()
+            .with_size(size)
+            .with_color(color.0, color.1, color.2, color.3);
+
+        if let Some(line_spacing) = line_spacing {
+            style.line_spacing = line_spacing;
+        }
+
+        if let Some(align_str) = align {
+            let text_align = match align_str.as_str() {
+                "center" => crate::text::styles::TextAlign::Center,
+                "right" => crate::text::styles::TextAlign::Right,
+                _ => crate::text::styles::TextAlign::Left,
+            };
+            style = style.with_align(text_align);
+        }
 
         Python::with_gil(|py| {
-            py.allow_threads(|| text::add_text_styled(image, text, (x, y), size, color, style))
+            py.allow_threads(|| text::draw_text_multiline(image, text, x, y, &style, font_path))
         })
         .map(|result| PyImage {
             lazy_image: LazyImage::Loaded(result),
@@ -280,25 +312,110 @@ impl PyImage {
         .map_err(|e| e.into())
     }
 
-    pub fn add_text_multiline_impl(
+    pub fn draw_text_centered_impl(
         &mut self,
         text: &str,
-        x: i32,
         y: i32,
-        size: u32,
+        size: f32,
         color: (u8, u8, u8, u8),
+        font_path: Option<String>,
+        background: Option<(u8, u8, u8, u8)>,
+        outline: Option<(u8, u8, u8, u8, f32)>,
+        shadow: Option<(i32, i32, u8, u8, u8, u8)>,
+        opacity: Option<f32>,
+    ) -> PyResult<Self> {
+        let format = self.format;
+        let image = self.get_image()?;
+
+        let font_path = font_path.as_ref().map(|p| std::path::Path::new(p));
+
+        let mut style = crate::text::styles::TextStyle::new()
+            .with_size(size)
+            .with_color(color.0, color.1, color.2, color.3)
+            .with_align(crate::text::styles::TextAlign::Center);
+
+        if let Some(bg) = background {
+            style = style.with_background(bg.0, bg.1, bg.2, bg.3);
+        }
+
+        if let Some((or, og, ob, oa, width)) = outline {
+            style = style.with_outline(or, og, ob, oa, width);
+        }
+
+        if let Some((sx, sy, sr, sg, sb, sa)) = shadow {
+            style = style.with_shadow(sx, sy, sr, sg, sb, sa);
+        }
+
+        if let Some(opacity) = opacity {
+            style = style.with_opacity(opacity);
+        }
+
+        Python::with_gil(|py| {
+            py.allow_threads(|| text::draw_text_centered(image, text, y, &style, font_path))
+        })
+        .map(|result| PyImage {
+            lazy_image: LazyImage::Loaded(result),
+            format,
+        })
+        .map_err(|e| e.into())
+    }
+
+    pub fn get_text_size_impl(
+        &mut self,
+        text: &str,
+        size: f32,
+        font_path: Option<String>,
+    ) -> PyResult<(u32, u32, i32, i32)> {
+        let font_path = font_path.as_ref().map(|p| std::path::Path::new(p));
+
+        Python::with_gil(|py| {
+            py.allow_threads(|| text::get_text_size(text, size, font_path))
+        })
+        .map_err(|e| e.into())
+    }
+
+    pub fn get_multiline_text_size_impl(
+        &mut self,
+        text: &str,
+        size: f32,
         line_spacing: f32,
-    ) -> PyResult<Self> {
-        let format = self.format;
-        let image = self.get_image()?;
+        font_path: Option<String>,
+    ) -> PyResult<(u32, u32, usize)> {
+        let font_path = font_path.as_ref().map(|p| std::path::Path::new(p));
 
         Python::with_gil(|py| {
-            py.allow_threads(|| text::add_text_multiline(image, text, (x, y), size, color, line_spacing))
-        })
-        .map(|result| PyImage {
-            lazy_image: LazyImage::Loaded(result),
-            format,
+            py.allow_threads(|| text::get_multiline_text_size(text, size, line_spacing, font_path))
         })
         .map_err(|e| e.into())
     }
+
+    pub fn get_text_box_impl(
+        &mut self,
+        text: &str,
+        x: i32,
+        y: i32,
+        size: f32,
+        font_path: Option<String>,
+    ) -> PyResult<pyo3::PyObject> {
+        let font_path = font_path.as_ref().map(|p| std::path::Path::new(p));
+
+        Python::with_gil(|py| {
+            let text_box = py.allow_threads(|| text::get_text_box(text, x, y, size, font_path))?;
+
+            let dict = pyo3::types::PyDict::new(py);
+            dict.set_item("x", text_box.x)?;
+            dict.set_item("y", text_box.y)?;
+            dict.set_item("width", text_box.width)?;
+            dict.set_item("height", text_box.height)?;
+            dict.set_item("ascent", text_box.ascent)?;
+            dict.set_item("descent", text_box.descent)?;
+            dict.set_item("baseline_y", text_box.baseline_y)?;
+            dict.set_item("bottom_y", text_box.bottom_y)?;
+            dict.set_item("right_x", text_box.right_x)?;
+
+            Ok(dict.to_object(py))
+        })
+        .map_err(|e: crate::errors::ImgrsError| e.into())
+    }
+
 }
