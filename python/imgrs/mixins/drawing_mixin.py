@@ -247,7 +247,7 @@ class DrawingMixin:
         color: Tuple[int, int, int, int] = (0, 0, 0, 255),
     ) -> "Image":
         """
-        Add text to the image (convenience method).
+        Add text to the image with flexible positioning.
 
         Args:
             text: Text to add
@@ -260,15 +260,16 @@ class DrawingMixin:
             New Image instance with text added
         """
         if isinstance(x_or_position, tuple):
-            x, y = x_or_position
+            x, y_pos = x_or_position
         else:
             x = x_or_position
             if y is None:
                 raise ValueError("y coordinate must be provided")
+            y_pos = y
 
-        # Approximate size to scale (8px base font * scale)
-        scale = max(1, size // 8)
-        return self.draw_text(text, x, y, color, scale)
+        return self.__class__(
+            self._rust_image.add_text(text, x, y_pos, size, color)
+        )
 
     def add_text_styled(
         self,
@@ -281,7 +282,7 @@ class DrawingMixin:
         background: Optional[Tuple[int, int, int, int]] = None,
     ) -> "Image":
         """
-        Add styled text to the image.
+        Add styled text to the image with outline, shadow, and background support.
 
         Args:
             text: Text to add
@@ -295,9 +296,21 @@ class DrawingMixin:
         Returns:
             New Image instance with styled text
         """
-        # For now, just draw basic text (advanced styling not implemented in Rust yet)
         x, y = position
-        return self.add_text(text, x, y, size, color)
+
+        # Extract styling parameters with defaults
+        outline_r, outline_g, outline_b, outline_a, outline_width = outline or (0, 0, 0, 255, 0.0)
+        shadow_offset_x, shadow_offset_y, shadow_r, shadow_g, shadow_b, shadow_a = shadow or (0, 0, 0, 0, 0, 0)
+        background_r, background_g, background_b, background_a = background or (0, 0, 0, 0)
+
+        return self.__class__(
+            self._rust_image.add_text_styled(
+                text, x, y, size, color,
+                outline_r, outline_g, outline_b, outline_a, outline_width,
+                shadow_offset_x, shadow_offset_y, shadow_r, shadow_g, shadow_b, shadow_a,
+                background_r, background_g, background_b, background_a
+            )
+        )
 
     def add_text_multiline(
         self,
@@ -308,7 +321,7 @@ class DrawingMixin:
         line_spacing: float = 1.2,
     ) -> "Image":
         """
-        Add multi-line text to the image.
+        Add multi-line text to the image with customizable line spacing.
 
         Args:
             text: Multi-line text (separated by \n)
@@ -321,17 +334,11 @@ class DrawingMixin:
             New Image instance with multi-line text
         """
         x, y = position
-        lines = text.split("\n")
-        result = self
+        return self.__class__(
+            self._rust_image.add_text_multiline(text, x, y, size, color, line_spacing)
+        )
 
-        for i, line in enumerate(lines):
-            line_y = y + int(i * size * line_spacing)
-            result = result.add_text(line, x, line_y, size, color)
-
-        return result
-
-    @classmethod
-    def get_text_size(cls, text: str, size: int = 40) -> Tuple[int, int]:
+    def get_text_size(self, text: str, size: int = 40) -> Tuple[int, int]:
         """
         Get the size of text when rendered.
 
@@ -342,16 +349,11 @@ class DrawingMixin:
         Returns:
             (width, height) tuple
         """
-        # Approximate: 8px base width per char, 8px height, scaled
-        scale = max(1, size // 8)
-        width = len(text) * 8 * scale
-        height = 8 * scale
-        return (width, height)
+        return self._rust_image.get_text_size(text, size)
 
-    @classmethod
-    def get_text_box(cls, text: str, x: int, y: int, size: int = 40) -> dict:
+    def get_text_box(self, text: str, x: int, y: int, size: int = 40) -> dict:
         """
-        Get text bounding box information.
+        Get complete text bounding box information.
 
         Args:
             text: Text to measure
@@ -362,11 +364,4 @@ class DrawingMixin:
         Returns:
             Dictionary with box information
         """
-        width, height = cls.get_text_size(text, size)
-        return {
-            "x": x,
-            "y": y,
-            "width": width,
-            "height": height,
-            "baseline_y": y + height,
-        }
+        return self._rust_image.get_text_box(text, x, y, size)
