@@ -10,6 +10,7 @@ from .mixins import (
     FilterMixin,
     MetadataMixin,
     PixelMixin,
+    TextMixin,
     TransformMixin,
 )
 
@@ -23,6 +24,7 @@ class Image(
     DrawingMixin,
     EffectsMixin,
     MetadataMixin,
+    TextMixin,
 ):
     """
     A high-performance image class backed by Rust.
@@ -35,7 +37,8 @@ class Image(
     - TransformMixin: Resize, crop, rotate, etc.
     - FilterMixin: All filter effects (blur, sharpen, edges, etc.) - 65+ filters
     - PixelMixin: Pixel-level operations and analysis
-    - DrawingMixin: Drawing shapes and advanced text rendering
+    - DrawingMixin: Drawing shapes and basic text rendering
+    - TextMixin: Advanced text rendering with styling, alignment, and effects
     - EffectsMixin: Special effects (shadows, glow, drop shadows)
     - ColorMixin: Color operations and analysis
     - MetadataMixin: EXIF/metadata reading and GPS data
