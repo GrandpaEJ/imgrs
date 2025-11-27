@@ -17,6 +17,7 @@ mod metadata;
 mod operations;
 mod pixels;
 mod shadows;
+mod text;
 
 pub use errors::ImgrsError;
 pub use image::PyImage;

@@ -2,7 +2,6 @@
 mod shapes;
 mod shapes_extended;
 mod shapes_generation;
-mod text;
 
 // Re-export public functions
 pub use shapes::{draw_circle, draw_line, draw_rectangle};
@@ -14,4 +13,4 @@ pub use shapes_generation::{
     create_hexagon, create_octagon, create_parallelogram, create_pentagon, create_quadrilateral,
     create_rectangle, create_square, create_star, create_triangle,
 };
-pub use text::draw_text;
+// Text functions are now in the text module
