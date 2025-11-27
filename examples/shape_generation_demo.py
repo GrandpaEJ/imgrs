@@ -4,6 +4,7 @@ Shape Generation Demo - Create various shapes without needing existing images
 """
 
 import os
+
 import imgrs
 
 # Create output directory

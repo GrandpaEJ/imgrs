@@ -3,9 +3,9 @@
 Run all Pillow compatibility tests
 """
 
+import os
 import subprocess
 import sys
-import os
 
 # Change to project root
 os.chdir("/home/grandpa/Downloads/imgrs")

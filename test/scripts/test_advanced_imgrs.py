@@ -4,6 +4,7 @@ Shows what's extra in imgrs
 """
 
 import os
+
 from imgrs import Image
 
 print("Advanced imgrs Features (Beyond Pillow)")

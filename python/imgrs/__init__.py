@@ -5,6 +5,7 @@ Provides the high-level API while addressing
 performance and memory-safety issues through a Rust backend.
 """
 
+from . import imagefont as ImageFont
 from .enums import (
     BlendMode,
     ColorFormat,
@@ -15,7 +16,6 @@ from .enums import (
     Transpose,
 )
 from .image import Image
-from . import imagefont as ImageFont
 from .mixins.color_mixin import ColorMixin
 from .operations import (
     blur,

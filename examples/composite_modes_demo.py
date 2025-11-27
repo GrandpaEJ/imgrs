@@ -4,6 +4,7 @@ Uses real images and saves outputs for visual comparison
 """
 
 import os
+
 from imgrs import Image
 
 # Create output directory

@@ -1,5 +1,6 @@
-import imgrs._core as _core
 import traceback
+
+import imgrs._core as _core
 from imgrs import Image
 
 print("Available functions in _core:")

@@ -3,11 +3,11 @@
 Fair benchmark comparing imgrs vs Pillow - only equivalent features.
 """
 
-import time
 import json
-from pathlib import Path
-from typing import Dict, Callable
 import sys
+import time
+from pathlib import Path
+from typing import Callable, Dict
 
 sys.path.insert(0, str(Path(__file__).parent.parent))  # noqa: E402
 

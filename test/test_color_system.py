@@ -9,7 +9,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "python"))
 
 try:
     import imgrs
-    from imgrs import Image, BlendMode, ColorFormat, MaskType
+    from imgrs import BlendMode, ColorFormat, Image, MaskType
 
     # Create a test image
     print("Creating test image...")

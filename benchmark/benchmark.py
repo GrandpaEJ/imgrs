@@ -3,11 +3,11 @@
 Comprehensive benchmark comparing imgrs vs Pillow performance.
 """
 
-import time
 import json
-from pathlib import Path
-from typing import Dict, Callable
 import sys
+import time
+from pathlib import Path
+from typing import Callable, Dict
 
 # Add parent directory to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -349,7 +349,7 @@ class BenchmarkRunner:
         output_dir = Path(__file__).parent / "results"
 
         if HAS_PILLOW:
-            from PIL import ImageFilter, ImageEnhance
+            from PIL import ImageEnhance, ImageFilter
 
             def pillow_pipeline():
                 img = PILImage.open(self.test_image_path)

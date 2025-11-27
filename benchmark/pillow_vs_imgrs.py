@@ -4,12 +4,13 @@ Performance Benchmark: imgrs vs Pillow (PIL)
 Compares execution time for common image operations
 """
 
-import time
 import statistics
+import time
 from pathlib import Path
 
 try:
-    from PIL import Image as PILImage, ImageFilter, ImageEnhance
+    from PIL import Image as PILImage
+    from PIL import ImageEnhance, ImageFilter
 
     HAS_PILLOW = True
 except ImportError:

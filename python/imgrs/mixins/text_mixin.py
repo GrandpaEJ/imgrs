@@ -5,8 +5,8 @@ Text rendering mixin - advanced text operations with styling support
 from typing import TYPE_CHECKING, Optional, Tuple, Union
 
 if TYPE_CHECKING:
-    from .image import Image
     from ..imagefont import Font
+    from .image import Image
 
 
 class TextMixin:

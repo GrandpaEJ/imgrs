@@ -8,8 +8,8 @@ Provides Pillow-compatible font loading functionality with support for:
 - Built-in fallback fonts
 """
 
-from typing import Optional, Union, Tuple
 from pathlib import Path
+from typing import Optional, Tuple, Union
 
 
 class Font:

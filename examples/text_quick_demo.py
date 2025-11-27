@@ -6,8 +6,9 @@ This script demonstrates the key TextMixin features in a fast, simple way.
 Showcases the new text functionality with minimal code.
 """
 
-import imgrs
 import os
+
+import imgrs
 
 
 def main():
