@@ -15,7 +15,7 @@ from .enums import (
     Transpose,
 )
 from .image import Image
-from .imagefont import Font as ImageFont
+from . import imagefont as ImageFont
 from .mixins.color_mixin import ColorMixin
 from .operations import (
     blur,
