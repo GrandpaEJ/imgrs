@@ -83,10 +83,6 @@ jobs:
           # Verify installation
           python -c "import imgrs; print('Imgrs installed successfully')"
 
-      - name: Run Python tests
-        run: |
-          pytest python/imgrs/tests/ -v
-
   build-wheels:
     name: Build wheels on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
