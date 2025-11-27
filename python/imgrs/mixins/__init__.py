@@ -9,6 +9,7 @@ from .effects_mixin import EffectsMixin
 from .filters_combined import FilterMixin
 from .metadata_mixin import MetadataMixin
 from .pixel_mixin import PixelMixin
+from .text_mixin import TextMixin
 from .transform_mixin import TransformMixin
 
 __all__ = [
@@ -20,4 +21,5 @@ __all__ = [
     "DrawingMixin",
     "EffectsMixin",
     "MetadataMixin",
+    "TextMixin",
 ]
