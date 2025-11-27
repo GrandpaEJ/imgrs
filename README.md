@@ -180,6 +180,14 @@ img.save("resized.jpg")
 - `get_text_bounding_box()` - Complete text bounding box with ascent/descent/baseline
 - Convenience methods: `add_text_with_shadow()`, `add_text_with_outline()`, `add_text_with_background()`
 
+### 🔤 Font Support - **NEW!**
+
+- `ImageFont.load()` - Load TTF, OTF, WOFF, WOFF2 font files
+- `ImageFont.truetype()` - Load TrueType fonts (Pillow-compatible)
+- `ImageFont.load_default()` - Get default fallback font
+- `ImageFont.get_font()` - Get font with automatic fallback
+- `text()` - Pillow-compatible text drawing method
+
 ### ✨ Shadow Effects - **NEW!**
 
 - `drop_shadow()` - Drop shadow with blur and offset
