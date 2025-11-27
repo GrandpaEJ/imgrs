@@ -155,6 +155,8 @@ copy = img.copy()
 
 ## ✏️ Drawing API
 
+## 📝 Text API
+
 ### Shape Drawing
 
 #### `img.draw_rectangle(x, y, width, height, color)`

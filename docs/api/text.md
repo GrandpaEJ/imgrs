@@ -2,18 +2,18 @@
 
 ## Overview
 
-imgrs now provides comprehensive text rendering capabilities with advanced styling options, multi-line support, and precise text measurement. All text functions use bitmap fonts for fast, dependency-free rendering.
+imgrs provides comprehensive text rendering capabilities with advanced styling options, multi-line support, precise text measurement, and full font loading support. Text rendering supports both built-in fonts and external TTF/OTF/WOFF font files for maximum flexibility.
 
 ## Available Methods
 
 ### Basic Text Rendering
 
-#### `add_text(text, position, size=40, color=(0,0,0,255))`
+#### `add_text(text, position, size=40, color=(0,0,0,255), font_path=None, font=None)`
 
-Add text to an image with flexible positioning.
+Add text to an image with flexible positioning and font support.
 
 ```python
-from imgrs import Image
+from imgrs import Image, ImageFont
 
 img = Image.new("RGB", (400, 300), (255, 255, 255))
 
@@ -22,13 +22,22 @@ img = img.add_text("Hello World", (20, 20), size=32, color=(0, 0, 0, 255))
 
 # Using separate x,y coordinates
 img = img.add_text("Hello World", 20, 20, size=32, color=(0, 0, 0, 255))
+
+# Using custom font
+font = ImageFont.load("arial.ttf", size=24)
+img = img.add_text("Custom Font", (20, 60), font=font, color=(0, 0, 150, 255))
+
+# Using font path directly
+img = img.add_text("Font Path", (20, 100), size=28, font_path="times.ttf", color=(150, 0, 0, 255))
 ```
 
 **Parameters:**
 - `text` (str): Text to render
 - `position` (int, int) or (int): X coordinate or (x, y) tuple
-- `size` (int): Font size (default: 40)
+- `size` (int): Font size (default: 40, ignored if font is provided)
 - `color` (tuple): RGBA color tuple (default: black)
+- `font_path` (str): Path to TTF/OTF/WOFF font file (optional)
+- `font` (Font): ImageFont object (alternative to font_path and size)
 
 ### Styled Text Rendering
 
@@ -161,11 +170,53 @@ print(bbox)
 
 **Returns:** Dictionary with bounding box information
 
+### Pillow-Compatible Text Drawing
+
+#### `text(position, text, fill=None, font=None, anchor=None, spacing=4, align="left", direction=None, features=None, language=None, stroke_width=0, stroke_fill=None, embedded_color=False)`
+
+Draw text on the image using Pillow-compatible API.
+
+```python
+from imgrs import Image, ImageFont
+
+img = Image.new("RGB", (400, 300), (255, 255, 255))
+
+# Load a font
+font = ImageFont.load("arial.ttf", size=24)
+
+# Draw text with font
+img = img.text((10, 10), "Hello World!", fill=(0, 0, 0, 255), font=font)
+
+# Multi-line text
+img = img.text((10, 50), "Line 1\nLine 2\nLine 3", fill=(0, 100, 0, 255), font=font)
+
+# Text with different alignment
+img = img.text((200, 50), "Right aligned\nmulti-line text",
+               fill=(0, 0, 150, 255), font=font, align="right")
+```
+
+**Parameters:**
+- `position` (int, int): (x, y) position tuple
+- `text` (str): Text to draw (supports multi-line with `\n`)
+- `fill` (tuple): RGBA color tuple for text color
+- `font` (Font): ImageFont object
+- `anchor` (str): Text anchor point (not yet supported)
+- `spacing` (int): Line spacing for multi-line text (default: 4)
+- `align` (str): Text alignment - "left", "center", "right" (default: "left")
+- `direction` (str): Text direction (not yet supported)
+- `features` (list): OpenType features (not yet supported)
+- `language` (str): Language code (not yet supported)
+- `stroke_width` (int): Text outline width (not yet supported)
+- `stroke_fill` (tuple): Outline color (not yet supported)
+- `embedded_color` (bool): Use embedded color glyphs (not yet supported)
+
 ## Font Information
 
-- **Font Type**: 8x8 bitmap font
-- **Supported Characters**: A-Z, 0-9, basic punctuation (! ? . ,)
-- **Rendering**: Scalable pixel-perfect rendering
+- **Supported Formats**: TTF, OTF, WOFF, WOFF2 font files
+- **Fallback Font**: Built-in DejaVuSans font when no font specified
+- **Font Caching**: Automatic caching for performance
+- **Character Support**: Full Unicode support (depends on font)
+- **Rendering**: Anti-aliased, scalable rendering
 - **Performance**: Fast, dependency-free rendering
 
 ## Examples
