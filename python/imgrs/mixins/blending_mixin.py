@@ -191,7 +191,13 @@ class BlendingMixin:
         """
         return self.composite(other, "add")
 
-    def blend(self, mode: str, other: Optional["Image"] = None, mask: Optional["Image"] = None, position: Optional[Tuple[int, int]] = None) -> "Image":
+    def blend(
+        self,
+        mode: str,
+        other: Optional["Image"] = None,
+        mask: Optional["Image"] = None,
+        position: Optional[Tuple[int, int]] = None,
+    ) -> "Image":
         """
         Advanced blending with position and mask support.
 
@@ -210,4 +216,11 @@ class BlendingMixin:
             >>> mask = Image.new('L', (100, 100), 200)  # Semi-transparent mask
             >>> result = base.blend('multiply', overlay, mask, (50, 50))
         """
-        return self.__class__(self._rust_image.blend(mode, other._rust_image if other else None, mask._rust_image if mask else None, position))
+        return self.__class__(
+            self._rust_image.blend(
+                mode,
+                other._rust_image if other else None,
+                mask._rust_image if mask else None,
+                position,
+            )
+        )
