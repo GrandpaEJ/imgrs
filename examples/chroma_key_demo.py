@@ -57,7 +57,7 @@ def create_green_screen_demo():
     print("\n🎨 Chroma Key Parameters:")
     print("   - Key Color: (0, 255, 0) - Pure green")
     print("   - Tolerance: 0.2 - Moderate color matching")
-    print("   - Feather: 0.1 - Soft edges for natural blending")
+    print("   - Feather: 0.1 - Soft edges for natural results")
 
 
 def demo_different_key_colors():
