@@ -651,10 +651,6 @@ impl PyImage {
         self.glow_impl(blur_radius, glow_color, intensity)
     }
 
-    #[pyo3(signature = (mode, opacity=1.0))]
-    fn composite(&mut self, mode: &str, opacity: f32) -> PyResult<Self> {
-        self.composite_impl(mode, opacity)
-    }
 
     // Enhanced Color Operations
     fn set_alpha(&mut self, alpha: f32) -> PyResult<Self> {
@@ -804,20 +800,7 @@ impl PyImage {
         Ok(self.alpha_to_color_impl(background_color)?)
     }
 
-    fn blend_with(&mut self, other_image: &mut Self, mode: String, opacity: f32) -> PyResult<Self> {
-        Ok(self.blend_with_impl(other_image.get_image()?.clone(), &mode, opacity)?)
-    }
 
-    #[pyo3(signature = (overlay, mode, opacity, position=None))]
-    fn overlay_with(
-        &mut self,
-        overlay: &mut Self,
-        mode: String,
-        opacity: f32,
-        position: Option<(i32, i32)>,
-    ) -> PyResult<Self> {
-        Ok(self.overlay_with_impl(overlay.get_image()?.clone(), &mode, opacity, position)?)
-    }
 
     fn get_color_palette(&mut self, max_colors: u32) -> PyResult<Vec<(u8, u8, u8, u8)>> {
         Ok(self.get_color_palette_impl(max_colors)?)
