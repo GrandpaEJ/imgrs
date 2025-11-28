@@ -3,6 +3,7 @@ Simplified Image class using mixins for better maintainability
 """
 
 from .mixins import (
+    BlendingMixin,
     ColorMixin,
     CoreMixin,
     DrawingMixin,
@@ -16,6 +17,7 @@ from .mixins import (
 
 
 class Image(
+    BlendingMixin,
     ColorMixin,
     CoreMixin,
     TransformMixin,
@@ -33,6 +35,7 @@ class Image(
     performance and memory safety for all image operations.
 
     The class is organized using mixins for better code organization:
+    - BlendingMixin: Advanced image compositing and blending modes
     - CoreMixin: I/O, constructors, properties
     - TransformMixin: Resize, crop, rotate, etc.
     - FilterMixin: All filter effects (blur, sharpen, edges, etc.) - 65+ filters
