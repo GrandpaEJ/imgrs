@@ -8,14 +8,14 @@ implementing various Porter-Duff and advanced blend modes for image compositing.
 
 import imgrs
 from pathlib import Path
-from imgrs import Image
+
 
 def create_base_images():
     """Create base images for blending demonstrations."""
     print("Creating base images...")
 
     # Create a gradient background
-    bg = imgrs.Image.new('RGB', (400, 300), (50, 100, 200))
+    bg = imgrs.Image.new("RGB", (400, 300), (50, 100, 200))
 
     # Create a circular overlay using shape creation
     circle = imgrs.Image.circle(160, (255, 100, 100, 180))
@@ -27,6 +27,7 @@ def create_base_images():
     star = imgrs.Image.star(120, (255, 255, 100, 200))
 
     return bg, circle, rect, star
+
 
 def demonstrate_basic_blending(bg, circle, rect, star):
     """Demonstrate basic blending modes."""
@@ -49,6 +50,7 @@ def demonstrate_basic_blending(bg, circle, rect, star):
     result_overlay.save("examples/output/blending_overlay.png")
 
     print("Basic blending results saved to examples/output/")
+
 
 def demonstrate_advanced_blending(bg, circle, rect, star):
     """Demonstrate advanced blending modes."""
@@ -80,11 +82,24 @@ def demonstrate_advanced_blending(bg, circle, rect, star):
 
     print("Advanced blending results saved to examples/output/")
 
+
 def demonstrate_porter_duff_modes(bg, circle):
     """Demonstrate Porter-Duff compositing modes."""
     print("Demonstrating Porter-Duff compositing modes...")
 
-    modes = ["clear", "source", "dest", "dest_over", "in", "out", "atop", "dest_in", "dest_out", "dest_atop", "xor"]
+    modes = [
+        "clear",
+        "source",
+        "dest",
+        "dest_over",
+        "in",
+        "out",
+        "atop",
+        "dest_in",
+        "dest_out",
+        "dest_atop",
+        "xor",
+    ]
 
     for mode in modes:
         try:
@@ -95,8 +110,8 @@ def demonstrate_porter_duff_modes(bg, circle):
             print(f"Error with {mode}: {e}")
 
     print("Porter-Duff results saved to examples/output/")
-    im = Image.new('RGBA', (400, 300), (255, 255, 255, 255))  # White background
-    result = bg.blend('dest_atop', circle)
+
+    result = bg.blend("dest_atop", circle)
     result.save("examples/output/0_blending_with_mask.png")
 
 
@@ -122,15 +137,25 @@ def demonstrate_convenience_methods(bg, circle, rect):
 
     print("Convenience method results saved to examples/output/")
 
+
 def create_comparison_grid(bg, circle):
     """Create a comparison grid showing different blend modes."""
     print("Creating comparison grid...")
 
     # Create a grid of blend mode results
     modes = [
-        "over", "multiply", "screen", "overlay",
-        "darken", "lighten", "difference", "exclusion",
-        "hard_light", "soft_light", "color_dodge", "color_burn"
+        "over",
+        "multiply",
+        "screen",
+        "overlay",
+        "darken",
+        "lighten",
+        "difference",
+        "exclusion",
+        "hard_light",
+        "soft_light",
+        "color_dodge",
+        "color_burn",
     ]
 
     # Create a larger canvas
@@ -140,7 +165,7 @@ def create_comparison_grid(bg, circle):
     cell_height = grid_height // 3
 
     # Create white background for grid
-    grid = imgrs.Image.new('RGB', (grid_width, grid_height), (255, 255, 255))
+    grid = imgrs.Image.new("RGB", (grid_width, grid_height), (255, 255, 255))
 
     for i, mode in enumerate(modes):
         try:
@@ -164,6 +189,7 @@ def create_comparison_grid(bg, circle):
 
     grid.save("examples/output/blending_grid.png")
     print("Comparison grid saved to examples/output/blending_grid.png")
+
 
 def main():
     """Main demonstration function."""
@@ -194,9 +220,12 @@ def main():
     print("\nBlend modes demonstrated:")
     print("- Basic: over, multiply, screen, overlay")
     print("- Advanced: darken, lighten, difference, exclusion, hard_light, soft_light")
-    print("- Porter-Duff: clear, source, dest, dest_over, in, out, atop, dest_in, dest_out, dest_atop, xor")
+    print(
+        "- Porter-Duff: clear, source, dest, dest_over, in, out, atop, dest_in, dest_out, dest_atop, xor"
+    )
     print("- Arithmetic: add, saturate")
     print("- Special: color_dodge, color_burn")
+
 
 if __name__ == "__main__":
     main()
