@@ -8,7 +8,6 @@ This example demonstrates the advanced color operations from ColorMixin:
 - Color manipulation (extract_color, color_quantize, color_shift, selective_desaturate)
 - Gradient and pattern overlays
 - Alpha channel operations
-- Advanced blending modes
 - Color analysis
 """
 
@@ -162,36 +161,6 @@ alpha_to_color = rgba_img.alpha_to_color((100, 100, 100))
 alpha_to_color.save(f"{OUTPUT_DIR}/alpha_to_color.png")
 print("✓ Converted alpha channel to gray color")
 
-# ============================================================================
-# 6. ADVANCED BLENDING MODES
-# ============================================================================
-print("\n6️⃣  Advanced Blending Modes")
-print("-" * 30)
-
-# Create overlay image
-overlay_img = imgrs.Image.new(
-    "RGBA", (400, 400), (0, 150, 255, 180)
-)  # Semi-transparent blue
-
-# Different blend modes
-blend_modes = [
-    "multiply",
-    "screen",
-    "overlay",
-    "soft_light",
-    "hard_light",
-    "difference",
-]
-for mode in blend_modes:
-    blended = base_img.blend_with(overlay_img, mode, 0.8)
-    blended.save(f"{OUTPUT_DIR}/blend_{mode}.png")
-    print(f"✓ Applied {mode} blend mode")
-
-# Overlay with positioning
-overlay_small = imgrs.Image.new("RGBA", (150, 150), (255, 255, 0, 200))  # Yellow square
-overlayed = base_img.overlay_with(overlay_small, "normal", 1.0, position=(50, 50))
-overlayed.save(f"{OUTPUT_DIR}/overlay_positioned.png")
-print("✓ Applied positioned overlay")
 
 # ============================================================================
 # 7. COLOR ANALYSIS
@@ -229,7 +198,6 @@ print("• Advanced masking system (gradient, color, luminance masks)")
 print("• Color manipulation (extract, quantize, shift, selective desaturate)")
 print("• Gradient and pattern overlays")
 print("• Alpha channel operations (split, merge, convert)")
-print("• Advanced blending modes (multiply, screen, overlay, etc.)")
 print("• Color analysis (palette extraction, distribution, region finding)")
 print("\n🚀 All color operations working perfectly!")
 print("=" * 60)
