@@ -107,38 +107,6 @@ Transpose.TRANSVERSE_INT = 6
 operation = Transpose.from_int(2)  # Returns "ROTATE_90"
 ```
 
-## BlendMode
-
-Advanced blending modes for compositing operations.
-
-```python
-from imgrs import BlendMode
-
-BlendMode.NORMAL = "normal"
-BlendMode.MULTIPLY = "multiply"
-BlendMode.SCREEN = "screen"
-BlendMode.OVERLAY = "overlay"
-BlendMode.SOFT_LIGHT = "soft_light"
-BlendMode.HARD_LIGHT = "hard_light"
-BlendMode.COLOR_DODGE = "color_dodge"
-BlendMode.COLOR_BURN = "color_burn"
-BlendMode.DARKEN = "darken"
-BlendMode.LIGHTEN = "lighten"
-BlendMode.DIFFERENCE = "difference"
-BlendMode.EXCLUSION = "exclusion"
-```
-
-### Usage Example
-```python
-from imgrs import Image, BlendMode
-
-img1 = Image.open("background.jpg")
-img2 = Image.open("overlay.png")
-
-# Blend with different modes
-multiply_blend = img1.blend_with(img2, BlendMode.MULTIPLY, 0.8)
-screen_blend = img1.blend_with(img2, BlendMode.SCREEN, 0.6)
-```
 
 ## MaskType
 
@@ -265,7 +233,7 @@ ColorSpace.DISPLAY_P3 = "display_p3"
 ```python
 from imgrs import (
     ImageMode, ImageFormat, Resampling, Transpose,
-    BlendMode, MaskType, ColorFormat, GradientDirection
+    MaskType, ColorFormat, GradientDirection
 )
 ```
 
@@ -278,18 +246,6 @@ def supports_alpha(mode):
     return mode in (ImageMode.LA, ImageMode.RGBA)
 ```
 
-### Blend Mode Selection
-```python
-def get_blend_mode_for_effect(effect_type):
-    modes = {
-        "multiply": BlendMode.MULTIPLY,
-        "screen": BlendMode.SCREEN,
-        "overlay": BlendMode.OVERLAY,
-        "soft_light": BlendMode.SOFT_LIGHT,
-        "hard_light": BlendMode.HARD_LIGHT,
-    }
-    return modes.get(effect_type, BlendMode.NORMAL)
-```
 
 ### Gradient Direction Mapping
 ```python
