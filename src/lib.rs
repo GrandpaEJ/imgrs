@@ -6,6 +6,7 @@
 use pyo3::prelude::*;
 use pyo3::types::PyModule;
 
+mod blending;
 mod css_filters;
 mod drawing;
 mod errors;

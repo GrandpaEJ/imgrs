@@ -817,4 +817,15 @@ impl PyImage {
     ) -> PyResult<Vec<(u32, u32, u32, u32)>> {
         Ok(self.find_color_regions_impl(target_color, tolerance)?)
     }
+
+    // Blending methods
+    #[pyo3(signature = (other, mode="over"))]
+    fn composite(&mut self, other: &mut Self, mode: &str) -> PyResult<Self> {
+        self.composite_impl(other, mode)
+    }
+
+    #[pyo3(signature = (mode, other=None, mask=None, position=None))]
+    fn blend(&mut self, mode: &str, other: Option<&mut Self>, mask: Option<&mut Self>, position: Option<(i32, i32)>) -> PyResult<Self> {
+        self.blend_impl(mode, other, mask, position)
+    }
 }

@@ -1,4 +1,5 @@
 use super::core::{color_type_to_mode_string, LazyImage, PyImage};
+use crate::blending;
 use crate::errors::ImgrsError;
 use crate::filters::simd_ops::fast_rgb_to_gray;
 use image::{DynamicImage, GenericImageView, Rgb, Rgba};
@@ -24,6 +25,92 @@ fn get_mask_alpha(mask: &DynamicImage, x: u32, y: u32) -> f32 {
             gray.get_pixel(x, y).0[0] as f32 / 255.0
         }
     }
+}
+
+fn get_blend_func(mode: &str) -> PyResult<fn(blending::Pixel, blending::Pixel) -> blending::Pixel> {
+    match mode {
+        "clear" => Ok(blending::blend_clear),
+        "source" => Ok(blending::blend_source),
+        "over" => Ok(blending::blend_over),
+        "in" => Ok(blending::blend_in),
+        "out" => Ok(blending::blend_out),
+        "atop" => Ok(blending::blend_atop),
+        "dest" => Ok(blending::blend_dest),
+        "dest_over" => Ok(blending::blend_dest_over),
+        "dest_in" => Ok(blending::blend_dest_in),
+        "dest_out" => Ok(blending::blend_dest_out),
+        "dest_atop" => Ok(blending::blend_dest_atop),
+        "xor" => Ok(blending::blend_xor),
+        "add" => Ok(blending::blend_add),
+        "saturate" => Ok(blending::blend_saturate),
+        "multiply" => Ok(blending::blend_multiply),
+        "screen" => Ok(blending::blend_screen),
+        "overlay" => Ok(blending::blend_overlay),
+        "darken" => Ok(blending::blend_darken),
+        "lighten" => Ok(blending::blend_lighten),
+        "color_dodge" => Ok(blending::blend_color_dodge),
+        "color_burn" => Ok(blending::blend_color_burn),
+        "hard_light" => Ok(blending::blend_hard_light),
+        "soft_light" => Ok(blending::blend_soft_light),
+        "difference" => Ok(blending::blend_difference),
+        "exclusion" => Ok(blending::blend_exclusion),
+        "hsl_hue" => Ok(blending::blend_hsl_hue),
+        "hsl_saturation" => Ok(blending::blend_hsl_saturation),
+        "hsl_color" => Ok(blending::blend_hsl_color),
+        "hsl_luminosity" => Ok(blending::blend_hsl_luminosity),
+        _ => Err(ImgrsError::InvalidOperation(format!("Unknown blend mode: {}", mode)).into()),
+    }
+}
+
+fn blend_with_position_and_mask(
+    base: &DynamicImage,
+    overlay: &DynamicImage,
+    blend_func: &fn(blending::Pixel, blending::Pixel) -> blending::Pixel,
+    mask: Option<&DynamicImage>,
+    x_offset: i32,
+    y_offset: i32,
+) -> Result<DynamicImage, ImgrsError> {
+    let (base_width, base_height) = base.dimensions();
+    let (overlay_width, overlay_height) = overlay.dimensions();
+
+    let mut result = base.to_rgba8();
+    let base_rgba = base.to_rgba8();
+    let overlay_rgba = overlay.to_rgba8();
+
+    for y in 0..overlay_height {
+        for x in 0..overlay_width {
+            let target_x = x_offset + x as i32;
+            let target_y = y_offset + y as i32;
+
+            // Check bounds
+            if target_x >= 0 && target_y >= 0 &&
+               (target_x as u32) < base_width && (target_y as u32) < base_height {
+
+                let base_pixel = base_rgba.get_pixel(target_x as u32, target_y as u32);
+                let overlay_pixel = overlay_rgba.get_pixel(x, y);
+
+                // Apply mask if provided
+                let mut alpha = overlay_pixel.0[3] as f32 / 255.0;
+                if let Some(mask_img) = mask {
+                    let mask_alpha = get_mask_alpha(mask_img, x, y);
+                    alpha *= mask_alpha;
+                }
+
+                if alpha > 0.0 {
+                    let blended = blend_func(
+                        (base_pixel.0[0], base_pixel.0[1], base_pixel.0[2], base_pixel.0[3]),
+                        (overlay_pixel.0[0], overlay_pixel.0[1], overlay_pixel.0[2], (alpha * 255.0) as u8)
+                    );
+
+                    result.put_pixel(target_x as u32, target_y as u32, Rgba([
+                        blended.0, blended.1, blended.2, blended.3
+                    ]));
+                }
+            }
+        }
+    }
+
+    Ok(DynamicImage::ImageRgba8(result))
 }
 
 impl PyImage {
@@ -389,6 +476,56 @@ impl PyImage {
                     format,
                 })
             })
+        })
+    }
+
+    pub fn composite_impl(&mut self, other: &mut Self, mode: &str) -> PyResult<Self> {
+        let format = self.format;
+        let dest_image = self.get_image()?;
+        let source_image = other.get_image()?;
+
+        let blend_func = get_blend_func(mode)?;
+
+        let result = blending::composite_images(dest_image, source_image, blend_func)?;
+
+        Ok(PyImage {
+            lazy_image: LazyImage::Loaded(result),
+            format,
+        })
+    }
+
+    pub fn blend_impl(&mut self, mode: &str, other: Option<&mut Self>, mask: Option<&mut Self>, position: Option<(i32, i32)>) -> PyResult<Self> {
+        let format = self.format;
+        let base_image = self.get_image()?;
+
+        // If no other image provided, this is a no-op
+        let other_image = match other {
+            Some(img) => img.get_image()?,
+            None => return Ok(PyImage {
+                lazy_image: LazyImage::Loaded(base_image.clone()),
+                format,
+            }),
+        };
+
+        let blend_func = get_blend_func(mode)?;
+
+        // Handle mask
+        let mask_image = match mask {
+            Some(mask_img) => Some(mask_img.get_image()?.clone()),
+            None => None,
+        };
+
+        let (x_offset, y_offset) = position.unwrap_or((0, 0));
+
+        let result = Python::with_gil(|py| {
+            py.allow_threads(|| {
+                blend_with_position_and_mask(base_image, other_image, &blend_func, mask_image.as_ref(), x_offset, y_offset)
+            })
+        })?;
+
+        Ok(PyImage {
+            lazy_image: LazyImage::Loaded(result),
+            format,
         })
     }
 
