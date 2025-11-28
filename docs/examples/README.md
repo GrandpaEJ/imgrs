@@ -51,7 +51,7 @@ Ready-to-use code examples for common tasks.
 
 ### [Image Composition](composition.md)
 - Layer images
-- Alpha blending
+- Alpha compositing
 - Masking
 - Complex compositions
 
