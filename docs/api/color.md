@@ -11,7 +11,6 @@ The color operations are implemented through the `ColorMixin` class and provide:
 - **Color Manipulation**: Extraction, quantization, shifting, and selective desaturation
 - **Gradient & Pattern Overlays**: Visual effects and patterns
 - **Alpha Channel Operations**: Splitting, merging, and converting alpha channels
-- **Advanced Blending**: Multiple blend modes for compositing
 - **Color Analysis**: Palette extraction and distribution analysis
 
 ## Transparency Operations
@@ -343,42 +342,6 @@ Convert alpha channel to solid color.
 gray_from_alpha = img.alpha_to_color((128, 128, 128))
 ```
 
-## Advanced Blending
-
-### `blend_with(other: Image, mode: str, opacity: float) -> Image`
-
-Blend image with another using advanced blend modes.
-
-**Parameters:**
-- `other` (Image): Image to blend with
-- `mode` (str): Blend mode ("normal", "multiply", "screen", "overlay", "soft_light", "hard_light", "color_dodge", "color_burn", "darken", "lighten", "difference", "exclusion")
-- `opacity` (float): Blend opacity (0.0-1.0)
-
-**Returns:** New blended Image
-
-**Example:**
-```python
-overlay = Image.new("RGB", (400, 400), (255, 255, 0))
-blended = img.blend_with(overlay, "multiply", 0.8)
-```
-
-### `overlay_with(overlay: Image, mode: str, opacity: float, position: tuple = None) -> Image`
-
-Overlay an image using advanced blending.
-
-**Parameters:**
-- `overlay` (Image): Image to overlay
-- `mode` (str): Blend mode
-- `opacity` (float): Overlay opacity
-- `position` (tuple): Position to overlay at (x, y), defaults to center
-
-**Returns:** New overlaid Image
-
-**Example:**
-```python
-watermark = Image.open("watermark.png")
-watermarked = img.overlay_with(watermark, "normal", 0.5, position=(50, 50))
-```
 
 ## Color Analysis
 
@@ -431,17 +394,6 @@ for region in regions:
 ```
 
 ## Related Enums
-
-### BlendMode
-```python
-from imgrs import BlendMode
-
-BlendMode.NORMAL
-BlendMode.MULTIPLY
-BlendMode.SCREEN
-BlendMode.OVERLAY
-# ... and more
-```
 
 ### MaskType
 ```python
