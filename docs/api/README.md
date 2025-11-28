@@ -983,7 +983,7 @@ final.save("enhanced_landscape.png")
 ```python
 from imgrs import (
     ImageMode, ImageFormat, Resampling, Transpose,
-    BlendMode, MaskType, ColorFormat, GradientDirection
+    MaskType, ColorFormat, GradientDirection
 )
 ```
 
@@ -1014,21 +1014,6 @@ Resampling.BICUBIC = "BICUBIC"     # High quality
 Resampling.LANCZOS = "LANCZOS"     # Highest quality, slower
 ```
 
-### BlendMode
-```python
-BlendMode.NORMAL = "normal"
-BlendMode.MULTIPLY = "multiply"
-BlendMode.SCREEN = "screen"
-BlendMode.OVERLAY = "overlay"
-BlendMode.SOFT_LIGHT = "soft_light"
-BlendMode.HARD_LIGHT = "hard_light"
-BlendMode.COLOR_DODGE = "color_dodge"
-BlendMode.COLOR_BURN = "color_burn"
-BlendMode.DARKEN = "darken"
-BlendMode.LIGHTEN = "lighten"
-BlendMode.DIFFERENCE = "difference"
-BlendMode.EXCLUSION = "exclusion"
-```
 
 ### MaskType
 ```python
@@ -1084,9 +1069,9 @@ def add_watermark(img, watermark_text):
     # Create watermark image
     watermark = (Image.new("RGBA", img.size, (0, 0, 0, 0))
         .draw_text(watermark_text, 10, img.height - 30, (255, 255, 255, 128), 2))
-    
-    # Apply with screen blend for visibility on dark areas
-    return img.overlay_with(watermark, BlendMode.SCREEN, 0.7)
+
+    # Overlay watermark
+    return img.overlay_with(watermark, "normal", 0.7)
 
 watermarked = add_watermark(Image.open("photo.jpg"), "© 2025")
 ```
