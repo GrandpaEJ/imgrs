@@ -83,6 +83,15 @@ img = img.add_text_styled(
     shadow=(2, 2, 105, 105, 105, 180),  # Gray shadow
     background=(25, 25, 112, 255)  # Midnight blue background
 )
+
+# Rotated text
+img = img.add_text_styled(
+    "ROTATED",
+    (100, 100),
+    size=32,
+    color=(0, 0, 0, 255),
+    rotation=45.0
+)
 ```
 
 **Parameters:**
@@ -93,6 +102,7 @@ img = img.add_text_styled(
 - `outline` (tuple): (r, g, b, a, width) for outline effect
 - `shadow` (tuple): (offset_x, offset_y, r, g, b, a) for shadow effect
 - `background` (tuple): (r, g, b, a) for background box
+- `rotation` (float): Rotation angle in degrees (optional)
 
 ### Multi-line Text Rendering
 
