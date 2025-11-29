@@ -113,22 +113,20 @@ class TextMixin:
         if y_pos is None:
             raise ValueError("y coordinate must be provided")
 
-        return self.__class__(
-            self._rust_image.draw_text_styled(
-                text,
-                x,
-                y_pos,
-                size,
-                color,
-                font_path,
-                background,
-                align,
-                outline,
-                shadow,
-                opacity,
-                max_width,
-                rotation,
-            )
+        return self.draw_text_styled(
+            text,
+            x,
+            y_pos,
+            size,
+            color,
+            font_path,
+            background,
+            align,
+            outline,
+            shadow,
+            opacity,
+            max_width,
+            rotation,
         )
 
     def add_text_multiline(
@@ -451,6 +449,61 @@ class TextMixin:
 
         # For now, just render the text (background not supported yet)
         return self.add_text(text, x, y_pos, size, color, font_path)
+
+    def draw_text_styled(
+        self,
+        text: str,
+        x: int,
+        y: int,
+        size: float,
+        color: Tuple[int, int, int, int],
+        font_path: Optional[str] = None,
+        background: Optional[Tuple[int, int, int, int]] = None,
+        align: Optional[str] = None,
+        outline: Optional[Tuple[int, int, int, int, float]] = None,
+        shadow: Optional[Tuple[int, int, int, int, int, int]] = None,
+        opacity: Optional[float] = None,
+        max_width: Optional[int] = None,
+        rotation: Optional[float] = None,
+    ) -> "Image":
+        """
+        Draw styled text on the image.
+
+        Args:
+            text: Text to draw
+            x: X coordinate
+            y: Y coordinate
+            size: Font size
+            color: (R, G, B, A) color values
+            font_path: Path to font file
+            background: Background color
+            align: Text alignment
+            outline: Outline parameters
+            shadow: Shadow parameters
+            opacity: Text opacity
+            max_width: Maximum width for wrapping
+            rotation: Rotation angle
+
+        Returns:
+            New Image instance with styled text drawn
+        """
+        return self.__class__(
+            self._rust_image.draw_text_styled(
+                text,
+                x,
+                y,
+                size,
+                color,
+                font_path,
+                background,
+                align,
+                outline,
+                shadow,
+                opacity,
+                max_width,
+                rotation,
+            )
+        )
 
     def text(
         self,
