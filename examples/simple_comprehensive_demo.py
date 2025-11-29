@@ -12,9 +12,9 @@ import sys
 import os
 
 # Add the project root to the path
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "python"))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "python"))  # noqa: E402
 
-from imgrs import Image
+from imgrs import Image  # noqa: E402
 
 
 def create_comprehensive_demo():
