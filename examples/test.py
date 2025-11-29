@@ -90,7 +90,7 @@ def imgrs_generate_image(
             position=(620, -100),
             size=300,
             color=(0, 255, 255, 255),
-            font_path="fonts/HighSchoolUsaSerif-6vwM.ttf",
+            font_path=None,
             outline=(0, 0, 0, 255, 3.0),
         )
 

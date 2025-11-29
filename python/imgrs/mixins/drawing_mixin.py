@@ -195,8 +195,8 @@ class DrawingMixin:
         center_y: int,
         radius: int,
         sides: int,
-        rotation: float,
         color: Tuple[int, int, int, int],
+        rotation: float = 0.0,
     ) -> "Image":
         """
         Draw a regular polygon on the image.
@@ -206,14 +206,14 @@ class DrawingMixin:
             center_y: Y coordinate of center
             radius: Radius
             sides: Number of sides
-            rotation: Rotation angle
             color: (R, G, B, A) color values
+            rotation: Rotation angle
 
         Returns:
             New Image instance with regular polygon drawn
         """
         return self.__class__(
-            self._rust_image.draw_regular_polygon(center_x, center_y, radius, sides, rotation, color)
+            self._rust_image.draw_regular_polygon(center_x, center_y, radius, sides, color, rotation)
         )
 
     def draw_text(
