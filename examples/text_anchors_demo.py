@@ -178,7 +178,7 @@ Red text: Uses TopLeft anchor
 - Text starts at the center point
 - Extends to the right and down
 
-Blue text: Uses BottomRight anchor  
+Blue text: Uses BottomRight anchor
 - Text ends at the center point
 - Extends to the left and up
 

@@ -30,9 +30,9 @@ def create_text_box_examples():
 
     # Sample long text that will need wrapping
     sample_text = """
-    This is a longer piece of text that will automatically wrap 
-    within the specified text box area. The text box functionality 
-    allows you to control exactly how text flows within a defined 
+    This is a longer piece of text that will automatically wrap
+    within the specified text box area. The text box functionality
+    allows you to control exactly how text flows within a defined
     rectangular area on your image.
     """
 
@@ -89,7 +89,8 @@ def create_text_box_examples():
     # Example 4: Multiple text boxes showing overflow behavior
     print("Creating Example 4: Overflow comparison...")
 
-    long_text = "This text is very long and will definitely overflow the text box boundaries when overflow is set to False. Let's see what happens!"
+    long_text = ("This text is very long and will definitely overflow the text box "
+                 "boundaries when overflow is set to False. Let's see what happens!")
 
     # Text box with overflow hidden
     image = image.add_text_box(
@@ -122,7 +123,7 @@ def create_text_box_examples():
 
     styled_text = """
     Styled Text Box
-    
+
     This example shows how text boxes can be combined
     with other text styling features like shadows,
     outlines, and backgrounds to create rich

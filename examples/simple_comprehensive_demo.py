@@ -29,8 +29,8 @@ def create_comprehensive_demo():
     print("  Adding text box examples...")
 
     demo_text = """
-    This is a text box demonstration showing how text automatically wraps 
-    within a defined rectangular area. The text box feature allows for 
+    This is a text box demonstration showing how text automatically wraps
+    within a defined rectangular area. The text box feature allows for
     precise control over text layout and formatting.
     """
 
@@ -112,11 +112,11 @@ def create_comprehensive_demo():
     # Card content (text box)
     content_text = """
     This demo showcases the integration of text box functionality with text anchoring.
-    
+
     • Text boxes provide automatic text wrapping within defined boundaries
     • Text anchors allow precise positioning relative to specific points
     • Both features work together to create professional layouts
-    
+
     The calculate_anchor_offset function enables precise text positioning,
     while the add_text_box function handles complex text layout requirements.
     """

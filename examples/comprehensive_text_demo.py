@@ -49,10 +49,10 @@ def create_comprehensive_demo():
 
     complex_text = """
     ENHANCED TEXT BOX FEATURES
-    
-    This comprehensive demonstration showcases the newly fixed 
-    text rendering capabilities in imgrs-core v0.3.6. 
-    
+
+    This comprehensive demonstration showcases the newly fixed
+    text rendering capabilities in imgrs-core v0.3.6.
+
     Key improvements include:
     ✓ Proper text box rendering with wrapping
     ✓ Support for all text anchor positions
@@ -60,7 +60,7 @@ def create_comprehensive_demo():
       shadows, and outlines
     ✓ Integration with text measurement functions
     ✓ Robust error handling and type safety
-    
+
     The text box functionality allows for precise control
     over text layout within specified boundaries, making
     it ideal for creating professional-looking graphics,
@@ -302,7 +302,7 @@ def create_comprehensive_demo():
 
     footer_text = """
     imgrs-core v0.3.6 - Fixed Text Rendering Capabilities
-    
+
     This demonstration showcases:
     • Enhanced text_box functionality with proper wrapping
     • Complete anchor position support (12 positions)
