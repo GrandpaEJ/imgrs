@@ -1,6 +1,6 @@
  [package]
 name = "imgrs-core"
-version = "0.3.5"
+version = "0.3.6"
 edition = "2021"
 authors = ["Grandpa EJ"]
 description = "A high-performance, memory-safe image processing library for Python"
@@ -23,6 +23,7 @@ rand_distr = "0.4"
 imageproc = "0.25"
 ab_glyph = "0.2"
 kamadak-exif = "0.5"
+wuff = "0.2"
 
 [features]
 default = []
