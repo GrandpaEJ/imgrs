@@ -482,6 +482,7 @@ extension or magic bytes."""
     custom_font_path = None
     for font_path in custom_fonts_to_try:
         import os
+
         if os.path.exists(font_path):
             custom_font_path = font_path
             break
@@ -489,7 +490,7 @@ extension or magic bytes."""
     if custom_font_path:
         font_name = os.path.basename(custom_font_path)
         print(f"Loading custom font: {font_name}")
-        
+
         img = img.add_text(
             f"Custom font loaded: {font_name}",
             (50, 500),
@@ -497,7 +498,7 @@ extension or magic bytes."""
             color=(0, 150, 0, 255),
             font_path=custom_font_path,
         )
-        
+
         # Add another line to show it off better
         img = img.add_text_styled(
             "Testing WOFF2 Support!",
@@ -505,7 +506,7 @@ extension or magic bytes."""
             size=32,
             color=(255, 100, 0, 255),
             font_path=custom_font_path,
-            shadow=(2, 2, 0, 0, 0, 100)
+            shadow=(2, 2, 0, 0, 0, 100),
         )
     else:
         img = img.add_text(
