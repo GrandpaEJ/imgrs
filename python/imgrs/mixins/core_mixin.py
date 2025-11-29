@@ -223,7 +223,9 @@ class CoreMixin:
             img = cls(rust_image)
             return img.convert("LA")
         else:
-            raise ValueError(f"Unsupported mode: {mode}. Use 'RGB', 'RGBA', 'L', or 'LA'")
+            raise ValueError(
+                f"Unsupported mode: {mode}. Use 'RGB', 'RGBA', 'L', or 'LA'"
+            )
 
         return cls(rust_image)
 

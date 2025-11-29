@@ -87,9 +87,7 @@ class DrawingMixin:
         Returns:
             New Image instance with line drawn
         """
-        return self.__class__(
-            self._rust_image.draw_line(x0, y0, x1, y1, color)
-        )
+        return self.__class__(self._rust_image.draw_line(x0, y0, x1, y1, color))
 
     def draw_star(
         self,
@@ -115,7 +113,9 @@ class DrawingMixin:
             New Image instance with star drawn
         """
         return self.__class__(
-            self._rust_image.draw_star(center_x, center_y, outer_radius, inner_radius, points, color)
+            self._rust_image.draw_star(
+                center_x, center_y, outer_radius, inner_radius, points, color
+            )
         )
 
     def draw_triangle(
@@ -213,7 +213,9 @@ class DrawingMixin:
             New Image instance with regular polygon drawn
         """
         return self.__class__(
-            self._rust_image.draw_regular_polygon(center_x, center_y, radius, sides, color, rotation)
+            self._rust_image.draw_regular_polygon(
+                center_x, center_y, radius, sides, color, rotation
+            )
         )
 
     def draw_text(
