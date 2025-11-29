@@ -87,6 +87,134 @@ class DrawingMixin:
         Returns:
             New Image instance with line drawn
         """
+        return self.__class__(
+            self._rust_image.draw_line(x0, y0, x1, y1, color)
+        )
+
+    def draw_star(
+        self,
+        center_x: int,
+        center_y: int,
+        outer_radius: int,
+        inner_radius: int,
+        points: int,
+        color: Tuple[int, int, int, int],
+    ) -> "Image":
+        """
+        Draw a star on the image.
+
+        Args:
+            center_x: X coordinate of star center
+            center_y: Y coordinate of star center
+            outer_radius: Outer radius of the star
+            inner_radius: Inner radius of the star
+            points: Number of points on the star
+            color: (R, G, B, A) color values
+
+        Returns:
+            New Image instance with star drawn
+        """
+        return self.__class__(
+            self._rust_image.draw_star(center_x, center_y, outer_radius, inner_radius, points, color)
+        )
+
+    def draw_triangle(
+        self,
+        x1: int,
+        y1: int,
+        x2: int,
+        y2: int,
+        x3: int,
+        y3: int,
+        color: Tuple[int, int, int, int],
+    ) -> "Image":
+        """
+        Draw a triangle on the image.
+
+        Args:
+            x1: X coordinate of first vertex
+            y1: Y coordinate of first vertex
+            x2: X coordinate of second vertex
+            y2: Y coordinate of second vertex
+            x3: X coordinate of third vertex
+            y3: Y coordinate of third vertex
+            color: (R, G, B, A) color values
+
+        Returns:
+            New Image instance with triangle drawn
+        """
+        return self.__class__(
+            self._rust_image.draw_triangle(x1, y1, x2, y2, x3, y3, color)
+        )
+
+    def draw_ellipse(
+        self,
+        center_x: int,
+        center_y: int,
+        radius_x: int,
+        radius_y: int,
+        color: Tuple[int, int, int, int],
+    ) -> "Image":
+        """
+        Draw an ellipse on the image.
+
+        Args:
+            center_x: X coordinate of ellipse center
+            center_y: Y coordinate of ellipse center
+            radius_x: Horizontal radius
+            radius_y: Vertical radius
+            color: (R, G, B, A) color values
+
+        Returns:
+            New Image instance with ellipse drawn
+        """
+        return self.__class__(
+            self._rust_image.draw_ellipse(center_x, center_y, radius_x, radius_y, color)
+        )
+
+    def draw_polygon(
+        self,
+        points: list,
+        color: Tuple[int, int, int, int],
+    ) -> "Image":
+        """
+        Draw a polygon on the image.
+
+        Args:
+            points: List of (x, y) tuples
+            color: (R, G, B, A) color values
+
+        Returns:
+            New Image instance with polygon drawn
+        """
+        return self.__class__(self._rust_image.draw_polygon(points, color))
+
+    def draw_regular_polygon(
+        self,
+        center_x: int,
+        center_y: int,
+        radius: int,
+        sides: int,
+        rotation: float,
+        color: Tuple[int, int, int, int],
+    ) -> "Image":
+        """
+        Draw a regular polygon on the image.
+
+        Args:
+            center_x: X coordinate of center
+            center_y: Y coordinate of center
+            radius: Radius
+            sides: Number of sides
+            rotation: Rotation angle
+            color: (R, G, B, A) color values
+
+        Returns:
+            New Image instance with regular polygon drawn
+        """
+        return self.__class__(
+            self._rust_image.draw_regular_polygon(center_x, center_y, radius, sides, rotation, color)
+        )
 
     def draw_text(
         self,
