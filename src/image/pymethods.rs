@@ -526,6 +526,7 @@ impl PyImage {
     }
 
 
+    #[pyo3(signature = (text, x, y, color=(0, 0, 0, 255), scale=32, anchor=None))]
     fn draw_text(
         &mut self,
         text: &str,
@@ -533,11 +534,12 @@ impl PyImage {
         y: i32,
         color: (u8, u8, u8, u8),
         scale: u32,
+        anchor: Option<String>,
     ) -> PyResult<Self> {
-        self.draw_text_impl(text, x, y, color, scale)
+        self.draw_text_impl(text, x, y, color, scale, anchor)
     }
 
-    #[pyo3(signature = (text, x, y, size=32.0, color=(0, 0, 0, 255), font_path=None, background=None, align=None, outline=None, shadow=None, opacity=None, max_width=None, rotation=None))]
+    #[pyo3(signature = (text, x, y, size=32.0, color=(0, 0, 0, 255), font_path=None, background=None, align=None, outline=None, shadow=None, opacity=None, max_width=None, rotation=None, anchor=None))]
     fn draw_text_styled(
         &mut self,
         text: &str,
@@ -553,8 +555,9 @@ impl PyImage {
         opacity: Option<f32>,
         max_width: Option<u32>,
         rotation: Option<f32>,
+        anchor: Option<String>,
     ) -> PyResult<Self> {
-        self.draw_text_styled_impl(text, x, y, size, color, font_path, background, align, outline, shadow, opacity, max_width, rotation)
+        self.draw_text_styled_impl(text, x, y, size, color, font_path, background, align, outline, shadow, opacity, max_width, rotation, anchor)
     }
 
     #[pyo3(signature = (text, x, y, size=32.0, color=(0, 0, 0, 255), font_path=None, line_spacing=None, align=None))]
@@ -619,6 +622,26 @@ impl PyImage {
         font_path: Option<String>,
     ) -> PyResult<pyo3::PyObject> {
         self.get_text_box_impl(text, x, y, size, font_path)
+    }
+
+    #[pyo3(signature = (text, x, y, width, height, size=32.0, color=(0, 0, 0, 255), font_path=None, background=None, align=None, vertical_align=None, line_spacing=None, overflow=None))]
+    fn draw_text_box(
+        &mut self,
+        text: &str,
+        x: i32,
+        y: i32,
+        width: u32,
+        height: u32,
+        size: f32,
+        color: (u8, u8, u8, u8),
+        font_path: Option<String>,
+        background: Option<(u8, u8, u8, u8)>,
+        align: Option<String>,
+        vertical_align: Option<String>,
+        line_spacing: Option<f32>,
+        overflow: Option<bool>,
+    ) -> PyResult<Self> {
+        self.draw_text_box_impl(text, x, y, width, height, size, color, font_path, background, align, vertical_align, line_spacing, overflow)
     }
 
     // Effect methods (from effects.rs)

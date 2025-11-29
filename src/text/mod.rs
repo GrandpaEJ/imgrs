@@ -13,7 +13,7 @@ pub mod styles;
 pub mod fonts;
 
 pub use renderer::{
-    draw_text, draw_text_multiline, draw_text_styled, draw_text_centered,
+    draw_text, draw_text_multiline, draw_text_styled, draw_text_centered, draw_text_box,
     get_text_size, get_multiline_text_size, get_text_box
 };
 // Additional text functions available for future use

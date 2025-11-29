@@ -1,12 +1,73 @@
-/// Text rendering implementation with full styling support
-
 use image::{DynamicImage, Rgba, RgbaImage};
 use imageproc::drawing::{draw_text_mut, draw_filled_rect_mut};
 use ab_glyph::{FontVec, PxScale, Font, ScaleFont};
 use imageproc::rect::Rect;
 use crate::errors::ImgrsError;
-use super::styles::{TextStyle, TextAlign};
+use super::styles::{TextStyle, TextAlign, TextAnchor, TextBoxStyle};
 use super::fonts::{self};
+
+/// Calculate anchor offset for text positioning
+fn calculate_anchor_offset(
+    text: &str,
+    anchor: TextAnchor,
+    size: f32,
+    font: &FontVec,
+) -> (i32, i32) {
+    let (width, height, ascent, _) = match get_text_metrics(text, size, font) {
+        Ok(metrics) => metrics,
+        Err(_) => return (0, 0), // Default to no offset if measurement fails
+    };
+    
+    match anchor {
+        TextAnchor::TopLeft => (0, 0),
+        TextAnchor::TopCenter => (-(width as i32 / 2), 0),
+        TextAnchor::TopRight => (-(width as i32), 0),
+        TextAnchor::MiddleLeft => (0, -(height as i32 / 2)),
+        TextAnchor::MiddleCenter => (-(width as i32 / 2), -(height as i32 / 2)),
+        TextAnchor::MiddleRight => (-(width as i32), -(height as i32 / 2)),
+        TextAnchor::BottomLeft => (0, -(height as i32)),
+        TextAnchor::BottomCenter => (-(width as i32 / 2), -(height as i32)),
+        TextAnchor::BottomRight => (-(width as i32), -(height as i32)),
+        TextAnchor::BaselineLeft => (0, -(ascent)),
+        TextAnchor::BaselineCenter => (-(width as i32 / 2), -(ascent)),
+        TextAnchor::BaselineRight => (-(width as i32), -(ascent)),
+    }
+}
+
+/// Get text metrics for anchor calculations
+fn get_text_metrics(
+    text: &str,
+    size: f32,
+    font: &FontVec,
+) -> Result<(u32, u32, i32, i32), ImgrsError> {
+    let scale = PxScale::from(size);
+    let scaled_font = font.as_scaled(scale);
+    
+    // Calculate width
+    let mut width = 0.0_f32;
+    let mut max_height = 0.0_f32;
+    let mut min_y = 0.0_f32;
+    let mut max_y = 0.0_f32;
+    
+    for c in text.chars() {
+        let glyph = scaled_font.scaled_glyph(c);
+        width += scaled_font.h_advance(glyph.id);
+        
+        // Get glyph bounds for height calculation
+        if let Some(outlined) = scaled_font.outline_glyph(glyph) {
+            let bounds = outlined.px_bounds();
+            min_y = min_y.min(bounds.min.y);
+            max_y = max_y.max(bounds.max.y);
+            max_height = max_height.max(bounds.height());
+        }
+    }
+    
+    let height = (max_y - min_y).max(size);
+    let ascent = (-min_y) as i32;
+    let descent = max_y as i32;
+    
+    Ok((width as u32, height as u32, ascent, descent))
+}
 
 /// Draw text on image with basic parameters
 pub fn draw_text(
@@ -17,6 +78,7 @@ pub fn draw_text(
     size: f32,
     color: (u8, u8, u8, u8),
     font_path: Option<&std::path::Path>,
+    anchor: Option<TextAnchor>,
 ) -> Result<DynamicImage, ImgrsError> {
     let mut rgba_image = image.to_rgba8();
     let font = fonts::load_font(font_path)?;
@@ -24,7 +86,13 @@ pub fn draw_text(
     let scale = PxScale::from(size);
     let rgba_color = Rgba([color.0, color.1, color.2, color.3]);
     
-    draw_text_mut(&mut rgba_image, rgba_color, x, y, scale, &font, text);
+    let (dx, dy) = if let Some(anchor) = anchor {
+        calculate_anchor_offset(text, anchor, size, &font)
+    } else {
+        (0, 0)
+    };
+    
+    draw_text_mut(&mut rgba_image, rgba_color, x + dx, y + dy, scale, &font, text);
     
     Ok(DynamicImage::ImageRgba8(rgba_image))
 }
@@ -74,6 +142,7 @@ pub fn draw_text_styled(
     y: i32,
     style: &TextStyle,
     font_path: Option<&std::path::Path>,
+    anchor: Option<TextAnchor>,
 ) -> Result<DynamicImage, ImgrsError> {
     // Handle multiline text
     if text.contains('\n') || style.max_width.is_some() {
@@ -87,6 +156,17 @@ pub fn draw_text_styled(
     
     let mut rgba_image = image.to_rgba8();
     let font = fonts::load_font(font_path)?;
+    
+    // Calculate anchor offset
+    let (dx, dy) = if let Some(anchor) = anchor {
+        calculate_anchor_offset(text, anchor, style.size, &font)
+    } else {
+        (0, 0)
+    };
+    
+    // Apply offset to coordinates
+    let x = x + dx;
+    let y = y + dy;
     
     // Handle rotation
     if style.rotation != 0.0 {
@@ -428,7 +508,7 @@ pub fn draw_text_quick(
     size: f32,
     color: (u8, u8, u8, u8),
 ) -> Result<DynamicImage, ImgrsError> {
-    draw_text(image, text, x, y, size, color, None)
+    draw_text(image, text, x, y, size, color, None, None)
 }
 
 /// Draw text with automatic positioning (center)
@@ -443,5 +523,66 @@ pub fn draw_text_centered(
     let text_width = measure_text_width(text, style.size, &font);
     let x = (image.width() as i32 - text_width) / 2;
     
-    draw_text_styled(image, text, x, y, style, font_path)
+    // Pass None for anchor since we manually centered it
+    draw_text_styled(image, text, x, y, style, font_path, None)
+}
+
+/// Draw text within a bounding box
+pub fn draw_text_box(
+    image: &DynamicImage,
+    text: &str,
+    x: i32,
+    y: i32,
+    width: u32,
+    height: u32,
+    style: &TextBoxStyle,
+    font_path: Option<&std::path::Path>,
+) -> Result<DynamicImage, ImgrsError> {
+    let mut rgba_image = image.to_rgba8();
+    let font = fonts::load_font(font_path)?;
+    
+    // Wrap text to fit width
+    let wrapped_text = wrap_text(text, width, style.text_style.size, font_path)?;
+    let lines: Vec<&str> = wrapped_text.lines().collect();
+    
+    // Calculate total text height
+    let line_height = (style.text_style.size * style.text_style.line_spacing) as i32;
+    let total_text_height = line_height * lines.len() as i32;
+    
+    // Calculate starting Y based on vertical alignment
+    let start_y = match style.vertical_align {
+        TextAlign::Left => y, // Top
+        TextAlign::Center => y + (height as i32 - total_text_height) / 2, // Middle
+        TextAlign::Right => y + height as i32 - total_text_height, // Bottom
+    };
+    
+    // Draw each line
+    for (i, line) in lines.iter().enumerate() {
+        let line_y = start_y + (i as i32 * line_height);
+        
+        // Skip lines outside the box if overflow is hidden
+        if !style.overflow && (line_y < y || line_y + line_height > y + height as i32) {
+            continue;
+        }
+        
+        // Calculate X based on horizontal alignment
+        let line_width = measure_text_width(line, style.text_style.size, &font);
+        let line_x = match style.text_style.align {
+            TextAlign::Left => x,
+            TextAlign::Center => x + (width as i32 - line_width) / 2,
+            TextAlign::Right => x + width as i32 - line_width,
+        };
+        
+        // Render line
+        render_text_with_effects(
+            &mut rgba_image,
+            line,
+            line_x,
+            line_y,
+            &style.text_style,
+            &font,
+        )?;
+    }
+    
+    Ok(DynamicImage::ImageRgba8(rgba_image))
 }

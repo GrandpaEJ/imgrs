@@ -1,4 +1,4 @@
-/// Font loading and management
+/// Font loading and management with ttf/otf/woff/woff2 support
 
 use ab_glyph::FontVec;
 use crate::errors::ImgrsError;
@@ -11,6 +11,15 @@ use std::fs;
 const DEFAULT_FONT: &[u8] = include_bytes!("../../fonts/DejaVuSans.ttf");
     #[allow(dead_code)]
 const BOLD_FONT: &[u8] = include_bytes!("../../fonts/DejaVuSans.ttf"); // TODO: Add DejaVuSans-Bold.ttf
+
+/// Font format types
+#[derive(Debug, Clone, Copy, PartialEq)]
+enum FontFormat {
+    Ttf,
+    Otf,
+    Woff,
+    Woff2,
+}
 
 /// Font manager for loading and caching fonts
     #[allow(dead_code)]
@@ -52,25 +61,97 @@ impl FontManager {
     }
 }
 
+/// Detect font format from file extension or magic bytes
+fn detect_font_format(path: &Path, data: &[u8]) -> FontFormat {
+    // First try file extension
+    if let Some(ext) = path.extension() {
+        let ext_str = ext.to_string_lossy().to_lowercase();
+        match ext_str.as_str() {
+            "ttf" => return FontFormat::Ttf,
+            "otf" => return FontFormat::Otf,
+            "woff" => return FontFormat::Woff,
+            "woff2" => return FontFormat::Woff2,
+            _ => {}
+        }
+    }
+    
+    // Fall back to magic bytes detection
+    if data.len() >= 4 {
+        match &data[0..4] {
+            b"wOFF" => return FontFormat::Woff,
+            b"wOF2" => return FontFormat::Woff2,
+            [0x00, 0x01, 0x00, 0x00] => return FontFormat::Ttf,
+            b"OTTO" => return FontFormat::Otf,
+            _ => {}
+        }
+    }
+    
+    // Default to TTF
+    FontFormat::Ttf
+}
+
+/// Convert WOFF to TTF format
+fn convert_woff_to_ttf(woff_data: &[u8]) -> Result<Vec<u8>, ImgrsError> {
+    wuff::decompress_woff1(woff_data)
+        .map_err(|e| ImgrsError::InvalidOperation(format!("Failed to convert WOFF to TTF: {:?}", e)))
+}
+
+/// Convert WOFF2 to TTF format
+fn convert_woff2_to_ttf(woff2_data: &[u8]) -> Result<Vec<u8>, ImgrsError> {
+    wuff::decompress_woff2(woff2_data)
+        .map_err(|e| ImgrsError::InvalidOperation(format!("Failed to convert WOFF2 to TTF: {:?}", e)))
+}
+
 /// Load embedded default font
 fn load_embedded_font() -> Result<FontVec, ImgrsError> {
     FontVec::try_from_vec(DEFAULT_FONT.to_vec())
         .map_err(|e| ImgrsError::InvalidOperation(format!("Failed to load embedded font: {:?}", e)))
 }
 
-/// Load font from file path (TTF or OTF)
+/// Load font from file path (TTF, OTF, WOFF, or WOFF2)
 pub fn load_font_from_path(path: impl AsRef<Path>) -> Result<FontVec, ImgrsError> {
-    let font_data = fs::read(path.as_ref())
+    let path = path.as_ref();
+    let font_data = fs::read(path)
         .map_err(|e| ImgrsError::InvalidOperation(format!("Failed to read font file: {}", e)))?;
     
-    FontVec::try_from_vec(font_data)
+    // Detect format
+    let format = detect_font_format(path, &font_data);
+    
+    // Convert to TTF/OTF if needed
+    let ttf_data = match format {
+        FontFormat::Ttf | FontFormat::Otf => font_data,
+        FontFormat::Woff => convert_woff_to_ttf(&font_data)?,
+        FontFormat::Woff2 => convert_woff2_to_ttf(&font_data)?,
+    };
+    
+    FontVec::try_from_vec(ttf_data)
         .map_err(|e| ImgrsError::InvalidOperation(format!("Invalid font file: {:?}", e)))
 }
 
 /// Load font from bytes
 #[allow(dead_code)]
 pub fn load_font_from_bytes(data: &[u8]) -> Result<FontVec, ImgrsError> {
-    FontVec::try_from_vec(data.to_vec())
+    // Try to detect format from magic bytes
+    let format = if data.len() >= 4 {
+        match &data[0..4] {
+            b"wOFF" => FontFormat::Woff,
+            b"wOF2" => FontFormat::Woff2,
+            [0x00, 0x01, 0x00, 0x00] => FontFormat::Ttf,
+            b"OTTO" => FontFormat::Otf,
+            _ => FontFormat::Ttf,
+        }
+    } else {
+        FontFormat::Ttf
+    };
+    
+    // Convert to TTF/OTF if needed
+    let ttf_data = match format {
+        FontFormat::Ttf | FontFormat::Otf => data.to_vec(),
+        FontFormat::Woff => convert_woff_to_ttf(data)?,
+        FontFormat::Woff2 => convert_woff2_to_ttf(data)?,
+    };
+    
+    FontVec::try_from_vec(ttf_data)
         .map_err(|e| ImgrsError::InvalidOperation(format!("Invalid font data: {:?}", e)))
 }
 

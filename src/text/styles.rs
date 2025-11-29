@@ -143,3 +143,63 @@ impl TextStyle {
         self
     }
 }
+
+/// Text anchor positions
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub enum TextAnchor {
+    TopLeft,
+    TopCenter,
+    TopRight,
+    MiddleLeft,
+    MiddleCenter,
+    MiddleRight,
+    BottomLeft,
+    BottomCenter,
+    BottomRight,
+    BaselineLeft,
+    BaselineCenter,
+    BaselineRight,
+}
+
+impl Default for TextAnchor {
+    fn default() -> Self {
+        TextAnchor::TopLeft
+    }
+}
+
+impl TextAnchor {
+    /// Parse from 2-char string (e.g., "lt", "mm", "rb")
+    pub fn from_str(s: &str) -> Option<Self> {
+        if s.len() != 2 {
+            return None;
+        }
+        
+        let chars: Vec<char> = s.chars().collect();
+        let v = chars[0]; // Vertical: l, m, s, b
+        let h = chars[1]; // Horizontal: l, m, r
+        
+        match (v, h) {
+            ('l', 'l') => Some(TextAnchor::TopLeft),
+            ('l', 'm') => Some(TextAnchor::TopCenter),
+            ('l', 'r') => Some(TextAnchor::TopRight),
+            ('m', 'l') => Some(TextAnchor::MiddleLeft),
+            ('m', 'm') => Some(TextAnchor::MiddleCenter),
+            ('m', 'r') => Some(TextAnchor::MiddleRight),
+            ('b', 'l') => Some(TextAnchor::BottomLeft),
+            ('b', 'm') => Some(TextAnchor::BottomCenter),
+            ('b', 'r') => Some(TextAnchor::BottomRight),
+            ('s', 'l') => Some(TextAnchor::BaselineLeft),
+            ('s', 'm') => Some(TextAnchor::BaselineCenter),
+            ('s', 'r') => Some(TextAnchor::BaselineRight),
+            _ => None,
+        }
+    }
+}
+
+/// Style for text box rendering
+#[derive(Debug, Clone)]
+pub struct TextBoxStyle {
+    pub text_style: TextStyle,
+    pub vertical_align: TextAlign, // Reusing TextAlign for vertical alignment (Left=Top, Center=Middle, Right=Bottom)
+    pub overflow: bool, // true = visible/overflow, false = clip
+}

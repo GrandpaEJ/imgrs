@@ -191,12 +191,15 @@ impl PyImage {
         y: i32,
         color: (u8, u8, u8, u8),
         scale: u32,
+        anchor: Option<String>,
     ) -> PyResult<Self> {
         let format = self.format;
         let image = self.get_image()?;
+        
+        let text_anchor = anchor.as_ref().and_then(|s| crate::text::styles::TextAnchor::from_str(s));
 
         Python::with_gil(|py| {
-            py.allow_threads(|| text::draw_text(image, text, x, y, scale as f32, color, None))
+            py.allow_threads(|| text::draw_text(image, text, x, y, scale as f32, color, None, text_anchor))
         })
         .map(|result| PyImage {
             lazy_image: LazyImage::Loaded(result),
@@ -220,11 +223,13 @@ impl PyImage {
         opacity: Option<f32>,
         max_width: Option<u32>,
         rotation: Option<f32>,
+        anchor: Option<String>,
     ) -> PyResult<Self> {
         let format = self.format;
         let image = self.get_image()?;
 
         let font_path = font_path.as_ref().map(|p| std::path::Path::new(p));
+        let text_anchor = anchor.as_ref().and_then(|s| crate::text::styles::TextAnchor::from_str(s));
 
         // Create TextStyle from parameters
         let mut style = crate::text::styles::TextStyle::new()
@@ -265,7 +270,7 @@ impl PyImage {
         }
 
         Python::with_gil(|py| {
-            py.allow_threads(|| text::draw_text_styled(image, text, x, y, &style, font_path))
+            py.allow_threads(|| text::draw_text_styled(image, text, x, y, &style, font_path, text_anchor))
         })
         .map(|result| PyImage {
             lazy_image: LazyImage::Loaded(result),
@@ -418,9 +423,78 @@ impl PyImage {
             dict.set_item("bottom_y", text_box.bottom_y)?;
             dict.set_item("right_x", text_box.right_x)?;
 
-            Ok(dict.to_object(py))
+            Ok(dict.into_pyobject(py).unwrap().unbind().into_any())
         })
         .map_err(|e: crate::errors::ImgrsError| e.into())
     }
 
+    pub fn draw_text_box_impl(
+        &mut self,
+        text: &str,
+        x: i32,
+        y: i32,
+        width: u32,
+        height: u32,
+        size: f32,
+        color: (u8, u8, u8, u8),
+        font_path: Option<String>,
+        background: Option<(u8, u8, u8, u8)>,
+        align: Option<String>,
+        vertical_align: Option<String>,
+        line_spacing: Option<f32>,
+        overflow: Option<bool>,
+    ) -> PyResult<Self> {
+        let format = self.format;
+        let image = self.get_image()?;
+
+        let font_path = font_path.as_ref().map(|p| std::path::Path::new(p));
+
+        // Create TextStyle
+        let mut text_style = crate::text::styles::TextStyle::new()
+            .with_size(size)
+            .with_color(color.0, color.1, color.2, color.3);
+
+        if let Some(bg) = background {
+            text_style = text_style.with_background(bg.0, bg.1, bg.2, bg.3);
+        }
+
+        if let Some(align_str) = align {
+            let text_align = match align_str.as_str() {
+                "center" => crate::text::styles::TextAlign::Center,
+                "right" => crate::text::styles::TextAlign::Right,
+                _ => crate::text::styles::TextAlign::Left,
+            };
+            text_style = text_style.with_align(text_align);
+        }
+        
+        if let Some(spacing) = line_spacing {
+            text_style.line_spacing = spacing;
+        }
+
+        // Create TextBoxStyle
+        let v_align = if let Some(align_str) = vertical_align {
+            match align_str.as_str() {
+                "center" | "middle" => crate::text::styles::TextAlign::Center,
+                "bottom" => crate::text::styles::TextAlign::Right, // Using Right for Bottom
+                _ => crate::text::styles::TextAlign::Left, // Using Left for Top
+            }
+        } else {
+            crate::text::styles::TextAlign::Left // Default Top
+        };
+        
+        let style = crate::text::styles::TextBoxStyle {
+            text_style,
+            vertical_align: v_align,
+            overflow: overflow.unwrap_or(false),
+        };
+
+        Python::with_gil(|py| {
+            py.allow_threads(|| text::draw_text_box(image, text, x, y, width, height, &style, font_path))
+        })
+        .map(|result| PyImage {
+            lazy_image: LazyImage::Loaded(result),
+            format,
+        })
+        .map_err(|e| e.into())
+    }
 }
