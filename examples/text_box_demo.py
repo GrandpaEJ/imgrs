@@ -13,7 +13,9 @@ import sys
 import os
 
 # Add the project root to the path
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "python"))  # noqa: E402
+sys.path.insert(
+    0, os.path.join(os.path.dirname(__file__), "..", "python")
+)  # noqa: E402
 
 from imgrs import Image  # noqa: E402
 
@@ -89,8 +91,10 @@ def create_text_box_examples():
     # Example 4: Multiple text boxes showing overflow behavior
     print("Creating Example 4: Overflow comparison...")
 
-    long_text = ("This text is very long and will definitely overflow the text box "
-                 "boundaries when overflow is set to False. Let's see what happens!")
+    long_text = (
+        "This text is very long and will definitely overflow the text box "
+        "boundaries when overflow is set to False. Let's see what happens!"
+    )
 
     # Text box with overflow hidden
     image = image.add_text_box(
