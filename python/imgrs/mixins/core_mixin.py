@@ -201,15 +201,31 @@ class CoreMixin:
         # Convert color to RGBA tuple
         rgba_color = cls._parse_color(color, mode)
 
-        # Handle LA mode (grayscale with alpha) which may not be directly supported by the Rust backend
-        if mode == "LA":
+        width, height = size
+
+        if mode == "RGB":
+            r, g, b, _ = rgba_color
+            data = bytes([r, g, b] * (width * height))
+            rust_image = RustImage.frombytes("RGB", size, data)
+        elif mode == "RGBA":
+            r, g, b, a = rgba_color
+            data = bytes([r, g, b, a] * (width * height))
+            rust_image = RustImage.frombytes("RGBA", size, data)
+        elif mode == "L":
+            gray, _, _, _ = rgba_color
+            data = bytes([gray] * (width * height))
+            rust_image = RustImage.frombytes("L", size, data)
+        elif mode == "LA":
             # Create an RGBA image first, then convert to LA
-            rust_image = RustImage.new("RGBA", size, rgba_color)
+            r, g, b, a = rgba_color
+            data = bytes([r, g, b, a] * (width * height))
+            rust_image = RustImage.frombytes("RGBA", size, data)
             img = cls(rust_image)
             return img.convert("LA")
         else:
-            rust_image = RustImage.new(mode, size, rgba_color)
-            return cls(rust_image)
+            raise ValueError(f"Unsupported mode: {mode}. Use 'RGB', 'RGBA', 'L', or 'LA'")
+
+        return cls(rust_image)
 
     @classmethod
     def fromarray(
