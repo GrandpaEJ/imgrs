@@ -65,7 +65,9 @@ class TextMixin:
             if hasattr(font, "get_size"):
                 final_size = font.get_size()
 
-        return self.__class__(self._rust_image.draw_text(text, x, y_pos, color, int(final_size)))
+        return self.__class__(
+            self._rust_image.draw_text(text, x, y_pos, color, int(final_size))
+        )
 
     def add_text_styled(
         self,
@@ -113,21 +115,23 @@ class TextMixin:
         if y_pos is None:
             raise ValueError("y coordinate must be provided")
 
-        return self.__class__(self._rust_image.draw_text_styled(
-            text,
-            x,
-            y_pos,
-            size,
-            color,
-            font_path,
-            background,
-            align,
-            outline,
-            shadow,
-            opacity,
-            max_width,
-            rotation,
-        ))
+        return self.__class__(
+            self._rust_image.draw_text_styled(
+                text,
+                x,
+                y_pos,
+                size,
+                color,
+                font_path,
+                background,
+                align,
+                outline,
+                shadow,
+                opacity,
+                max_width,
+                rotation,
+            )
+        )
 
     def add_text_multiline(
         self,
@@ -165,16 +169,18 @@ class TextMixin:
         if y_pos is None:
             raise ValueError("y coordinate must be provided")
 
-        return self.__class__(self._rust_image.draw_text_multiline(
-            text,
-            x,
-            y_pos,
-            size,
-            color,
-            font_path,
-            line_spacing,
-            align,
-        ))
+        return self.__class__(
+            self._rust_image.draw_text_multiline(
+                text,
+                x,
+                y_pos,
+                size,
+                color,
+                font_path,
+                line_spacing,
+                align,
+            )
+        )
 
     def add_text_centered(
         self,
@@ -205,17 +211,19 @@ class TextMixin:
         Returns:
             New Image instance with centered text added
         """
-        return self.__class__(self._rust_image.draw_text_centered(
-            text,
-            y,
-            size,
-            color,
-            font_path,
-            background,
-            outline,
-            shadow,
-            opacity,
-        ))
+        return self.__class__(
+            self._rust_image.draw_text_centered(
+                text,
+                y,
+                size,
+                color,
+                font_path,
+                background,
+                outline,
+                shadow,
+                opacity,
+            )
+        )
 
     def get_text_dimensions(
         self,
@@ -255,7 +263,9 @@ class TextMixin:
         Returns:
             Tuple of (width, height, line_count)
         """
-        return self._rust_image.get_multiline_text_size(text, size, line_spacing, font_path)
+        return self._rust_image.get_multiline_text_size(
+            text, size, line_spacing, font_path
+        )
 
     def get_text_bounding_box(
         self,
