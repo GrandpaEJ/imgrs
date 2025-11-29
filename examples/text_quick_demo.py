@@ -25,13 +25,11 @@ def main():
     img = img.add_text("Hello TextMixin!", (20, 20), size=24, color=(0, 0, 0, 255))
 
     # Styled text with outline and background
-    img = img.add_text_styled(
+    img = img.add_text(
         "Styled",
         (20, 60),
         size=28,
         color=(255, 255, 255, 255),
-        outline=(0, 0, 0, 255, 1.0),
-        background=(100, 149, 237, 255),
     )
 
     # Multi-line text with center alignment

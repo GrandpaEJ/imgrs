@@ -47,4 +47,6 @@ class Image(
     - MetadataMixin: EXIF/metadata reading and GPS data
     """
 
-    pass  # All functionality is provided by mixins
+    def __init__(self, rust_image=None):
+        # Initialize the core mixin first to set up _rust_image properly
+        CoreMixin.__init__(self, rust_image)

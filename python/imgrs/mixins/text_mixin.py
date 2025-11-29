@@ -65,7 +65,7 @@ class TextMixin:
             if hasattr(font, "get_size"):
                 final_size = font.get_size()
 
-        return self.__class__(self.draw_text(text, x, y_pos, color, int(final_size)))
+        return self.__class__(self._rust_image.draw_text(text, x, y_pos, color, int(final_size)))
 
     def add_text_styled(
         self,
@@ -113,23 +113,21 @@ class TextMixin:
         if y_pos is None:
             raise ValueError("y coordinate must be provided")
 
-        return self.__class__(
-            self._rust_image.draw_text_styled(
-                text,
-                x,
-                y_pos,
-                size,
-                color,
-                font_path,
-                background,
-                align,
-                outline,
-                shadow,
-                opacity,
-                max_width,
-                rotation,
-            )
-        )
+        return self.__class__(self._rust_image.draw_text_styled(
+            text,
+            x,
+            y_pos,
+            size,
+            color,
+            font_path,
+            background,
+            align,
+            outline,
+            shadow,
+            opacity,
+            max_width,
+            rotation,
+        ))
 
     def add_text_multiline(
         self,
@@ -145,9 +143,6 @@ class TextMixin:
         """
         Add multi-line text with alignment support.
 
-        NOTE: Advanced features (line_spacing, align) are not yet available.
-        This method currently renders each line as separate text.
-
         Args:
             text: Multi-line text to render (separated by \\n)
             position: Either (x, y) tuple or just x coordinate
@@ -155,8 +150,8 @@ class TextMixin:
             size: Font size in pixels
             color: (R, G, B, A) color values
             font_path: Path to TTF/OTF font file (optional)
-            line_spacing: Line spacing multiplier (default: 1.2) - NOT YET SUPPORTED
-            align: Text alignment - "left", "center", or "right" (optional) - NOT YET SUPPORTED
+            line_spacing: Line spacing multiplier (default: 1.2)
+            align: Text alignment - "left", "center", or "right" (optional)
 
         Returns:
             New Image instance with multi-line text added
@@ -170,14 +165,16 @@ class TextMixin:
         if y_pos is None:
             raise ValueError("y coordinate must be provided")
 
-        # For now, render each line as separate text
-        img = self
-        for i, line in enumerate(text.split("\n")):
-            img = img.add_text(
-                line, x, y_pos + i * int(size * 1.2), size, color, font_path
-            )
-
-        return img
+        return self.__class__(self._rust_image.draw_text_multiline(
+            text,
+            x,
+            y_pos,
+            size,
+            color,
+            font_path,
+            line_spacing,
+            align,
+        ))
 
     def add_text_centered(
         self,
@@ -194,27 +191,31 @@ class TextMixin:
         """
         Add horizontally centered text.
 
-        NOTE: Advanced styling features are not yet available.
-        This method currently centers text horizontally using basic calculation.
-
         Args:
             text: Text to render
             y: Y coordinate for text baseline
             size: Font size in pixels
             color: (R, G, B, A) color values
             font_path: Path to TTF/OTF font file (optional)
-            background: (R, G, B, A) background color (optional) - NOT YET SUPPORTED
-            outline: (R, G, B, A, width) outline color and width (optional) - NOT YET SUPPORTED
-            shadow: (offset_x, offset_y, R, G, B, A) shadow offset and color (optional) - NOT YET SUPPORTED
-            opacity: Text opacity 0.0-1.0 (optional) - NOT YET SUPPORTED
+            background: (R, G, B, A) background color (optional)
+            outline: (R, G, B, A, width) outline color and width (optional)
+            shadow: (offset_x, offset_y, R, G, B, A) shadow offset and color (optional)
+            opacity: Text opacity 0.0-1.0 (optional)
 
         Returns:
             New Image instance with centered text added
         """
-        # Simple centering calculation
-        text_width = len(text) * int(size * 0.6)  # Rough estimate
-        x = (self.width - text_width) // 2
-        return self.add_text(text, x, y, size, color, font_path)
+        return self.__class__(self._rust_image.draw_text_centered(
+            text,
+            y,
+            size,
+            color,
+            font_path,
+            background,
+            outline,
+            shadow,
+            opacity,
+        ))
 
     def get_text_dimensions(
         self,
@@ -225,8 +226,6 @@ class TextMixin:
         """
         Get text dimensions and metrics.
 
-        NOTE: This is a rough estimate. Advanced text measurement is not yet available.
-
         Args:
             text: Text to measure
             size: Font size in pixels
@@ -235,12 +234,7 @@ class TextMixin:
         Returns:
             Tuple of (width, height, ascent, descent) in pixels
         """
-        # Rough estimate
-        width = len(text) * int(size * 0.6)
-        height = int(size)
-        ascent = int(size * 0.8)
-        descent = int(size * 0.2)
-        return (width, height, ascent, descent)
+        return self._rust_image.get_text_size(text, size, font_path)
 
     def get_multiline_text_dimensions(
         self,
@@ -252,8 +246,6 @@ class TextMixin:
         """
         Get multi-line text dimensions.
 
-        NOTE: This is a rough estimate. Advanced text measurement is not yet available.
-
         Args:
             text: Multi-line text to measure
             size: Font size in pixels
@@ -263,11 +255,7 @@ class TextMixin:
         Returns:
             Tuple of (width, height, line_count)
         """
-        lines = text.split("\n")
-        line_count = len(lines)
-        max_width = max(len(line) for line in lines) * int(size * 0.6)
-        height = int(line_count * size * line_spacing)
-        return (max_width, height, line_count)
+        return self._rust_image.get_multiline_text_size(text, size, line_spacing, font_path)
 
     def get_text_bounding_box(
         self,
@@ -280,8 +268,6 @@ class TextMixin:
         """
         Get text bounding box information.
 
-        NOTE: This is a rough estimate. Advanced text measurement is not yet available.
-
         Args:
             text: Text to measure
             x: X coordinate
@@ -292,22 +278,7 @@ class TextMixin:
         Returns:
             Dictionary with bounding box information
         """
-        width = len(text) * int(size * 0.6)
-        height = int(size)
-        ascent = int(size * 0.8)
-        descent = int(size * 0.2)
-
-        return {
-            "x": x,
-            "y": y - ascent,
-            "width": width,
-            "height": height,
-            "ascent": ascent,
-            "descent": descent,
-            "baseline_y": y,
-            "bottom_y": y + descent,
-            "right_x": x + width,
-        }
+        return self._rust_image.get_text_box(text, x, y, size, font_path)
 
     # Convenience methods for common text operations
 

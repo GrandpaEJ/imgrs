@@ -85,13 +85,12 @@ def imgrs_generate_image(
         img = img.paste(boy, (-300, -450))
 
         # Text sticker - add directly since paste has issues
-        img = img.add_text_styled(
+        img = img.add_text(
             text=name_text,
             position=(620, -100),
             size=300,
             color=(0, 255, 255, 255),
             font_path=None,
-            outline=(0, 0, 0, 255, 3.0),
         )
 
         # Main character image
