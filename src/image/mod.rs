@@ -19,4 +19,4 @@ mod properties;
 mod transform;
 
 // Python bindings
-mod pymethods;
+pub mod pymethods;
