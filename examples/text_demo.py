@@ -4,6 +4,7 @@ Text rendering examples for imgrs TextMixin.
 
 This script demonstrates all the advanced text rendering features available through the TextMixin:
 - Basic text rendering with flexible positioning
+- Custom font support (TTF, OTF, WOFF, WOFF2)
 - Styled text with outlines, shadows, backgrounds, and opacity
 - Multi-line text with custom alignment and line spacing
 - Centered text rendering
@@ -413,6 +414,111 @@ def demo_text_composition():
     print("✓ Text composition demo saved as examples/output/text_composition_demo.png")
 
 
+def demo_font_formats():
+    """Demonstrate custom font loading with different formats."""
+    print("Creating font formats demo...")
+
+    img = imgrs.new("RGB", (800, 600), (255, 255, 255))
+
+    # Title
+    img = img.add_text_styled(
+        "FONT FORMAT SUPPORT",
+        (50, 30),
+        size=36,
+        color=(0, 0, 0, 255),
+        outline=(100, 100, 100, 255, 1.0),
+    )
+
+    # Information text
+    info_text = """imgrs supports multiple font formats:
+• TTF (TrueType Font)
+• OTF (OpenType Font)
+• WOFF (Web Open Font Format)
+• WOFF2 (Web Open Font Format 2)
+
+Fonts are automatically detected and converted as needed."""
+
+    img = img.add_text_multiline(
+        info_text,
+        (50, 100),
+        size=18,
+        color=(60, 60, 60, 255),
+        line_spacing=1.4,
+    )
+
+    # Example with default font
+    img = img.add_text_styled(
+        "Default Embedded Font (DejaVu Sans)",
+        (50, 320),
+        size=24,
+        color=(0, 100, 200, 255),
+    )
+
+    # Note about custom fonts
+    note_text = """To use custom fonts, pass the font_path parameter:
+
+img.add_text("Hello", (x, y), font_path="path/to/font.ttf")
+img.add_text_styled("Styled", (x, y), font_path="font.woff2")
+
+The font format is automatically detected from the file
+extension or magic bytes."""
+
+    img = img.add_text_multiline(
+        note_text,
+        (50, 360),
+        size=14,
+        color=(80, 80, 80, 255),
+        line_spacing=1.5,
+    )
+
+    # Try to load the user-provided WOFF2 font first, then system fonts
+    custom_fonts_to_try = [
+        "examples/UTMAvo.woff2",
+        "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
+        "/System/Library/Fonts/Helvetica.ttc",
+        "C:\\Windows\\Fonts\\arial.ttf",
+    ]
+
+    custom_font_path = None
+    for font_path in custom_fonts_to_try:
+        import os
+        if os.path.exists(font_path):
+            custom_font_path = font_path
+            break
+
+    if custom_font_path:
+        font_name = os.path.basename(custom_font_path)
+        print(f"Loading custom font: {font_name}")
+        
+        img = img.add_text(
+            f"Custom font loaded: {font_name}",
+            (50, 500),
+            size=24,
+            color=(0, 150, 0, 255),
+            font_path=custom_font_path,
+        )
+        
+        # Add another line to show it off better
+        img = img.add_text_styled(
+            "Testing WOFF2 Support!",
+            (50, 540),
+            size=32,
+            color=(255, 100, 0, 255),
+            font_path=custom_font_path,
+            shadow=(2, 2, 0, 0, 0, 100)
+        )
+    else:
+        img = img.add_text(
+            "No system fonts found - using default embedded font",
+            (50, 540),
+            size=14,
+            color=(150, 150, 0, 255),
+        )
+
+    img.save("examples/output/text_font_formats_demo.png")
+    print("✓ Font formats demo saved as examples/output/text_font_formats_demo.png")
+
+
 def main():
     """Run all text demos."""
     print("Running imgrs TextMixin demos...")
@@ -430,12 +536,14 @@ def main():
     demo_convenience_methods()
     demo_text_measurement()
     demo_text_composition()
+    demo_font_formats()
 
     print("=" * 50)
     print("All TextMixin demos completed!")
     print("Check the examples/output/ directory for the generated images.")
     print("\nFeatures demonstrated:")
     print("• Basic text rendering with flexible positioning")
+    print("• Custom font support (TTF, OTF, WOFF, WOFF2)")
     print("• Styled text with outlines, shadows, backgrounds, opacity")
     print("• Multi-line text with alignment and custom spacing")
     print("• Centered text rendering")
