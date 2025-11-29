@@ -2,6 +2,52 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.3.5] - 2025-11-29
+
+### Added
+
+#### Text Rendering System Upgrade
+- **Core Architecture Fix**: Fixed Image class `__init__` to properly call `CoreMixin.__init__()`, ensuring all mixins have access to `_rust_image` attribute
+- **TextMixin Full Integration**: All text rendering methods now properly use the Rust backend:
+  - `add_text()` - Basic text rendering with proper Rust integration
+  - `add_text_styled()` - Full styling support (shadows, outlines, backgrounds, opacity, alignment, wrapping, rotation)
+  - `add_text_multiline()` - Proper multi-line text with alignment and line spacing
+  - `add_text_centered()` - Centered text with all styling options
+- **Enhanced Text Measurement**: All measurement functions now use accurate Rust calculations:
+  - `get_text_dimensions()` - Accurate text size and metrics from Rust
+  - `get_multiline_text_dimensions()` - Multi-line measurement with proper line spacing
+  - `get_text_bounding_box()` - Comprehensive bounding box information from Rust
+- **Advanced Styling Features**: All text styling features are now fully functional:
+  - Drop shadows with custom offsets and colors
+  - Text outlines with customizable width and color
+  - Background rectangles with custom colors
+  - Opacity control for text and effects
+  - Text alignment (left, center, right)
+  - Text wrapping within specified width
+  - Text rotation support
+
+### Changed
+
+#### Python-Rust Integration
+- **Mixin System**: Fixed inheritance chain to ensure proper initialization of PyImage objects
+- **Method Signatures**: Updated all TextMixin methods to properly interface with Rust backend
+- **Error Handling**: Improved parameter validation and error reporting
+
+#### Performance Improvements
+- **Direct Backend Calls**: Replaced placeholder implementations with direct Rust backend calls
+- **Accurate Measurements**: Text measurements now use actual font metrics instead of estimates
+- **Optimized Rendering**: Full utilization of Rust text rendering capabilities
+
+### Fixed
+- **CoreMixin Integration**: Resolved issue where Image class bypassed CoreMixin initialization
+- **TextMixin Functionality**: All text methods now work with actual Rust backend instead of broken placeholders
+- **Measurement Accuracy**: Text measurement functions now return accurate values from Rust font metrics
+- **Convenience Methods**: All text convenience methods (shadow, outline, background) now properly use Rust implementation
+
+### Testing
+- **Comprehensive Verification**: All 7 text demo functions tested and working
+- **Build System**: Successful compilation with `uv run maturin build`
+
 ## [0.3.1] - 2025-11-26
 
 ### Added
