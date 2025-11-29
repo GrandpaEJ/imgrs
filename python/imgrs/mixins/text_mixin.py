@@ -31,6 +31,7 @@ class TextMixin:
         color: Tuple[int, int, int, int] = (0, 0, 0, 255),
         font_path: Optional[str] = None,
         font: Optional["Font"] = None,
+        anchor: Optional[str] = None,
     ) -> "Image":
         """
         Add basic text to the image.
@@ -41,8 +42,9 @@ class TextMixin:
             y: Y coordinate (if position is int)
             size: Font size in pixels (ignored if font is provided)
             color: (R, G, B, A) color values
-            font_path: Path to TTF/OTF font file (optional, uses default if None)
+            font_path: Path to font file - supports TTF, OTF, WOFF, WOFF2 (optional, uses default if None)
             font: Font object (alternative to font_path and size)
+            anchor: Text anchor point (e.g., "lt", "mm", "rb") - see TextAnchor docs
 
         Returns:
             New Image instance with text added
@@ -66,7 +68,7 @@ class TextMixin:
                 final_size = font.get_size()
 
         return self.__class__(
-            self._rust_image.draw_text(text, x, y_pos, color, int(final_size))
+            self._rust_image.draw_text(text, x, y_pos, color, int(final_size), anchor)
         )
 
     def add_text_styled(
@@ -84,6 +86,7 @@ class TextMixin:
         opacity: Optional[float] = None,
         max_width: Optional[int] = None,
         rotation: Optional[float] = None,
+        anchor: Optional[str] = None,
     ) -> "Image":
         """
         Add styled text with advanced formatting options.
@@ -94,7 +97,7 @@ class TextMixin:
             y: Y coordinate (if position is int)
             size: Font size in pixels
             color: (R, G, B, A) color values
-            font_path: Path to TTF/OTF font file (optional)
+            font_path: Path to font file - supports TTF, OTF, WOFF, WOFF2 (optional)
             background: (R, G, B, A) background color (optional)
             align: Text alignment - "left", "center", or "right" (optional)
             outline: (R, G, B, A, width) outline color and width (optional)
@@ -102,6 +105,7 @@ class TextMixin:
             opacity: Text opacity 0.0-1.0 (optional)
             max_width: Maximum width for text wrapping (optional)
             rotation: Rotation angle in degrees (optional)
+            anchor: Text anchor point (e.g., "lt", "mm", "rb") - see TextAnchor docs
 
         Returns:
             New Image instance with styled text added
@@ -130,6 +134,7 @@ class TextMixin:
                 opacity,
                 max_width,
                 rotation,
+                anchor,
             )
         )
 
@@ -153,7 +158,7 @@ class TextMixin:
             y: Y coordinate (if position is int)
             size: Font size in pixels
             color: (R, G, B, A) color values
-            font_path: Path to TTF/OTF font file (optional)
+            font_path: Path to font file - supports TTF, OTF, WOFF, WOFF2 (optional)
             line_spacing: Line spacing multiplier (default: 1.2)
             align: Text alignment - "left", "center", or "right" (optional)
 
@@ -202,7 +207,7 @@ class TextMixin:
             y: Y coordinate for text baseline
             size: Font size in pixels
             color: (R, G, B, A) color values
-            font_path: Path to TTF/OTF font file (optional)
+            font_path: Path to font file - supports TTF, OTF, WOFF, WOFF2 (optional)
             background: (R, G, B, A) background color (optional)
             outline: (R, G, B, A, width) outline color and width (optional)
             shadow: (offset_x, offset_y, R, G, B, A) shadow offset and color (optional)
@@ -237,7 +242,7 @@ class TextMixin:
         Args:
             text: Text to measure
             size: Font size in pixels
-            font_path: Path to TTF/OTF font file (optional)
+            font_path: Path to font file - supports TTF, OTF, WOFF, WOFF2 (optional)
 
         Returns:
             Tuple of (width, height, ascent, descent) in pixels
@@ -258,7 +263,7 @@ class TextMixin:
             text: Multi-line text to measure
             size: Font size in pixels
             line_spacing: Line spacing multiplier
-            font_path: Path to TTF/OTF font file (optional)
+            font_path: Path to font file - supports TTF, OTF, WOFF, WOFF2 (optional)
 
         Returns:
             Tuple of (width, height, line_count)
@@ -283,10 +288,83 @@ class TextMixin:
             x: X coordinate
             y: Y coordinate
             size: Font size in pixels
-            font_path: Path to TTF/OTF font file (optional)
+            font_path: Path to font file - supports TTF, OTF, WOFF, WOFF2 (optional)
 
         Returns:
             Dictionary with bounding box information
+        """
+        return self._rust_image.get_text_box(text, x, y, size, font_path)
+
+    def add_text_box(
+        self,
+        text: str,
+        box: Tuple[int, int, int, int],
+        size: float = 32.0,
+        color: Tuple[int, int, int, int] = (0, 0, 0, 255),
+        font_path: Optional[str] = None,
+        background: Optional[Tuple[int, int, int, int]] = None,
+        align: Optional[str] = None,
+        vertical_align: Optional[str] = None,
+        line_spacing: Optional[float] = None,
+        overflow: Optional[bool] = None,
+    ) -> "Image":
+        """
+        Add text within a bounding box with automatic wrapping.
+
+        Args:
+            text: Text to render
+            box: (x, y, width, height) tuple defining the bounding box
+            size: Font size in pixels
+            color: (R, G, B, A) color values
+            font_path: Path to font file - supports TTF, OTF, WOFF, WOFF2 (optional)
+            background: (R, G, B, A) background color (optional)
+            align: Horizontal alignment - "left", "center", or "right" (optional)
+            vertical_align: Vertical alignment - "top", "middle", or "bottom" (optional)
+            line_spacing: Line spacing multiplier (optional)
+            overflow: Whether to show text overflowing the box (default: False)
+
+        Returns:
+            New Image instance with text box added
+        """
+        x, y, width, height = box
+        return self.__class__(
+            self._rust_image.draw_text_box(
+                text,
+                x,
+                y,
+                width,
+                height,
+                size,
+                color,
+                font_path,
+                background,
+                align,
+                vertical_align,
+                line_spacing,
+                overflow,
+            )
+        )
+
+    def get_text_box(
+        self,
+        text: str,
+        x: int,
+        y: int,
+        size: float = 32.0,
+        font_path: Optional[str] = None,
+    ) -> dict:
+        """
+        Get detailed text box metrics.
+
+        Args:
+            text: Text to measure
+            x: X coordinate
+            y: Y coordinate
+            size: Font size in pixels
+            font_path: Path to font file - supports TTF, OTF, WOFF, WOFF2 (optional)
+
+        Returns:
+            Dictionary with detailed metrics (x, y, width, height, ascent, descent, etc.)
         """
         return self._rust_image.get_text_box(text, x, y, size, font_path)
 
@@ -314,7 +392,7 @@ class TextMixin:
             color: (R, G, B, A) text color
             shadow_color: (R, G, B, A) shadow color
             shadow_offset: (offset_x, offset_y) shadow offset in pixels
-            font_path: Path to TTF/OTF font file (optional)
+            font_path: Path to font file - supports TTF, OTF, WOFF, WOFF2 (optional)
 
         Returns:
             New Image instance with shadowed text added
@@ -370,7 +448,7 @@ class TextMixin:
             color: (R, G, B, A) text color
             outline_color: (R, G, B, A) outline color
             outline_width: Outline width in pixels
-            font_path: Path to TTF/OTF font file (optional)
+            font_path: Path to font file - supports TTF, OTF, WOFF, WOFF2 (optional)
 
         Returns:
             New Image instance with outlined text added
@@ -416,7 +494,7 @@ class TextMixin:
             size: Font size in pixels
             color: (R, G, B, A) text color
             background_color: (R, G, B, A) background color
-            font_path: Path to TTF/OTF font file (optional)
+            font_path: Path to font file - supports TTF, OTF, WOFF, WOFF2 (optional)
 
         Returns:
             New Image instance with background text added
