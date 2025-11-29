@@ -452,7 +452,6 @@ class TextMixin:
         # For now, just render the text (background not supported yet)
         return self.add_text(text, x, y_pos, size, color, font_path)
 
-
     def text(
         self,
         position: Tuple[int, int],
