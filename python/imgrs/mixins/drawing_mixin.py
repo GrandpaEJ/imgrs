@@ -225,6 +225,8 @@ class DrawingMixin:
         y: int,
         color: Tuple[int, int, int, int],
         scale: int = 1,
+        font_path: str = None,
+        anchor: str = None,
     ) -> "Image":
         """
         Draw text on the image.
@@ -235,8 +237,12 @@ class DrawingMixin:
             y: Y coordinate
             color: (R, G, B, A) color values
             scale: Text scale factor
+            font_path: Path to font file
+            anchor: Text anchor point
 
         Returns:
             New Image instance with text drawn
         """
-        return self.__class__(self._rust_image.draw_text(text, x, y, color, scale))
+        return self.__class__(
+            self._rust_image.draw_text(text, x, y, color, scale, font_path, anchor)
+        )
