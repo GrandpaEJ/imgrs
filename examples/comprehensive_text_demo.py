@@ -10,8 +10,8 @@ This example demonstrates:
 5. Real-world use cases and practical applications
 """
 
-import sys
 import os
+import sys
 
 # Add the project root to the path
 sys.path.insert(
@@ -33,14 +33,12 @@ def create_comprehensive_demo():
     # Section 1: Title and Header
     print("  Adding title and headers...")
 
-    image = image.draw_text(
+    image = image.add_text_styled(
         text="COMPREHENSIVE TEXT RENDERING DEMO",
-        x=width // 2,
-        y=30,
+        position=(width // 2, 30),
         size=42,
         color=(255, 255, 255, 255),
         background=(50, 50, 70, 255),
-        scale=1,
         anchor="mm",
         outline=(255, 255, 255, 255, 2.0),
         shadow=(2, 2, 0, 0, 0, 180),
@@ -69,12 +67,9 @@ def create_comprehensive_demo():
     user interfaces, and document layouts.
     """
 
-    image = image.draw_text_box(
+    image = image.add_text_box(
         text=complex_text.strip(),
-        x=50,
-        y=100,
-        width=500,
-        height=400,
+        box=(50, 100, 500, 400),
         size=16,
         color=(255, 255, 255, 255),
         background=(40, 60, 80, 255),
@@ -82,9 +77,6 @@ def create_comprehensive_demo():
         vertical_align="top",
         line_spacing=1.4,
         overflow=False,
-        outline=(100, 150, 200, 255, 1.5),
-        shadow=(3, 3, 0, 0, 0, 100),
-        opacity=0.95,
     )
 
     # Section 3: Anchor Position Showcase
@@ -108,14 +100,12 @@ def create_comprehensive_demo():
         image = image.draw_circle(x, y, 3, (255, 255, 255, 255))
 
         # Draw sample text with this anchor
-        image = image.draw_text(
+        image = image.add_text_styled(
             text=text,
-            x=x,
-            y=y,
+            position=(x, y),
             size=14,
             color=text_color,
             background=bg_color,
-            scale=1,
             anchor=anchor,
             outline=(255, 255, 255, 255, 1.0),
             shadow=(1, 1, 0, 0, 0, 100),
@@ -132,13 +122,11 @@ def create_comprehensive_demo():
         btn1_x, btn1_y, btn1_width, btn1_height, (70, 130, 180, 255)
     )
 
-    image = image.draw_text(
+    image = image.add_text_styled(
         text="SAVE",
-        x=btn1_x + btn1_width // 2,
-        y=btn1_y + btn1_height // 2,
+        position=(btn1_x + btn1_width // 2, btn1_y + btn1_height // 2),
         size=18,
         color=(255, 255, 255, 255),
-        scale=1,
         anchor="mm",
     )
 
@@ -149,13 +137,11 @@ def create_comprehensive_demo():
         btn2_x, btn2_y, btn1_width, btn1_height, (108, 117, 125, 255)
     )
 
-    image = image.draw_text(
+    image = image.add_text_styled(
         text="CANCEL",
-        x=btn2_x + btn1_width // 2,
-        y=btn2_y + btn1_height // 2,
+        position=(btn2_x + btn1_width // 2, btn2_y + btn1_height // 2),
         size=18,
         color=(255, 255, 255, 255),
-        scale=1,
         anchor="mm",
     )
 
@@ -166,13 +152,11 @@ def create_comprehensive_demo():
         btn3_x, btn3_y, btn1_width, btn1_height, (220, 53, 69, 255)
     )
 
-    image = image.draw_text(
+    image = image.add_text_styled(
         text="DELETE",
-        x=btn3_x + btn1_width // 2,
-        y=btn3_y + btn1_height // 2,
+        position=(btn3_x + btn1_width // 2, btn3_y + btn1_height // 2),
         size=18,
         color=(255, 255, 255, 255),
-        scale=1,
         anchor="mm",
     )
 
@@ -196,13 +180,11 @@ def create_comprehensive_demo():
         image = image.draw_rectangle(status_x, status_y, 100, 30, bg_color)
 
         # Add status text
-        image = image.draw_text(
+        image = image.add_text_styled(
             text=status,
-            x=status_x + 50,
-            y=status_y + 15,
+            position=(status_x + 50, status_y + 15),
             size=14,
             color=text_color,
-            scale=1,
             anchor="mm",
         )
 
@@ -210,25 +192,21 @@ def create_comprehensive_demo():
     print("  Adding watermarks and overlays...")
 
     # Watermark
-    image = image.draw_text(
+    image = image.add_text_styled(
         text="CONFIDENTIAL",
-        x=width - 50,
-        y=height - 50,
+        position=(width - 50, height - 50),
         size=24,
         color=(255, 255, 255, 64),
-        scale=1,
         anchor="br",
         rotation=45.0,
     )
 
     # Timestamp
-    image = image.draw_text(
+    image = image.add_text_styled(
         text="Generated: 2024-11-29 16:44:00",
-        x=50,
-        y=height - 30,
+        position=(50, height - 30),
         size=12,
         color=(150, 150, 150, 255),
-        scale=1,
         anchor="bl",
     )
 
@@ -241,7 +219,7 @@ def create_comprehensive_demo():
 
     for size in [12, 16, 20, 24, 32]:
         try:
-            width_px, height_px, ascent, descent = image.get_text_size(
+            width_px, height_px, ascent, descent = image.get_text_dimensions(
                 test_text, size, None
             )
             measurements.append((size, width_px, height_px, ascent, descent))
@@ -255,12 +233,9 @@ def create_comprehensive_demo():
             f"Size {size}: {width_px}x{height_px}px (A:{ascent}, D:{descent})\n"
         )
 
-    image = image.draw_text_box(
+    image = image.add_text_box(
         text=measurement_text.strip(),
-        x=650,
-        y=450,
-        width=500,
-        height=250,
+        box=(650, 450, 500, 250),
         size=12,
         color=(200, 200, 200, 255),
         background=(35, 35, 45, 255),
@@ -274,26 +249,22 @@ def create_comprehensive_demo():
     print("  Creating creative text effects...")
 
     # Glowing text effect
-    image = image.draw_text(
+    image = image.add_text_styled(
         text="GLOWING TEXT",
-        x=width // 2,
-        y=900,
+        position=(width // 2, 900),
         size=36,
         color=(0, 255, 255, 255),
-        scale=1,
         anchor="mm",
         shadow=(0, 0, 0, 255, 255, 255),
         opacity=0.8,
     )
 
     # 3D effect text
-    image = image.draw_text(
+    image = image.add_text_styled(
         text="3D EFFECT",
-        x=width // 2,
-        y=970,
+        position=(width // 2, 970),
         size=32,
         color=(255, 215, 0, 255),
-        scale=1,
         anchor="mm",
         shadow=(3, 3, 0, 0, 0, 180),
         outline=(255, 255, 255, 255, 1.0),
@@ -313,12 +284,9 @@ def create_comprehensive_demo():
     • Robust error handling and type safety
     """
 
-    image = image.draw_text_box(
+    image = image.add_text_box(
         text=footer_text.strip(),
-        x=50,
-        y=1400,
-        width=1100,
-        height=150,
+        box=(50, 1400, 1100, 150),
         size=14,
         color=(180, 180, 180, 255),
         background=(30, 30, 40, 255),
@@ -349,23 +317,19 @@ def create_before_after_comparison():
     image = image.draw_rectangle(center_x, 0, center_x, height, (200, 255, 200, 255))
 
     # Add titles
-    image = image.draw_text(
+    image = image.add_text_styled(
         text="BEFORE (v0.3.5)",
-        x=center_x // 2,
-        y=30,
+        position=(center_x // 2, 30),
         size=24,
         color=(100, 0, 0, 255),
-        scale=1,
         anchor="mm",
     )
 
-    image = image.draw_text(
+    image = image.add_text_styled(
         text="AFTER (v0.3.6)",
-        x=center_x + center_x // 2,
-        y=30,
+        position=(center_x + center_x // 2, 30),
         size=24,
         color=(0, 100, 0, 255),
-        scale=1,
         anchor="mm",
     )
 
@@ -407,12 +371,9 @@ def create_before_after_comparison():
     """
 
     # Use the actual draw_text_box function now
-    image = image.draw_text_box(
+    image = image.add_text_box(
         text=after_text.strip(),
-        x=center_x + 50,
-        y=80,
-        width=center_x - 100,
-        height=400,
+        box=(center_x + 50, 80, center_x - 100, 400),
         size=14,
         color=(0, 80, 0, 255),
         background=(220, 255, 220, 255),
@@ -478,13 +439,11 @@ def draw_text_box_compat(
         elif align == "right":
             line_x = x + width - 10
 
-        image = image.draw_text(
+        image = image.add_text_styled(
             text=line,
-            x=line_x,
-            y=line_y,
+            position=(line_x, line_y),
             size=size,
             color=color,
-            scale=1,
             anchor="mm" if align == "center" else ("tr" if align == "right" else "tl"),
         )
 
