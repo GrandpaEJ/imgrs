@@ -6,8 +6,9 @@ This example demonstrates the new blending functionality added to imgrs,
 implementing various Porter-Duff and advanced blend modes for image compositing.
 """
 
-import imgrs
 from pathlib import Path
+
+import imgrs
 
 
 def create_base_images():

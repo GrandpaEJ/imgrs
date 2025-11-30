@@ -1,5 +1,6 @@
-import imgrs
 import os
+
+import imgrs
 
 
 def test_add_text_font():

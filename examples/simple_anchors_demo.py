@@ -5,8 +5,8 @@ Simple Text Anchoring Demo - Basic demonstration of anchor functionality
 This example shows how to use text anchors with the add_text method.
 """
 
-import sys
 import os
+import sys
 
 # Add the project root to the path
 sys.path.insert(

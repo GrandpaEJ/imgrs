@@ -8,8 +8,8 @@ This example demonstrates:
 3. Basic text styling and effects
 """
 
-import sys
 import os
+import sys
 
 # Add the project root to the path
 sys.path.insert(

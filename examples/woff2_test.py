@@ -3,8 +3,9 @@
 Simple test script for WOFF2 font support.
 """
 
-import imgrs
 import os
+
+import imgrs
 
 
 def main():

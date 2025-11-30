@@ -9,8 +9,8 @@ This example shows how to:
 4. Use different text styles within text boxes
 """
 
-import sys
 import os
+import sys
 
 # Add the project root to the path
 sys.path.insert(
