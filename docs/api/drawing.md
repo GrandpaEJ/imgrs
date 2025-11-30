@@ -9,6 +9,7 @@ Complete reference for drawing operations on images.
 Draw a filled rectangle on the image.
 
 **Parameters:**
+
 - `x` (int): X coordinate of top-left corner
 - `y` (int): Y coordinate of top-left corner
 - `width` (int): Rectangle width in pixels
@@ -18,6 +19,7 @@ Draw a filled rectangle on the image.
 **Returns:** `Image`
 
 **Example:**
+
 ```python
 # Red rectangle
 img = img.draw_rectangle(50, 50, 200, 100, (255, 0, 0, 255))
@@ -30,6 +32,7 @@ img = img.draw_rectangle(10, 10, 100, 100, (255, 255, 255, 255))
 ```
 
 **Notes:**
+
 - Coordinates can be negative (will be clipped)
 - Alpha blending is automatic for RGBA images
 
@@ -40,6 +43,7 @@ img = img.draw_rectangle(10, 10, 100, 100, (255, 255, 255, 255))
 Draw a filled circle on the image.
 
 **Parameters:**
+
 - `center_x` (int): X coordinate of circle center
 - `center_y` (int): Y coordinate of circle center
 - `radius` (int): Circle radius in pixels
@@ -48,6 +52,7 @@ Draw a filled circle on the image.
 **Returns:** `Image`
 
 **Example:**
+
 ```python
 # Red circle at center
 w, h = img.size
@@ -67,6 +72,7 @@ img = img.draw_circle(200, 200, 100, (0, 0, 255, 128))
 Draw a line using Bresenham's algorithm.
 
 **Parameters:**
+
 - `x0` (int): Starting X coordinate
 - `y0` (int): Starting Y coordinate
 - `x1` (int): Ending X coordinate
@@ -76,6 +82,7 @@ Draw a line using Bresenham's algorithm.
 **Returns:** `Image`
 
 **Example:**
+
 ```python
 # Diagonal line
 img = img.draw_line(0, 0, 400, 300, (255, 0, 0, 255))
@@ -91,38 +98,51 @@ img = img.draw_line(200, 50, 200, 250, (0, 0, 255, 255))
 
 ---
 
-### `img.draw_text(text, x, y, color, scale)`
+### `img.draw_text(text, x, y, color, scale, font_path=None, anchor=None)`
 
-Draw text using built-in bitmap font.
+Draw text using built-in bitmap font or custom font.
 
 **Parameters:**
-- `text` (str): Text to draw (supports A-Z, 0-9, space)
+
+- `text` (str): Text to draw
 - `x` (int): X coordinate for text start
 - `y` (int): Y coordinate for text start
 - `color` (Tuple[int, int, int, int]): RGBA color
-- `scale` (int): Font scale (1 = 8x8 pixels per character)
+- `scale` (int): Font scale (1 = 8x8 pixels per character for built-in font)
+- `font_path` (str, optional): Path to TTF/OTF/WOFF/WOFF2 font file
+- `anchor` (str, optional): Text anchor point (e.g., "lt", "mm", "rb")
 
 **Returns:** `Image`
 
 **Example:**
+
 ```python
-# Small text
+# Small text with built-in font
 img = img.draw_text("HELLO", 10, 10, (255, 255, 255, 255), scale=1)
 
-# Large text
+# Large text with built-in font
 img = img.draw_text("TITLE", 50, 50, (255, 0, 0, 255), scale=4)
 
-# Numbers
-img = img.draw_text("12345", 100, 200, (0, 255, 0, 255), scale=2)
+# Text with custom font
+img = img.draw_text("Custom", 100, 100, (0, 0, 0, 255), scale=32,
+                     font_path="arial.ttf")
+
+# Text with anchor positioning
+img = img.draw_text("Centered", 200, 150, (0, 0, 255, 255), scale=24,
+                     anchor="mm")
 ```
 
-**Limitations:**
-- Built-in 8x8 bitmap font only
-- Supports: A-Z, 0-9, space
-- No lowercase (yet)
-- Fixed-width font
+**Notes:**
 
-**Character size:** Each character is `(8 × scale)` pixels wide and tall.
+- When `font_path` is provided, `scale` is used as font size in pixels
+- Built-in font supports: A-Z, 0-9, space (8x8 bitmap)
+- Custom fonts support full Unicode (depends on font file)
+- Anchor positions: "lt" (left-top), "mm" (middle-middle), "rb" (right-bottom), etc.
+
+**Character size:**
+
+- Built-in font: Each character is `(8 × scale)` pixels wide and tall
+- Custom font: Size determined by `scale` parameter (font size in pixels)
 
 ---
 
@@ -178,11 +198,11 @@ canvas.save("chart.png")
 def add_bbox(img, x, y, w, h, label=""):
     # Draw semi-transparent box
     img = img.draw_rectangle(x, y, w, h, (255, 0, 0, 128))
-    
+
     # Add label
     if label:
         img = img.draw_text(label, x, y - 20, (255, 0, 0, 255), 2)
-    
+
     return img
 
 # Use it
@@ -242,6 +262,7 @@ canvas.save("blended.png")
 4. **Pre-calculate positions** - Faster loops
 
 **Example - Efficient batch drawing:**
+
 ```python
 # ✅ Good - chain operations
 img = img.draw_rectangle(...).draw_circle(...).draw_line(...)
@@ -282,7 +303,7 @@ marked = draw_crosshair(img, 200, 150)
 ---
 
 **See Also:**
+
 - [Effects API](effects.md) - Shadows and glows
 - [Pixels API](pixels.md) - Pixel-level control
 - [Examples](../examples/drawing.md) - More drawing examples
-
