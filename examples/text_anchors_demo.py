@@ -146,26 +146,22 @@ def create_anchor_comparison():
     print("Creating anchor comparison...")
 
     # TopLeft anchor (traditional behavior)
-    image = image.draw_text(
+    image = image.add_text_styled(
         text=sample_text,
-        x=center_x,
-        y=center_y,
+        position=(center_x, center_y),
         size=32,
         color=(255, 255, 255, 255),
         background=(255, 0, 0, 255),  # Red background
-        scale=1,
         anchor="tl",  # TopLeft anchor
     )
 
     # BottomRight anchor (opposite corner)
-    image = image.draw_text(
+    image = image.add_text_styled(
         text=sample_text,
-        x=center_x,
-        y=center_y,
+        position=(center_x, center_y),
         size=32,
         color=(255, 255, 255, 255),
         background=(0, 0, 255, 255),  # Blue background
-        scale=1,
         anchor="br",  # BottomRight anchor
     )
 
@@ -220,78 +216,64 @@ def create_practical_anchor_examples():
     )
 
     # Button text centered (using mm anchor)
-    image = image.draw_text(
+    image = image.add_text(
         text="CLICK ME",
-        x=button_x + button_width // 2,
-        y=button_y + button_height // 2,
+        position=(button_x + button_width // 2, button_y + button_height // 2),
         size=18,
         color=(255, 255, 255, 255),
-        scale=1,
         anchor="mm",  # MiddleCenter anchor for perfect centering
     )
 
     # Example 2: Watermark with bottom-right corner
     watermark_text = "CONFIDENTIAL"
 
-    image = image.draw_text(
+    image = image.add_text(
         text=watermark_text,
-        x=width - 20,
-        y=height - 20,
+        position=(width - 20, height - 20),
         size=16,
         color=(128, 128, 128, 128),  # Semi-transparent
-        scale=1,
         anchor="br",  # BottomRight anchor
     )
 
     # Example 3: Image caption with top-center
     caption_text = "Beautiful Landscape Photography"
 
-    image = image.draw_text(
+    image = image.add_text(
         text=caption_text,
-        x=width // 2,
-        y=20,
+        position=(width // 2, 20),
         size=20,
         color=(255, 255, 255, 255),
-        background=(0, 0, 0, 128),  # Semi-transparent background
-        scale=1,
         anchor="tm",  # TopCenter anchor
     )
 
     # Example 4: Corner label with top-left
     corner_label = "NEW!"
 
-    image = image.draw_text(
+    image = image.add_text(
         text=corner_label,
-        x=20,
-        y=20,
+        position=(20, 20),
         size=16,
         color=(255, 255, 255, 255),
-        background=(255, 0, 0, 255),
-        scale=1,
         anchor="tl",  # TopLeft anchor
     )
 
     # Example 5: Signature with bottom-left
     signature = "- John Doe, Photographer"
 
-    image = image.draw_text(
+    image = image.add_text(
         text=signature,
-        x=20,
-        y=height - 20,
+        position=(20, height - 20),
         size=14,
         color=(80, 80, 80, 255),
-        scale=1,
         anchor="bl",  # BottomLeft anchor
     )
 
     # Add title
-    image = image.draw_text(
+    image = image.add_text(
         text="Practical Anchor Usage Examples",
-        x=width // 2,
-        y=10,
+        position=(width // 2, 10),
         size=28,
         color=(0, 0, 0, 255),
-        scale=1,
         anchor="tm",
     )
 
@@ -309,13 +291,11 @@ def create_practical_anchor_examples():
     ]
 
     for desc, x, y in descriptions:
-        image = image.draw_text(
+        image = image.add_text(
             text=desc,
-            x=x,
-            y=y,
+            position=(x, y),
             size=12,
             color=(100, 100, 100, 255),
-            scale=1,
             anchor="mm",
         )
 
