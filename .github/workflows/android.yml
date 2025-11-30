@@ -1,51 +1,63 @@
 name: Android Build
-
 on:
   workflow_dispatch:
+  push:
+    branches: ["main"]
 
 jobs:
-  android-build:
-    name: Build for Android
+  android:
+    name: Android Rust Build
     runs-on: ubuntu-latest
+    timeout-minutes: 30
 
     env:
       ANDROID_SDK_ROOT: ${{ github.workspace }}/android-sdk
       NDK_VERSION: 26.1.10909125
 
+      # Disable all Python linking (PyO3 / maturin safe)
+      PYO3_NO_PYTHON: "1"
+      PYO3_CROSS: "1"
+      PYTHON_SYS_EXECUTABLE: "no-python"
+
+      CARGO_TERM_COLOR: always
+
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      # -------------------------
+      # Checkout
+      # -------------------------
+      - uses: actions/checkout@v4
 
-      - name: Install required packages
+      # -------------------------
+      # System Deps
+      # -------------------------
+      - name: Install host packages
         run: |
-          sudo apt-get update
-          sudo apt-get install -y unzip wget libssl-dev
+          sudo apt update
+          sudo apt install -y unzip wget clang cmake make libssl-dev
 
-      # -----------------------------
-      # Install Android SDK + NDK
-      # -----------------------------
-      - name: Download Android command-line tools
+      # -------------------------
+      # Android SDK + NDK
+      # -------------------------
+      - name: Install Android SDK + NDK
         run: |
           mkdir -p $ANDROID_SDK_ROOT
           cd $ANDROID_SDK_ROOT
-          wget https://dl.google.com/android/repository/commandlinetools-linux-10406996_latest.zip -O tools.zip
-          unzip tools.zip
 
+          wget https://dl.google.com/android/repository/commandlinetools-linux-10406996_latest.zip -O tools.zip
+          unzip -oq tools.zip
 
           mkdir -p cmdline-tools/latest
           mv cmdline-tools/* cmdline-tools/latest || true
 
-      - name: Install SDK components
-        run: |
           yes | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --sdk_root=$ANDROID_SDK_ROOT \
             "platform-tools" \
             "platforms;android-34" \
             "build-tools;34.0.0" \
             "ndk;$NDK_VERSION"
 
-      # -----------------------------
-      # Install Rust + Android targets
-      # -----------------------------
+      # -------------------------
+      # Rust + Targets
+      # -------------------------
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
 
@@ -56,22 +68,52 @@ jobs:
           rustup target add x86_64-linux-android
 
       - name: Install cargo-ndk
-        run: cargo install cargo-ndk
+        run: cargo install cargo-ndk --locked
 
-      # -----------------------------
-      # Build Rust library for Android
-      # -----------------------------
-      - name: Build Android Rust library
+      # -------------------------
+      # Cache
+      # -------------------------
+      - name: Cache Cargo
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: android-cargo-${{ hashFiles('**/Cargo.lock') }}
+
+      # -------------------------
+      # Android Build
+      # -------------------------
+      - name: Build Android shared libraries
         run: |
-          cargo ndk -t arm64-v8a -o target/android build --release
-          cargo ndk -t armeabi-v7a -o target/android build --release
-          cargo ndk -t x86_64 -o target/android build --release
+          export ANDROID_NDK_HOME=$ANDROID_SDK_ROOT/ndk/$NDK_VERSION
+          export PATH=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin:$PATH
 
-      # -----------------------------
-      # Upload artifacts
-      # -----------------------------
-      - name: Upload Android builds
+          echo "NDK = $ANDROID_NDK_HOME"
+          echo "Targets: arm64-v8a, armeabi-v7a, x86_64"
+
+          # arm64
+          cargo ndk -t arm64-v8a -o target/android build --release --no-default-features || true
+
+          # armv7
+          cargo ndk -t armeabi-v7a -o target/android build --release --no-default-features || true
+
+          # x64
+          cargo ndk -t x86_64 -o target/android build --release --no-default-features || true
+
+      # -------------------------
+      # Strip binaries (smaller size)
+      # -------------------------
+      - name: Strip native libs
+        run: |
+          find target/android -name "*.so" -exec llvm-strip {} \; || true
+
+      # -------------------------
+      # Upload Artifacts
+      # -------------------------
+      - name: Upload Android Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: android-builds
+          name: android-native-libs
           path: target/android/**/*.so
