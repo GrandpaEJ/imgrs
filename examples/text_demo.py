@@ -536,7 +536,7 @@ def main():
     # Ensure output directory exists
     import os
 
-    os.makedirs("examples/output", exist_ok=True)
+    os.makedirs("examples/output/text", exist_ok=True)
 
     demo_basic_text()
     demo_styled_text()
