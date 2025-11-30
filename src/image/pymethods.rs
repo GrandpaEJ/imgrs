@@ -526,7 +526,7 @@ impl PyImage {
     }
 
 
-    #[pyo3(signature = (text, x, y, color=(0, 0, 0, 255), scale=32, anchor=None))]
+    #[pyo3(signature = (text, x, y, color=(0, 0, 0, 255), scale=32, font_path=None, anchor=None))]
     fn draw_text(
         &mut self,
         text: &str,
@@ -534,9 +534,10 @@ impl PyImage {
         y: i32,
         color: (u8, u8, u8, u8),
         scale: u32,
+        font_path: Option<String>,
         anchor: Option<String>,
     ) -> PyResult<Self> {
-        self.draw_text_impl(text, x, y, color, scale, anchor)
+        self.draw_text_impl(text, x, y, color, scale, font_path, anchor)
     }
 
     #[pyo3(signature = (text, x, y, size=32.0, color=(0, 0, 0, 255), font_path=None, background=None, align=None, outline=None, shadow=None, opacity=None, max_width=None, rotation=None, anchor=None))]

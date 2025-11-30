@@ -191,15 +191,17 @@ impl PyImage {
         y: i32,
         color: (u8, u8, u8, u8),
         scale: u32,
+        font_path: Option<String>,
         anchor: Option<String>,
     ) -> PyResult<Self> {
         let format = self.format;
         let image = self.get_image()?;
         
+        let font_path = font_path.as_ref().map(|p| std::path::Path::new(p));
         let text_anchor = anchor.as_ref().and_then(|s| crate::text::styles::TextAnchor::from_str(s));
 
         Python::with_gil(|py| {
-            py.allow_threads(|| text::draw_text(image, text, x, y, scale as f32, color, None, text_anchor))
+            py.allow_threads(|| text::draw_text(image, text, x, y, scale as f32, color, font_path, text_anchor))
         })
         .map(|result| PyImage {
             lazy_image: LazyImage::Loaded(result),

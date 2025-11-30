@@ -68,7 +68,7 @@ class TextMixin:
                 final_size = font.get_size()
 
         return self.__class__(
-            self._rust_image.draw_text(text, x, y_pos, color, int(final_size), anchor)
+            self._rust_image.draw_text(text, x, y_pos, color, int(final_size), font_path, anchor)
         )
 
     def add_text_styled(
