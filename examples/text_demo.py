@@ -37,8 +37,8 @@ def demo_basic_text():
         "Custom font support", (20, 190), size=20, color=(128, 0, 128, 255)
     )
 
-    img.save("examples/output/text_basic_demo.png")
-    print("✓ Basic text demo saved as examples/output/text_basic_demo.png")
+    img.save("examples/output/text/text_basic_demo.png")
+    print("✓ Basic text demo saved as examples/output/text/text_basic_demo.png")
 
 
 def demo_styled_text():
@@ -113,8 +113,8 @@ def demo_styled_text():
         align="center",
     )
 
-    img.save("examples/output/text_styled_demo.png")
-    print("✓ Styled text demo saved as examples/output/text_styled_demo.png")
+    img.save("examples/output/text/text_styled_demo.png")
+    print("✓ Styled text demo saved as examples/output/text/text_styled_demo.png")
 
 
 def demo_multiline_text():
@@ -177,8 +177,10 @@ def demo_multiline_text():
         background=(100, 149, 237, 255),  # Cornflower blue
     )
 
-    img.save("examples/output/text_multiline_demo.png")
-    print("✓ Multi-line text demo saved as examples/output/text_multiline_demo.png")
+    img.save("examples/output/text/text_multiline_demo.png")
+    print(
+        "✓ Multi-line text demo saved as examples/output/text/text_multiline_demo.png"
+    )
 
 
 def demo_centered_text():
@@ -223,8 +225,8 @@ def demo_centered_text():
         color=(0, 100, 0, 255),
     )
 
-    img.save("examples/output/text_centered_demo.png")
-    print("✓ Centered text demo saved as examples/output/text_centered_demo.png")
+    img.save("examples/output/text/text_centered_demo.png")
+    print("✓ Centered text demo saved as examples/output/text/text_centered_demo.png")
 
 
 def demo_convenience_methods():
@@ -290,9 +292,9 @@ def demo_convenience_methods():
         shadow=(2, 2, 128, 128, 128, 200),
     )
 
-    img.save("examples/output/text_convenience_demo.png")
+    img.save("examples/output/text/text_convenience_demo.png")
     print(
-        "✓ Convenience methods demo saved as examples/output/text_convenience_demo.png"
+        "✓ Convenience methods demo saved as examples/output/text/text_convenience_demo.png"
     )
 
 
@@ -347,8 +349,10 @@ def demo_text_measurement():
 
         y_offset += height + 40
 
-    img.save("examples/output/text_measurement_demo.png")
-    print("✓ Text measurement demo saved as examples/output/text_measurement_demo.png")
+    img.save("examples/output/text/text_measurement_demo.png")
+    print(
+        "✓ Text measurement demo saved as examples/output/text/text_measurement_demo.png"
+    )
 
 
 def demo_text_composition():
@@ -410,8 +414,10 @@ def demo_text_composition():
         outline=(64, 64, 64, 255, 0.5),
     )
 
-    img.save("examples/output/text_composition_demo.png")
-    print("✓ Text composition demo saved as examples/output/text_composition_demo.png")
+    img.save("examples/output/text/text_composition_demo.png")
+    print(
+        "✓ Text composition demo saved as examples/output/text/text_composition_demo.png"
+    )
 
 
 def demo_font_formats():
@@ -473,7 +479,7 @@ extension or magic bytes."""
 
     # Try to load the user-provided WOFF2 font first, then system fonts
     custom_fonts_to_try = [
-        "examples/UTMAvo.woff2",
+        "examples/SVN-Suargie.woff2",
         "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
         "/System/Library/Fonts/Helvetica.ttc",
         "C:\\Windows\\Fonts\\arial.ttf",
@@ -516,8 +522,10 @@ extension or magic bytes."""
             color=(150, 150, 0, 255),
         )
 
-    img.save("examples/output/text_font_formats_demo.png")
-    print("✓ Font formats demo saved as examples/output/text_font_formats_demo.png")
+    img.save("examples/output/text/text_font_formats_demo.png")
+    print(
+        "✓ Font formats demo saved as examples/output/text/text_font_formats_demo.png"
+    )
 
 
 def main():
@@ -541,7 +549,7 @@ def main():
 
     print("=" * 50)
     print("All TextMixin demos completed!")
-    print("Check the examples/output/ directory for the generated images.")
+    print("Check the examples/output/text/ directory for the generated images.")
     print("\nFeatures demonstrated:")
     print("• Basic text rendering with flexible positioning")
     print("• Custom font support (TTF, OTF, WOFF, WOFF2)")
