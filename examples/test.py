@@ -1,6 +1,7 @@
-from imgrs import Image
-import tempfile
 import os
+import tempfile
+
+from imgrs import Image
 
 
 # --- COLOR PARSER (USED BY IMGRS BACKGROUND) ---
@@ -21,8 +22,8 @@ def parse_color_string(color_str) -> tuple[int, int, int]:
 def imgrs_generate_image(
     anime,
     image_data,
-    layer2_path="layer-2.png",
-    layer3_path="layer-3.png",
+    layer2_path="examples/img/layer-2.png",
+    layer3_path="examples/img/layer-3.png",
     slog="Hello world! Ebtisam here!",
     custom_name=None,
     slogan=None,
@@ -102,11 +103,11 @@ def imgrs_generate_image(
             text=name_text.upper(),
             position=(400, 380),
             size=67,
-            font_path="fonts/GMVDINPro-CondMedium.ttf",
+            font_path="fonts/DejaVuSans.ttf",
         )
 
         img = img.add_text(
-            text=slogan_text, position=(400, 440), font_path="fonts/arial/ARIAL.TTF"
+            text=slogan_text, position=(400, 440), font_path="fonts/DejaVuSans.ttf"
         )
 
         # --- END IMAGE GENERATION LOGIC ---
@@ -124,7 +125,7 @@ def imgrs_generate_image(
 
 
 if __name__ == "__main__":
-    img = Image.open("examples/Boy.png")
+    img = Image.open("examples/img/Boy.png")
     with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as temp_file:
         img.save(temp_file.name)
         with open(temp_file.name, "rb") as f:
