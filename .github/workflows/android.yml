@@ -30,8 +30,10 @@ jobs:
           cd $ANDROID_SDK_ROOT
           wget https://dl.google.com/android/repository/commandlinetools-linux-10406996_latest.zip -O tools.zip
           unzip tools.zip
-          mkdir cmdline-tools
-          mv cmdline-tools cmdline-tools/latest
+
+
+          mkdir -p cmdline-tools/latest
+          mv cmdline-tools/* cmdline-tools/latest || true
 
       - name: Install SDK components
         run: |
