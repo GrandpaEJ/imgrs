@@ -1,0 +1,75 @@
+name: Android Build
+
+on:
+  workflow_dispatch:
+
+jobs:
+  android-build:
+    name: Build for Android
+    runs-on: ubuntu-latest
+
+    env:
+      ANDROID_SDK_ROOT: ${{ github.workspace }}/android-sdk
+      NDK_VERSION: 26.1.10909125
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install required packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y unzip wget libssl-dev
+
+      # -----------------------------
+      # Install Android SDK + NDK
+      # -----------------------------
+      - name: Download Android command-line tools
+        run: |
+          mkdir -p $ANDROID_SDK_ROOT
+          cd $ANDROID_SDK_ROOT
+          wget https://dl.google.com/android/repository/commandlinetools-linux-10406996_latest.zip -O tools.zip
+          unzip tools.zip
+          mkdir cmdline-tools
+          mv cmdline-tools cmdline-tools/latest
+
+      - name: Install SDK components
+        run: |
+          yes | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --sdk_root=$ANDROID_SDK_ROOT \
+            "platform-tools" \
+            "platforms;android-34" \
+            "build-tools;34.0.0" \
+            "ndk;$NDK_VERSION"
+
+      # -----------------------------
+      # Install Rust + Android targets
+      # -----------------------------
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Add Android targets
+        run: |
+          rustup target add aarch64-linux-android
+          rustup target add armv7-linux-androideabi
+          rustup target add x86_64-linux-android
+
+      - name: Install cargo-ndk
+        run: cargo install cargo-ndk
+
+      # -----------------------------
+      # Build Rust library for Android
+      # -----------------------------
+      - name: Build Android Rust library
+        run: |
+          cargo ndk -t arm64-v8a -o target/android build --release
+          cargo ndk -t armeabi-v7a -o target/android build --release
+          cargo ndk -t x86_64 -o target/android build --release
+
+      # -----------------------------
+      # Upload artifacts
+      # -----------------------------
+      - name: Upload Android builds
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-builds
+          path: target/android/**/*.so
