@@ -46,6 +46,11 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pip-
 
+      - name: Upgrade pip with Python 3.8
+        run: |
+          python3.8 -m pip install --upgrade --force-reinstall pip
+          python3.8 -m pip --version
+
       - name: Install Python dependencies
         run: |
 
