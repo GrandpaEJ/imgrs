@@ -1,5 +1,6 @@
 // Core types and utilities
 mod core;
+pub mod color_input;
 pub use core::PyImage;
 
 // Feature modules - implementation
