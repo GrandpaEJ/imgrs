@@ -336,8 +336,29 @@ class CoreMixin:
             else:
                 raise ValueError(f"Invalid color tuple length: {len(color)}")
 
-        # Handle string color names
+        # Handle string color names and hex codes
         if isinstance(color, str):
+            # Handle hex codes
+            clean_color = color.lstrip("#")
+            is_hex = all(c in "0123456789abcdefABCDEF" for c in clean_color)
+            
+            if is_hex and len(clean_color) in (3, 6, 8):
+                if len(clean_color) == 3:
+                    # Expand RGB to RRGGBB
+                    clean_color = "".join(c * 2 for c in clean_color)
+                
+                if len(clean_color) == 6:
+                    r = int(clean_color[0:2], 16)
+                    g = int(clean_color[2:4], 16)
+                    b = int(clean_color[4:6], 16)
+                    return (r, g, b, 255)
+                elif len(clean_color) == 8:
+                    r = int(clean_color[0:2], 16)
+                    g = int(clean_color[2:4], 16)
+                    b = int(clean_color[4:6], 16)
+                    a = int(clean_color[6:8], 16)
+                    return (r, g, b, a)
+
             color_map = {
                 "black": (0, 0, 0, 255),
                 "white": (255, 255, 255, 255),
