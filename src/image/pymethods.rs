@@ -1,4 +1,5 @@
 use super::core::PyImage;
+use super::color_input::ColorInput;
 use pyo3::prelude::*;
 use pyo3::Bound;
 
@@ -12,8 +13,9 @@ impl PyImage {
 
     #[staticmethod]
     #[pyo3(signature = (mode, size, color=None))]
-    fn new(mode: &str, size: (u32, u32), color: Option<(u8, u8, u8, u8)>) -> PyResult<Self> {
-        Self::new_with_mode(mode, size, color)
+    fn new(mode: &str, size: (u32, u32), color: Option<ColorInput>) -> PyResult<Self> {
+        let color_tuple = color.map(|c| c.to_rgba());
+        Self::new_with_mode(mode, size, color_tuple)
     }
 
     #[staticmethod]
@@ -399,8 +401,8 @@ impl PyImage {
         self.getpixel_impl(x, y)
     }
 
-    fn putpixel(&mut self, x: u32, y: u32, color: (u8, u8, u8, u8)) -> PyResult<Self> {
-        self.putpixel_impl(x, y, color)
+    fn putpixel(&mut self, x: u32, y: u32, color: ColorInput) -> PyResult<Self> {
+        self.putpixel_impl(x, y, color.to_rgba())
     }
 
     fn histogram(&mut self) -> PyResult<(Vec<u32>, Vec<u32>, Vec<u32>, Vec<u32>)> {
@@ -417,11 +419,11 @@ impl PyImage {
 
     fn replace_color(
         &mut self,
-        target_color: (u8, u8, u8, u8),
-        replacement_color: (u8, u8, u8, u8),
+        target_color: ColorInput,
+        replacement_color: ColorInput,
         tolerance: u8,
     ) -> PyResult<Self> {
-        self.replace_color_impl(target_color, replacement_color, tolerance)
+        self.replace_color_impl(target_color.to_rgba(), replacement_color.to_rgba(), tolerance)
     }
 
     fn threshold(&mut self, threshold_value: u8) -> PyResult<Self> {
@@ -439,9 +441,9 @@ impl PyImage {
         y: i32,
         width: u32,
         height: u32,
-        color: (u8, u8, u8, u8),
+        color: ColorInput,
     ) -> PyResult<Self> {
-        self.draw_rectangle_impl(x, y, width, height, color)
+        self.draw_rectangle_impl(x, y, width, height, color.to_rgba())
     }
 
     fn draw_circle(
@@ -449,9 +451,9 @@ impl PyImage {
         center_x: i32,
         center_y: i32,
         radius: u32,
-        color: (u8, u8, u8, u8),
+        color: ColorInput,
     ) -> PyResult<Self> {
-        self.draw_circle_impl(center_x, center_y, radius, color)
+        self.draw_circle_impl(center_x, center_y, radius, color.to_rgba())
     }
 
     fn draw_line(
@@ -460,9 +462,9 @@ impl PyImage {
         y0: i32,
         x1: i32,
         y1: i32,
-        color: (u8, u8, u8, u8),
+        color: ColorInput,
     ) -> PyResult<Self> {
-        self.draw_line_impl(x0, y0, x1, y1, color)
+        self.draw_line_impl(x0, y0, x1, y1, color.to_rgba())
     }
 
     fn draw_star(
@@ -472,7 +474,7 @@ impl PyImage {
         outer_radius: u32,
         inner_radius: u32,
         points: u32,
-        color: (u8, u8, u8, u8),
+        color: ColorInput,
     ) -> PyResult<Self> {
         self.draw_star_impl(
             center_x,
@@ -480,7 +482,7 @@ impl PyImage {
             outer_radius,
             inner_radius,
             points,
-            color,
+            color.to_rgba(),
         )
     }
 
@@ -492,13 +494,13 @@ impl PyImage {
         y2: i32,
         x3: i32,
         y3: i32,
-        color: (u8, u8, u8, u8),
+        color: ColorInput,
     ) -> PyResult<Self> {
-        self.draw_triangle_impl(x1, y1, x2, y2, x3, y3, color)
+        self.draw_triangle_impl(x1, y1, x2, y2, x3, y3, color.to_rgba())
     }
 
-    fn draw_polygon(&mut self, points: Vec<(i32, i32)>, color: (u8, u8, u8, u8)) -> PyResult<Self> {
-        self.draw_polygon_impl(points, color)
+    fn draw_polygon(&mut self, points: Vec<(i32, i32)>, color: ColorInput) -> PyResult<Self> {
+        self.draw_polygon_impl(points, color.to_rgba())
     }
 
     fn draw_ellipse(
@@ -507,9 +509,9 @@ impl PyImage {
         center_y: i32,
         radius_x: u32,
         radius_y: u32,
-        color: (u8, u8, u8, u8),
+        color: ColorInput,
     ) -> PyResult<Self> {
-        self.draw_ellipse_impl(center_x, center_y, radius_x, radius_y, color)
+        self.draw_ellipse_impl(center_x, center_y, radius_x, radius_y, color.to_rgba())
     }
 
     #[pyo3(signature = (center_x, center_y, radius, sides, color, rotation=0.0))]
@@ -519,37 +521,38 @@ impl PyImage {
         center_y: i32,
         radius: u32,
         sides: u32,
-        color: (u8, u8, u8, u8),
+        color: ColorInput,
         rotation: f32,
     ) -> PyResult<Self> {
-        self.draw_regular_polygon_impl(center_x, center_y, radius, sides, rotation, color)
+        self.draw_regular_polygon_impl(center_x, center_y, radius, sides, rotation, color.to_rgba())
     }
 
 
-    #[pyo3(signature = (text, x, y, color=(0, 0, 0, 255), scale=32, font_path=None, anchor=None))]
+    #[pyo3(signature = (text, x, y, color=None, scale=32, font_path=None, anchor=None))]
     fn draw_text(
         &mut self,
         text: &str,
         x: i32,
         y: i32,
-        color: (u8, u8, u8, u8),
+        color: Option<ColorInput>,
         scale: u32,
         font_path: Option<String>,
         anchor: Option<String>,
     ) -> PyResult<Self> {
-        self.draw_text_impl(text, x, y, color, scale, font_path, anchor)
+        let color_tuple = color.map(|c| c.to_rgba()).unwrap_or((0, 0, 0, 255));
+        self.draw_text_impl(text, x, y, color_tuple, scale, font_path, anchor)
     }
 
-    #[pyo3(signature = (text, x, y, size=32.0, color=(0, 0, 0, 255), font_path=None, background=None, align=None, outline=None, shadow=None, opacity=None, max_width=None, rotation=None, anchor=None))]
+    #[pyo3(signature = (text, x, y, size=32.0, color=None, font_path=None, background=None, align=None, outline=None, shadow=None, opacity=None, max_width=None, rotation=None, anchor=None))]
     fn draw_text_styled(
         &mut self,
         text: &str,
         x: i32,
         y: i32,
         size: f32,
-        color: (u8, u8, u8, u8),
+        color: Option<ColorInput>,
         font_path: Option<String>,
-        background: Option<(u8, u8, u8, u8)>,
+        background: Option<ColorInput>,
         align: Option<String>,
         outline: Option<(u8, u8, u8, u8, f32)>,
         shadow: Option<(i32, i32, u8, u8, u8, u8)>,
@@ -558,38 +561,43 @@ impl PyImage {
         rotation: Option<f32>,
         anchor: Option<String>,
     ) -> PyResult<Self> {
-        self.draw_text_styled_impl(text, x, y, size, color, font_path, background, align, outline, shadow, opacity, max_width, rotation, anchor)
+        let color_tuple = color.map(|c| c.to_rgba()).unwrap_or((0, 0, 0, 255));
+        let background_tuple = background.map(|c| c.to_rgba());
+        self.draw_text_styled_impl(text, x, y, size, color_tuple, font_path, background_tuple, align, outline, shadow, opacity, max_width, rotation, anchor)
     }
 
-    #[pyo3(signature = (text, x, y, size=32.0, color=(0, 0, 0, 255), font_path=None, line_spacing=None, align=None))]
+    #[pyo3(signature = (text, x, y, size=32.0, color=None, font_path=None, line_spacing=None, align=None))]
     fn draw_text_multiline(
         &mut self,
         text: &str,
         x: i32,
         y: i32,
         size: f32,
-        color: (u8, u8, u8, u8),
+        color: Option<ColorInput>,
         font_path: Option<String>,
         line_spacing: Option<f32>,
         align: Option<String>,
     ) -> PyResult<Self> {
-        self.draw_text_multiline_impl(text, x, y, size, color, font_path, line_spacing, align)
+        let color_tuple = color.map(|c| c.to_rgba()).unwrap_or((0, 0, 0, 255));
+        self.draw_text_multiline_impl(text, x, y, size, color_tuple, font_path, line_spacing, align)
     }
 
-    #[pyo3(signature = (text, y, size=32.0, color=(0, 0, 0, 255), font_path=None, background=None, outline=None, shadow=None, opacity=None))]
+    #[pyo3(signature = (text, y, size=32.0, color=None, font_path=None, background=None, outline=None, shadow=None, opacity=None))]
     fn draw_text_centered(
         &mut self,
         text: &str,
         y: i32,
         size: f32,
-        color: (u8, u8, u8, u8),
+        color: Option<ColorInput>,
         font_path: Option<String>,
-        background: Option<(u8, u8, u8, u8)>,
+        background: Option<ColorInput>,
         outline: Option<(u8, u8, u8, u8, f32)>,
         shadow: Option<(i32, i32, u8, u8, u8, u8)>,
         opacity: Option<f32>,
     ) -> PyResult<Self> {
-        self.draw_text_centered_impl(text, y, size, color, font_path, background, outline, shadow, opacity)
+        let color_tuple = color.map(|c| c.to_rgba()).unwrap_or((0, 0, 0, 255));
+        let background_tuple = background.map(|c| c.to_rgba());
+        self.draw_text_centered_impl(text, y, size, color_tuple, font_path, background_tuple, outline, shadow, opacity)
     }
 
     #[pyo3(signature = (text, size=32.0, font_path=None))]
@@ -625,7 +633,7 @@ impl PyImage {
         self.get_text_box_impl(text, x, y, size, font_path)
     }
 
-    #[pyo3(signature = (text, x, y, width, height, size=32.0, color=(0, 0, 0, 255), font_path=None, background=None, align=None, vertical_align=None, line_spacing=None, overflow=None))]
+    #[pyo3(signature = (text, x, y, width, height, size=32.0, color=None, font_path=None, background=None, align=None, vertical_align=None, line_spacing=None, overflow=None))]
     fn draw_text_box(
         &mut self,
         text: &str,
@@ -634,15 +642,17 @@ impl PyImage {
         width: u32,
         height: u32,
         size: f32,
-        color: (u8, u8, u8, u8),
+        color: Option<ColorInput>,
         font_path: Option<String>,
-        background: Option<(u8, u8, u8, u8)>,
+        background: Option<ColorInput>,
         align: Option<String>,
         vertical_align: Option<String>,
         line_spacing: Option<f32>,
         overflow: Option<bool>,
     ) -> PyResult<Self> {
-        self.draw_text_box_impl(text, x, y, width, height, size, color, font_path, background, align, vertical_align, line_spacing, overflow)
+        let color_tuple = color.map(|c| c.to_rgba()).unwrap_or((0, 0, 0, 255));
+        let background_tuple = background.map(|c| c.to_rgba());
+        self.draw_text_box_impl(text, x, y, width, height, size, color_tuple, font_path, background_tuple, align, vertical_align, line_spacing, overflow)
     }
 
     // Effect methods (from effects.rs)
@@ -651,9 +661,9 @@ impl PyImage {
         offset_x: i32,
         offset_y: i32,
         blur_radius: f32,
-        shadow_color: (u8, u8, u8, u8),
+        shadow_color: ColorInput,
     ) -> PyResult<Self> {
-        self.drop_shadow_impl(offset_x, offset_y, blur_radius, shadow_color)
+        self.drop_shadow_impl(offset_x, offset_y, blur_radius, shadow_color.to_rgba())
     }
 
     fn inner_shadow(
@@ -661,18 +671,18 @@ impl PyImage {
         offset_x: i32,
         offset_y: i32,
         blur_radius: f32,
-        shadow_color: (u8, u8, u8, u8),
+        shadow_color: ColorInput,
     ) -> PyResult<Self> {
-        self.inner_shadow_impl(offset_x, offset_y, blur_radius, shadow_color)
+        self.inner_shadow_impl(offset_x, offset_y, blur_radius, shadow_color.to_rgba())
     }
 
     fn glow(
         &mut self,
         blur_radius: f32,
-        glow_color: (u8, u8, u8, u8),
+        glow_color: ColorInput,
         intensity: f32,
     ) -> PyResult<Self> {
-        self.glow_impl(blur_radius, glow_color, intensity)
+        self.glow_impl(blur_radius, glow_color.to_rgba(), intensity)
     }
 
 
@@ -685,13 +695,14 @@ impl PyImage {
         Ok(self.get_alpha_impl())
     }
 
-    fn add_transparency(&mut self, color: (u8, u8, u8), tolerance: u8) -> PyResult<Self> {
-        Ok(self.add_transparency_impl(color, tolerance)?)
+    fn add_transparency(&mut self, color: ColorInput, tolerance: u8) -> PyResult<Self> {
+        Ok(self.add_transparency_impl(color.to_rgb(), tolerance)?)
     }
 
     #[pyo3(signature = (background_color=None))]
-    fn remove_transparency(&mut self, background_color: Option<(u8, u8, u8)>) -> PyResult<Self> {
-        Ok(self.remove_transparency_impl(background_color)?)
+    fn remove_transparency(&mut self, background_color: Option<ColorInput>) -> PyResult<Self> {
+        let bg_tuple = background_color.map(|c| c.to_rgb());
+        Ok(self.remove_transparency_impl(bg_tuple)?)
     }
 
     fn apply_mask(&mut self, mask: &mut Self, invert: bool) -> PyResult<Self> {
@@ -715,11 +726,11 @@ impl PyImage {
 
     fn create_color_mask(
         &mut self,
-        target_color: (u8, u8, u8),
+        target_color: ColorInput,
         tolerance: u8,
         feather: u32,
     ) -> PyResult<Self> {
-        let color_mask = self.create_color_mask_impl(target_color, tolerance, feather)?;
+        let color_mask = self.create_color_mask_impl(target_color.to_rgb(), tolerance, feather)?;
         let py_image = crate::image::core::PyImage {
             lazy_image: crate::image::core::LazyImage::Loaded(color_mask),
             format: None,
@@ -749,8 +760,8 @@ impl PyImage {
         Ok(py_image)
     }
 
-    fn extract_color(&mut self, target_color: (u8, u8, u8), tolerance: u8) -> PyResult<Self> {
-        Ok(self.extract_color_impl(target_color, tolerance)?)
+    fn extract_color(&mut self, target_color: ColorInput, tolerance: u8) -> PyResult<Self> {
+        Ok(self.extract_color_impl(target_color.to_rgb(), tolerance)?)
     }
 
     fn color_quantize(&mut self, levels: u8) -> PyResult<Self> {
@@ -763,11 +774,11 @@ impl PyImage {
 
     fn selective_desaturate(
         &mut self,
-        target_color: (u8, u8, u8),
+        target_color: ColorInput,
         tolerance: u8,
         desaturate_factor: f32,
     ) -> PyResult<Self> {
-        Ok(self.selective_desaturate_impl(target_color, tolerance, desaturate_factor)?)
+        Ok(self.selective_desaturate_impl(target_color.to_rgb(), tolerance, desaturate_factor)?)
     }
 
     fn color_match(&mut self, reference_image: &mut Self, strength: f32) -> PyResult<Self> {
@@ -776,21 +787,21 @@ impl PyImage {
 
     fn apply_gradient_overlay(
         &mut self,
-        color: (u8, u8, u8, u8),
+        color: ColorInput,
         direction: String,
         opacity: f32,
     ) -> PyResult<Self> {
-        Ok(self.apply_gradient_overlay_impl(color, &direction, opacity)?)
+        Ok(self.apply_gradient_overlay_impl(color.to_rgba(), &direction, opacity)?)
     }
 
     fn create_stripe_pattern(
         &mut self,
-        color: (u8, u8, u8, u8),
+        color: ColorInput,
         width: u32,
         spacing: u32,
         angle: f32,
     ) -> PyResult<Self> {
-        let stripe_pattern = self.create_stripe_pattern_impl(color, width, spacing, angle)?;
+        let stripe_pattern = self.create_stripe_pattern_impl(color.to_rgba(), width, spacing, angle)?;
         let py_image = crate::image::core::PyImage {
             lazy_image: crate::image::core::LazyImage::Loaded(stripe_pattern),
             format: None,
