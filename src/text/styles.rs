@@ -39,6 +39,7 @@ pub struct TextStyle {
     pub line_spacing: f32,
     
     /// Letter spacing in pixels (default: 0.0)
+    #[allow(dead_code)]
     pub letter_spacing: f32,
     
     /// Add outline/stroke
