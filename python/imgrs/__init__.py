@@ -37,7 +37,7 @@ from .operations import (
     split,
 )
 
-__version__ = "0.3.5"
+__version__ = "0.3.8"
 __author__ = "Grandpa EJ"
 
 __all__ = [

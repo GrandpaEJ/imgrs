@@ -1,6 +1,6 @@
  [package]
 name = "imgrs-core"
-version = "0.3.7"
+version = "0.3.8"
 edition = "2021"
 authors = ["Grandpa EJ"]
 description = "A high-performance, memory-safe image processing library for Python"
