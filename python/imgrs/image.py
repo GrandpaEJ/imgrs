@@ -5,6 +5,7 @@ Simplified Image class using mixins for better maintainability
 from .mixins import (
     BlendingMixin,
     ColorMixin,
+    ConversionMixin,
     CoreMixin,
     DrawingMixin,
     EffectsMixin,
@@ -19,6 +20,7 @@ from .mixins import (
 class Image(
     BlendingMixin,
     ColorMixin,
+    ConversionMixin,
     CoreMixin,
     TransformMixin,
     FilterMixin,

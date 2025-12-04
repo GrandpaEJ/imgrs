@@ -18,6 +18,7 @@ from .enums import (
 from .image import Image
 from .mixins.color_mixin import ColorMixin
 from .operations import (
+    # Basic operations
     blur,
     brightness,
     chroma_key,
@@ -35,6 +36,16 @@ from .operations import (
     save,
     sharpen,
     split,
+    # Format conversion operations
+    batch_convert,
+    convert_format,
+    convert_to_bytes,
+    detect_format,
+    get_format_capabilities,
+    get_format_recommendation,
+    get_supported_formats,
+    is_supported_format,
+    optimize_for_format,
 )
 
 __version__ = "0.3.8"
@@ -51,6 +62,7 @@ __all__ = [
     "MaskType",
     "Resampling",
     "Transpose",
+    # Basic operations
     "open",
     "new",
     "save",
@@ -69,4 +81,14 @@ __all__ = [
     "emboss",
     "brightness",
     "contrast",
+    # Format conversion operations
+    "batch_convert",
+    "convert_format",
+    "convert_to_bytes",
+    "detect_format",
+    "get_format_capabilities",
+    "get_format_recommendation",
+    "get_supported_formats",
+    "is_supported_format",
+    "optimize_for_format",
 ]

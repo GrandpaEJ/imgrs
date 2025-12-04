@@ -2,6 +2,9 @@
 Enumerations and constants matching Pillow's API
 """
 
+from pathlib import Path
+from typing import Dict, List, Optional
+
 
 class ImageMode:
     """Image mode constants."""
@@ -25,18 +28,126 @@ class ImageMode:
 class ImageFormat:
     """Image format constants."""
 
+    # Lossy formats
     JPEG = "JPEG"
+    JPG = "JPG"
+    WEBP = "WEBP"
+    AVIF = "AVIF"
+    HEIF = "HEIF"
+    
+    # Lossless formats
     PNG = "PNG"
     GIF = "GIF"
     BMP = "BMP"
     TIFF = "TIFF"
-    WEBP = "WEBP"
     ICO = "ICO"
+    TGA = "TGA"
     PNM = "PNM"
     DDS = "DDS"
-    TGA = "TGA"
     FARBFELD = "FARBFELD"
-    AVIF = "AVIF"
+    
+    # Vector formats
+    SVG = "SVG"
+    PDF = "PDF"
+    EPS = "EPS"
+    
+    # Specialized formats
+    PCX = "PCX"
+    PSD = "PSD"
+    TGA = "TGA"
+    JPEG2000 = "JPEG2000"
+    JXL = "JXL"
+    
+    # Format groups
+    @classmethod
+    def get_lossy_formats(cls) -> List[str]:
+        """Get list of lossy compression formats."""
+        return [cls.JPEG, cls.JPG, cls.WEBP, cls.AVIF, cls.HEIF]
+    
+    @classmethod
+    def get_lossless_formats(cls) -> List[str]:
+        """Get list of lossless compression formats."""
+        return [cls.PNG, cls.GIF, cls.BMP, cls.TIFF, cls.ICO]
+    
+    @classmethod
+    def get_supported_formats(cls) -> List[str]:
+        """Get list of all supported formats."""
+        return [
+            cls.JPEG, cls.JPG, cls.PNG, cls.GIF, cls.BMP, cls.WEBP,
+            cls.TIFF, cls.ICO, cls.AVIF, cls.HEIF, cls.SVG, cls.PDF
+        ]
+    
+    @classmethod
+    def get_extension_mapping(cls) -> Dict[str, str]:
+        """Get mapping of file extensions to format names."""
+        return {
+            '.jpg': cls.JPG,
+            '.jpeg': cls.JPEG,
+            '.png': cls.PNG,
+            '.gif': cls.GIF,
+            '.bmp': cls.BMP,
+            '.webp': cls.WEBP,
+            '.tiff': cls.TIFF,
+            '.tif': cls.TIFF,
+            '.ico': cls.ICO,
+            '.avif': cls.AVIF,
+            '.heif': cls.HEIF,
+            '.heic': cls.HEIF,
+            '.svg': cls.SVG,
+            '.pdf': cls.PDF,
+            '.eps': cls.EPS,
+            '.pcx': cls.PCX,
+            '.psd': cls.PSD,
+            '.jp2': cls.JPEG2000,
+            '.j2k': cls.JPEG2000,
+            '.jxl': cls.JXL,
+            '.tga': cls.TGA,
+        }
+    
+    @classmethod
+    def detect_format_from_extension(cls, filename: str) -> Optional[str]:
+        """Detect image format from file extension."""
+        ext = Path(filename).suffix.lower()
+        mapping = cls.get_extension_mapping()
+        return mapping.get(ext)
+    
+    @classmethod
+    def is_supported(cls, format_name: str) -> bool:
+        """Check if a format is supported."""
+        return format_name.upper() in cls.get_supported_formats()
+    
+    @classmethod
+    def validate_format(cls, format_name: str) -> str:
+        """Validate and normalize format name."""
+        if not format_name:
+            raise ValueError("Format name cannot be empty")
+        
+        format_upper = format_name.upper()
+        
+        # Handle common aliases
+        aliases = {
+            'JPG': cls.JPEG,
+            'JPE': cls.JPEG,
+            'JPEG2000': cls.JPEG2000,
+            'JP2': cls.JPEG2000,
+            'HEIC': cls.HEIF,
+            'PDF': cls.PDF,
+            'SVG': cls.SVG,
+            'EPS': cls.EPS,
+        }
+        
+        if format_upper in aliases:
+            return aliases[format_upper]
+        
+        # Check if it's a valid format
+        if not cls.is_supported(format_upper):
+            supported = ", ".join(cls.get_supported_formats())
+            raise ValueError(
+                f"Unsupported format '{format_name}'. "
+                f"Supported formats: {supported}"
+            )
+        
+        return format_upper
 
 
 class Resampling:

@@ -143,6 +143,17 @@
                         </div>
                     </div>
                 </div>
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body text-center">
+                            <div class="feature-icon bg-warning bg-gradient text-white rounded-circle mx-auto mb-3">
+                                <i class="bi bi-arrow-left-right"></i>
+                            </div>
+                            <h5 class="card-title">Universal Format Support</h5>
+                            <p class="card-text">Convert between PNG, JPG, JPEG, BMP, GIF, WebP, SVG, HEIF, TIFF, AVIF and more with advanced optimization options.</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
@@ -228,6 +239,18 @@ shadowed = img.drop_shadow(
 )
 
 shadowed.save("logo_shadow.png")</code></pre>
+                </div>
+                <div class="col-lg-6 mb-4">
+                    <h4><i class="bi bi-5-circle-fill text-primary"></i> Format Conversion</h4>
+                    <pre><code class="language-python">from imgrs import Image
+
+# Open any format (PNG, JPG, JPEG, BMP, GIF, WebP, SVG)
+img = Image.open("photo.jpg")
+
+# Convert to different formats
+img.convert("PNG").save("converted.png")
+img.convert("WEBP", quality=95).save("web_optimized.webp")
+img.convert("GIF").save("animated.gif")</code></pre>
                 </div>
             </div>
         </div>
@@ -324,6 +347,7 @@ shadowed.save("logo_shadow.png")</code></pre>
                                 <li><i class="bi bi-check-lg text-success"></i> Flip and transpose</li>
                                 <li><i class="bi bi-check-lg text-success"></i> Convert between modes (RGB, RGBA, L, LA)</li>
                                 <li><i class="bi bi-check-lg text-success"></i> Split and merge channels</li>
+                                <li><i class="bi bi-check-lg text-success"></i> Convert between all image formats (PNG, JPG, JPEG, BMP, GIF, WebP, SVG)</li>
                             </ul>
                         </div>
                     </div>

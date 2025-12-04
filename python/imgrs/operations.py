@@ -4,7 +4,7 @@ provides Pillow-compatible module-level functions with IDE-friendly suggestions 
 """
 
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, List, Optional, Tuple, Union
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple, Union
 
 from .enums import ImageFormat, Resampling
 from .image import Image
@@ -787,3 +787,302 @@ def chroma_key(
         >>> final = imgrs.paste(background, keyed, (100, 50))
     """
     return image.chroma_key(key_color, tolerance, feather)
+
+
+# Image Format Conversion Functions
+
+def convert_format(
+    image: Image,
+    target_format: Union[str, ImageFormat],
+    save_options: Optional[Dict[str, Any]] = None,
+    optimize: bool = True,
+    progressive: bool = False,
+) -> Image:
+    """
+    Convert image to a different format with advanced options.
+
+    Args:
+        image: Image instance to convert
+        target_format: Target format name (e.g., 'JPEG', 'PNG', 'WEBP')
+        save_options: Format-specific options dict
+        optimize: Whether to apply format-specific optimizations
+        progressive: For JPEG formats, create progressive JPEG
+
+    Returns:
+        New Image instance in the target format
+
+    Raises:
+        ValueError: If target format is not supported
+        OSError: If conversion fails due to I/O issues
+
+    Example:
+        >>> img = imgrs.open("photo.png")
+        >>> jpeg_img = imgrs.convert_format(img, 'JPEG', quality=90)
+        >>> webp_img = imgrs.convert_format(img, 'WEBP', lossless=True)
+    """
+    return image.convert_format(target_format, save_options, optimize, progressive)
+
+
+def convert_to_bytes(
+    image: Image,
+    target_format: Union[str, ImageFormat],
+    save_options: Optional[Dict[str, Any]] = None,
+) -> bytes:
+    """
+    Convert image to target format and return as bytes.
+
+    Args:
+        image: Image instance to convert
+        target_format: Target format name
+        save_options: Format-specific save options
+
+    Returns:
+        Image data in target format as bytes
+
+    Raises:
+        ValueError: If target format is not supported
+        OSError: If conversion fails
+
+    Example:
+        >>> img = imgrs.open("photo.png")
+        >>> jpeg_bytes = imgrs.convert_to_bytes(img, 'JPEG', quality=85)
+        >>> with open("photo.jpg", "wb") as f:
+        ...     f.write(jpeg_bytes)
+    """
+    return image.convert_to_bytes(target_format, save_options)
+
+
+def batch_convert(
+    image: Image,
+    target_formats: List[Union[str, ImageFormat]],
+    output_dir: Union[str, Path],
+    base_filename: str,
+    save_options: Optional[Dict[str, Dict[str, Any]]] = None,
+) -> Dict[str, str]:
+    """
+    Convert image to multiple formats and save to directory.
+
+    Args:
+        image: Image instance to convert
+        target_formats: List of target formats
+        output_dir: Output directory path
+        base_filename: Base filename (without extension)
+        save_options: Dict mapping format -> save_options dict
+
+    Returns:
+        Dict mapping format -> output file path
+
+    Raises:
+        ValueError: If any format is not supported
+        OSError: If directory operations fail
+
+    Example:
+        >>> img = imgrs.open("photo.png")
+        >>> results = imgrs.batch_convert(
+        ...     img,
+        ...     ['JPEG', 'WEBP', 'PNG'],
+        ...     "output",
+        ...     "photo",
+        ...     {'JPEG': {'quality': 90}, 'WEBP': {'quality': 80}}
+        ... )
+        >>> print(results)
+        {'JPEG': 'output/photo.jpg', 'WEBP': 'output/photo.webp', 'PNG': 'output/photo.png'}
+    """
+    return image.batch_convert(target_formats, output_dir, base_filename, save_options)
+
+
+def detect_format(filename: str) -> Optional[str]:
+    """
+    Detect image format from filename extension.
+
+    Args:
+        filename: Image filename or path
+
+    Returns:
+        Detected format name or None if not recognized
+
+    Example:
+        >>> imgrs.detect_format("photo.jpg")
+        'JPEG'
+        >>> imgrs.detect_format("image.png")
+        'PNG'
+        >>> imgrs.detect_format("unknown.xyz")
+        None
+    """
+    return ImageFormat.detect_format_from_extension(filename)
+
+
+def is_supported_format(format_name: str) -> bool:
+    """
+    Check if a format is supported by imgrs.
+
+    Args:
+        format_name: Format name to check
+
+    Returns:
+        True if format is supported, False otherwise
+
+    Example:
+        >>> imgrs.is_supported_format('JPEG')
+        True
+        >>> imgrs.is_supported_format('HEIF')
+        True
+        >>> imgrs.is_supported_format('UNKNOWN')
+        False
+    """
+    return ImageFormat.is_supported(format_name)
+
+
+def get_format_capabilities(format_name: str) -> Dict[str, Any]:
+    """
+    Get detailed capabilities of a specific format.
+
+    Args:
+        format_name: Format name to analyze
+
+    Returns:
+        Dict with format capabilities and limitations
+
+    Example:
+        >>> cap = imgrs.get_format_capabilities('WEBP')
+        >>> cap['lossy']
+        True
+        >>> cap['lossless']
+        True
+        >>> cap['supports_transparency']
+        True
+    """
+    # Create a dummy image to access format capabilities
+    dummy_image = Image.new('RGB', (1, 1))
+    return dummy_image.get_format_capabilities(format_name)
+
+
+def get_supported_formats() -> List[str]:
+    """
+    Get list of all supported image formats.
+
+    Returns:
+        List of supported format names
+
+    Example:
+        >>> formats = imgrs.get_supported_formats()
+        >>> 'JPEG' in formats
+        True
+        >>> len(formats) > 10
+        True
+    """
+    return ImageFormat.get_supported_formats()
+
+
+def get_format_recommendation(
+    image: Image,
+    use_case: str = "web",
+    preserve_quality: bool = True,
+) -> Dict[str, Any]:
+    """
+    Get format recommendations based on image characteristics and use case.
+
+    Args:
+        image: Image instance to analyze
+        use_case: Use case ('web', 'print', 'archive', 'mobile')
+        preserve_quality: Whether to prioritize quality over file size
+
+    Returns:
+        Dict with format recommendations and reasoning
+
+    Example:
+        >>> img = imgrs.open("photo.png")
+        >>> rec = imgrs.get_format_recommendation(img, 'web')
+        >>> rec['recommended']
+        'WEBP'
+        >>> rec['reason']
+        'Best balance of quality and file size for web use'
+    """
+    recommendations = {
+        'web': {
+            'recommended': 'WEBP',
+            'alternatives': ['JPEG', 'PNG'],
+            'reason': 'Best balance of quality and file size for web use'
+        },
+        'print': {
+            'recommended': 'TIFF',
+            'alternatives': ['PNG', 'JPEG'],
+            'reason': 'Lossless compression for high-quality printing'
+        },
+        'archive': {
+            'recommended': 'PNG',
+            'alternatives': ['TIFF', 'JPEG'],
+            'reason': 'Lossless with good compression for long-term storage'
+        },
+        'mobile': {
+            'recommended': 'JPEG',
+            'alternatives': ['WEBP'],
+            'reason': 'Maximum compression for limited storage'
+        }
+    }
+    
+    # Adjust based on image characteristics
+    mode = image.mode
+    size = image.size
+    aspect_ratio = size[0] / size[1]
+    
+    base_rec = recommendations.get(use_case, recommendations['web'])
+    
+    # Mode-based adjustments
+    if mode == 'RGBA' and 'transparency' not in str(base_rec).lower():
+        base_rec['alternatives'].insert(0, 'PNG')
+    
+    # Size-based adjustments
+    if max(size) > 4000:
+        if preserve_quality:
+            base_rec['recommended'] = 'TIFF'
+        else:
+            base_rec['recommended'] = 'JPEG'
+    
+    return base_rec
+
+
+def optimize_for_format(
+    image: Image,
+    target_format: Union[str, ImageFormat],
+    quality_level: str = "high",
+    remove_metadata: bool = True,
+) -> Image:
+    """
+    Optimize image for specific format with best practices.
+
+    Args:
+        image: Image instance to optimize
+        target_format: Target format
+        quality_level: Quality level ('low', 'medium', 'high', 'maximum')
+        remove_metadata: Whether to remove metadata
+
+    Returns:
+        Optimized Image instance
+
+    Example:
+        >>> img = imgrs.open("photo.png")
+        >>> web_optimal = imgrs.optimize_for_format(img, 'WEBP', 'medium')
+        >>> web_optimal.save("optimized.webp")
+    """
+    quality_levels = {
+        'low': {'quality': 60, 'optimize': True},
+        'medium': {'quality': 75, 'optimize': True},
+        'high': {'quality': 90, 'optimize': True},
+        'maximum': {'quality': 100, 'optimize': True}
+    }
+    
+    options = quality_levels.get(quality_level, quality_levels['high'])
+    
+    # Format-specific optimizations
+    format_upper = str(target_format).upper()
+    if format_upper == 'JPEG':
+        options['progressive'] = True
+        options['subsampling'] = '4:2:0'
+    elif format_upper == 'PNG':
+        options['compress_level'] = 9
+        options['optimize'] = True
+    elif format_upper == 'WEBP':
+        options['method'] = 6
+    
+    return image.convert_format(target_format, options, optimize=True)
