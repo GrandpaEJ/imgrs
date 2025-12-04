@@ -20,7 +20,7 @@
         <div class="container">
             <a class="navbar-brand fw-bold" href="#">
                 <i class="bi bi-image"></i> imgrs
-                <span class="badge bg-success ms-2">v0.1.0</span>
+                <span class="badge bg-success ms-2">v0.3.8</span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -45,11 +45,11 @@
     <!-- Hero Section -->
     <section class="hero-section bg-gradient text-white py-5">
         <div class="container text-center py-5">
-            <h1 class="display-3 fw-bold mb-3">
-                <i class="bi bi-lightning-charge-fill text-warning"></i>
-                imgrs
+            <h1 class="display-3 fw-bold mb-3"style="color: black !important;">
+                <i class="bi bi-lightning-charge-fill" ></i>
+                Imgrs
             </h1>
-            <p class="lead mb-4">Blazing Fast Image Processing for Python, Powered by Rust</p>
+            <p class="lead mb-4"style="color:black;">Blazing Fast Image Processing for Python, Powered by Rust</p>
             <div class="mb-4">
                 <span class="badge bg-light text-dark me-2 p-2">
                     <i class="bi bi-speedometer2"></i> 196x Faster I/O
@@ -65,7 +65,7 @@
                 <button class="btn btn-warning btn-lg px-4 gap-3" onclick="copyToClipboard('pip install imgrs')">
                     <i class="bi bi-download"></i> pip install imgrs
                 </button>
-                <a href="#quickstart" class="btn btn-outline-light btn-lg px-4">
+                <a href="#quickstart" class="btn btn-outline-primary btn-lg px-4">
                     Get Started <i class="bi bi-arrow-right"></i>
                 </a>
             </div>
@@ -533,22 +533,27 @@ for jpg in Path("photos/").glob("*.jpg"):
                 <div class="col-md-3 mb-3">
                     <i class="bi bi-ubuntu display-3 text-danger"></i>
                     <h5 class="mt-2">Linux</h5>
-                    <small class="text-muted">manylinux wheels</small>
+                    <small class="text-muted">x86_64 & Aarch64</small>
                 </div>
                 <div class="col-md-3 mb-3">
                     <i class="bi bi-windows display-3 text-primary"></i>
                     <h5 class="mt-2">Windows</h5>
-                    <small class="text-muted">x64, x86, ARM64</small>
+                    <small class="text-muted">x64</small>
                 </div>
                 <div class="col-md-3 mb-3">
                     <i class="bi bi-apple display-3 text-secondary"></i>
                     <h5 class="mt-2">macOS</h5>
-                    <small class="text-muted">Intel & Apple Silicon</small>
+                    <small class="text-muted">x86_64 & Aarch64</small>
                 </div>
-                <div class="col-md-3 mb-3">
+                <!-- <div class="col-md-3 mb-3">
                     <i class="bi bi-phone display-3 text-success"></i>
                     <h5 class="mt-2">Android</h5>
                     <small class="text-muted">ARM & x86</small>
+                </div> -->
+                <div class="col-md-3 mb-3">
+                    <i class="bi bi-phone display-3 text-success"></i>
+                    <h5 class="mt-2">Custom Build</h5>
+                    <small class="text-muted">From Source</small>
                 </div>
             </div>
         </div>
